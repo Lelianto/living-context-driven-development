@@ -87,3 +87,52 @@ export async function sourceRemoveCommand(id: string): Promise<void> {
     process.exit(1);
   }
 }
+
+export async function sourceWatchCommand(options: { interval?: string; once?: boolean }): Promise<void> {
+  const connector = new SourceConnector(process.cwd());
+  const interval = parseInt(options.interval || '60', 10);
+
+  if (options.once) {
+    console.log('');
+    console.log(chalk.bold('Source Check'));
+    console.log(chalk.dim('─'.repeat(60)));
+    const results = connector.checkSource();
+    for (const r of results) {
+      const icon = r.error ? chalk.red('✗') : r.has_changes ? chalk.yellow('⚠') : chalk.green('✓');
+      console.log(`  ${icon} ${r.source_id}  ${r.has_changes ? chalk.yellow('CHANGED') : chalk.green('OK')}  ${r.changes_summary || r.error}`);
+    }
+    console.log('');
+    return;
+  }
+
+  console.log('');
+  console.log(chalk.bold(`Watching sources every ${interval} minutes...`));
+  console.log(chalk.dim('Press Ctrl+C to stop'));
+  console.log('');
+
+  const watcher = connector.watch(interval);
+
+  const onSigInt = () => {
+    console.log('');
+    console.log(chalk.dim('Stopped watching.'));
+    process.exit(0);
+  };
+  process.on('SIGINT', onSigInt);
+
+  for await (const result of watcher) {
+    const icon = result.error ? chalk.red('✗') : result.has_changes ? chalk.yellow('⚠') : chalk.green('✓');
+    const ts = new Date(result.timestamp).toLocaleTimeString();
+    console.log(`  ${chalk.dim(ts)} ${icon} ${result.source_id}  ${result.has_changes ? chalk.yellow('CHANGED') : chalk.green('OK')}  ${result.changes_summary || result.error}`);
+  }
+}
+
+export async function sourceScheduleCommand(options: { cron?: boolean; github?: boolean; interval?: string }): Promise<void> {
+  const interval = parseInt(options.interval || '60', 10);
+
+  if (options.github) {
+    console.log(SourceConnector.getScheduleGitHubAction(interval));
+    return;
+  }
+
+  console.log(SourceConnector.getScheduleCron(process.cwd(), interval));
+}

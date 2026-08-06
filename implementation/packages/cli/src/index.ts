@@ -191,6 +191,52 @@ sourceCmd
     await sourceRemoveCommand(id);
   });
 
+sourceCmd
+  .command('watch')
+  .description('Watch sources for changes at intervals')
+  .option('--interval <minutes>', 'Poll interval in minutes', '60')
+  .option('--once', 'Run a single check and exit')
+  .action(async (options) => {
+    const { sourceWatchCommand } = await import('./commands/source.js');
+    await sourceWatchCommand(options);
+  });
+
+sourceCmd
+  .command('schedule')
+  .description('Generate cron or GitHub Actions schedule for source monitoring')
+  .option('--cron', 'Output cron schedule line')
+  .option('--github', 'Output GitHub Actions workflow YAML')
+  .option('--interval <minutes>', 'Interval in minutes', '60')
+  .action(async (options) => {
+    const { sourceScheduleCommand } = await import('./commands/source.js');
+    await sourceScheduleCommand(options);
+  });
+
+program
+  .command('extract')
+  .description('Extract constraints from a source using LLM')
+  .argument('<source-id>', 'Source ID to extract from')
+  .option('--backend <name>', 'LLM provider (ollama, openai, anthropic)')
+  .option('--model <model>', 'Override default model')
+  .option('--dry-run', 'Output to stdout, do not write to registry')
+  .option('--output <dir>', 'Write candidate YAML files to directory')
+  .option('--auto', 'Extract + normalize + write drafts to registry')
+  .action(async (sourceId: string, options) => {
+    const { extractCommand } = await import('./commands/extract.js');
+    await extractCommand(sourceId, options);
+  });
+
+program
+  .command('normalize')
+  .description('Normalize extracted candidates into draft contexts')
+  .option('--threshold <n>', 'Similarity threshold for dedup (default 0.8)', '0.8')
+  .option('--auto-merge', 'Auto-skip exact duplicates')
+  .option('--all', 'Process all unnormalized candidates')
+  .action(async (options) => {
+    const { normalizeCommand } = await import('./commands/normalize.js');
+    await normalizeCommand(options);
+  });
+
 program
   .command('dashboard')
   .description('View enforcement metrics and lifecycle observability')

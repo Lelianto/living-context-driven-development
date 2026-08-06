@@ -188,16 +188,16 @@ Each transition is an auditable event. Contexts can be reactivated if conditions
 The LCDD Context Engineering Pipeline is what makes LCDD different from every other approach — it starts from **unknown constraints**, not known ones:
 
 ```
-           01 ⚡ Phase A    02 Planned      03 Planned      04 ✅ Done       05 ✅ Done       06 ✅ Done       07 ✅ Done       08 ✅ Done       09 ✅ Done
+           01 ✅ Done      02 🟡 Phase A    03 🟡 Phase A    04 ✅ Done       05 ✅ Done       06 ✅ Done       07 ✅ Done       08 ✅ Done       09 ✅ Done
            ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────
            Observe  ──→  Understand ──→  Govern   ──→  Distribute──→  Enforce  ──→  Verify   ──→  Learn    ──→  Improve
               │               │               │              │              │              │              │              │
-              │ Source        │ Extract +     │ Review +     │ Version +    │ Validate     │ Metrics,     │ Trigger
-              │ monitoring    │ Normalize     │ Classify     │ publish      │ artifacts    │ dashboard,   │ evaluator
-              │ (deterministic)│ (needs LLM)  │ (done)       │              │              │ web, events  │ + doctor
+              │ Source        │ Extract       │ Normalize    │ Review +     │ Validate     │ Metrics,     │ Trigger
+              │ watch +       │ (Ollama free, │ schema map,  │ Classify     │ artifacts    │ dashboard,   │ evaluator
+              │ schedule      │ OpenAI/Anthro)│ dedup        │              │              │ web, events  │ + doctor
 ```
 
-> **Implementation status:** Stages 04–09 are fully implemented in v0.3.0 as deterministic. Stage 01 has Phase A (source connectors). Stages 02–03 require LLM integration and remain planned for v1.0+. No API key, no LLM, no new infrastructure needed for stages 04–09. See [ROADMAP.md](ROADMAP.md).
+> **Implementation status:** Stages 01, 04–09 are fully implemented. Stages 02–03 have Phase A — `lcd extract` (Ollama free by default) and `lcd normalize` (deterministic dedup). Only Stage 02 LLM refinement and Stage 03 embedding dedup remain for v1.0+. No API key required for any stage except OpenAI/Anthropic optional backends.
 
 **Example:** A new regulation is published (ex. GDPR update, PCI-DSS revision) → Discover detects it → Extract parses it with an LLM → Normalize maps it to the Context Schema → Classify assigns it level 4 (Mandate) → Review routes it to the compliance team → Version commits it as Draft → Approve → Active → Block enforcement in CI. See the full [Context Builder](specification/0006-context-builder.md).
 
@@ -477,8 +477,8 @@ Living Context Driven Development is built on five axioms:
 |---|---|---|---|
 | **Foundation** | v0.1.0 | ✅ Complete | Specification — 17 docs, manifesto, examples, reference schema |
 | **Reference Implementation** | v0.2.1 | ✅ Complete | `@lcdd/core` SDK + `@lcdd/cli` CLI — published to npm |
-| **Pipeline Automation** | v0.3.1 | ✅ Complete | Deterministic pipeline: `lcd doctor`, rule engine, `lcd review`, source connector, trigger evaluator |
-| **MCP Server** | v0.3.1 | ✅ Complete | AI agent integration — 7 tools via Model Context Protocol |
+| **Pipeline Automation** | v0.4.0 | ✅ Complete | Deterministic pipeline: `lcd doctor`, rule engine, `lcd review`, source connector, trigger evaluator, `lcd extract` + `lcd normalize` |
+| **MCP Server** | v0.4.0 | ✅ Complete | AI agent integration — 7 tools via Model Context Protocol |
 | **Ecosystem** | v0.5.0 | 🔴 Planned | VS Code, GitHub App, Community Packs, Observability Dashboard, LLM extraction |
 | **Adoption** | v1.0.0 | 🔴 Planned | Stabilized spec, conference talks, case studies |
 
@@ -486,14 +486,14 @@ Living Context Driven Development is built on five axioms:
 
 | Stage | Status | Available In |
 |---|---|---|
-| 01 Observe | 🟡 Partial | v0.3.0 — Deterministic source monitoring: `lcd source add/check`, Git diff, website checksum |
-| 02 Extract | 🔴 Planned | v1.0+ — LLM extraction from source documents (requires API key) |
-| 03 Normalize | 🔴 Planned | v1.0+ — Schema mapping, deduplication |
+| 01 Observe | ✅ Done | v0.4.0 — Deterministic source monitoring: `lcd source watch`, `lcd source schedule` (cron + GitHub Actions) |
+| 02 Extract | 🟡 Phase A | v0.4.0 — `lcd extract <id>`: Ollama (default, free), OpenAI, Anthropic. No API key needed for Ollama. |
+| 03 Normalize | 🟡 Phase A | v0.4.0 — `lcd normalize`: schema mapping, Jaccard dedup, validation, draft context creation |
 | 04 Classify | ✅ Done | v0.3.0 — Deterministic rule engine: source type → authority, keyword → severity, domain → tags |
 | 05 Review | ✅ Done | v0.3.0 — `lcd review list/show/approve/reject/revision`, auto-approval for Local contexts |
 | 06 Enforce | ✅ Done | v0.2.1 — `lcd validate`, `ContextVerifier`, CI integration |
 | 07 Verify | ✅ Done | v0.2.1 — Schema validation, semantic rules, lifecycle checks |
-| 08 Learn | ✅ Done | v0.3.0 — `lcd dashboard` (terminal + web), enforcement metrics, violation trends, actor breakdown |
+| 08 Learn | ✅ Done | v0.3.0 — `lcd dashboard` (terminal + web), enforcement metrics, violation trends |
 | 09 Improve | ✅ Done | v0.3.0 — `lcd doctor`, Context Health Score, 5-trigger evaluator, structured recommendations |
 
 ### Install

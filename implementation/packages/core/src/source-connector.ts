@@ -4,6 +4,16 @@ import yaml from 'js-yaml';
 import { execSync } from 'child_process';
 import { createHash } from 'crypto';
 
+export interface SourceChangeEvent {
+  event_id: string;
+  timestamp: string;
+  source_id: string;
+  url: string;
+  type: 'git' | 'website';
+  has_changes: boolean;
+  summary: string;
+}
+
 export interface RegisteredSource {
   id: string;
   url: string;
@@ -276,5 +286,76 @@ export class SourceConnector {
       return 'git';
     }
     return 'website';
+  }
+
+  async *watch(intervalMinutes: number): AsyncGenerator<SourceCheckResult, void, void> {
+    while (true) {
+      const results = this.checkSource();
+      for (const result of results) {
+        this.writeChangeEvent({
+          event_id: `chg-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
+          timestamp: new Date().toISOString(),
+          source_id: result.source_id,
+          url: result.url,
+          type: result.type,
+          has_changes: result.has_changes,
+          summary: result.changes_summary,
+        });
+        yield result;
+      }
+
+      if (results.length === 0) {
+        await new Promise(resolve => setTimeout(resolve, intervalMinutes * 60 * 1000));
+        continue;
+      }
+
+      await new Promise(resolve => setTimeout(resolve, intervalMinutes * 60 * 1000));
+    }
+  }
+
+  writeChangeEvent(event: SourceChangeEvent): void {
+    this.ensureDir();
+    const logPath = join(this.sourcesDir, '.changes.log');
+    writeFileSync(logPath, JSON.stringify(event) + '\n', { flag: 'a' });
+  }
+
+  readChangeEvents(): SourceChangeEvent[] {
+    const logPath = join(this.sourcesDir, '.changes.log');
+    if (!existsSync(logPath)) return [];
+    const content = readFileSync(logPath, 'utf-8').trim();
+    if (!content) return [];
+    return content.split('\n')
+      .filter(line => line.trim())
+      .map(line => {
+        try { return JSON.parse(line) as SourceChangeEvent; } catch { return null; }
+      })
+      .filter((e): e is SourceChangeEvent => e !== null);
+  }
+
+  static getScheduleCron(projectPath: string, intervalMinutes: number = 60): string {
+    const cronExpr = intervalMinutes < 60
+      ? `*/${intervalMinutes} * * * *`
+      : `0 */${Math.floor(intervalMinutes / 60)} * * *`;
+    return `${cronExpr} cd ${projectPath} && lcd source check`;
+  }
+
+  static getScheduleGitHubAction(intervalMinutes: number = 60): string {
+    const cronExpr = intervalMinutes < 60
+      ? `*/${intervalMinutes} * * * *`
+      : `0 */${Math.floor(intervalMinutes / 60)} * * *`;
+    return `name: LCDD Source Monitor
+on:
+  schedule:
+    - cron: '${cronExpr}'
+  workflow_dispatch:
+jobs:
+  check-sources:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npx @lcdd/cli source check`;
   }
 }

@@ -16,3 +16,7 @@ export { SourceConnector } from './source-connector.js';
 export type { RegisteredSource, SourceCheckResult } from './source-connector.js';
 export { DashboardService } from './dashboard.js';
 export type { DashboardMetrics, ViolationTrend, ActorBreakdown, ContextViolationRanking } from './dashboard.js';
+export { ContextNormalizer } from './normalizer.js';
+export type { CandidateContext, NormalizationResult } from './normalizer.js';
+export { Extractor, buildExtractionPrompt, parseLlmJsonResponse } from './extractor.js';
+export type { LlmProvider } from './extractor.js';

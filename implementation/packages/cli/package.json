@@ -1,7 +1,7 @@
 {
   "name": "@lcdd/cli",
-  "version": "0.3.1",
-  "description": "LCDD CLI — lcd init, context, validate, query, doctor, review, source, transition",
+  "version": "0.4.0",
+  "description": "LCDD CLI — lcd init, context, validate, query, doctor, review, source, extract, normalize, dashboard, transition",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -30,7 +30,7 @@
   },
   "homepage": "https://github.com/Lelianto/living-context-driven-development#readme",
   "dependencies": {
-    "@lcdd/core": "^0.3.0",
+    "@lcdd/core": "^0.4.0",
     "commander": "^12.1.0",
     "chalk": "^5.3.0",
     "js-yaml": "^4.1.0"
