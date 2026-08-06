@@ -1,6 +1,6 @@
 <div align="center">
-    <img src="media/logo.svg" alt="LCDD Logo" width="180" height="180"/>
-    <h1>🌱 Living Context Driven Development</h1>
+    <img src="media/logo.png" alt="LCDD Logo" width="180" height="180"/>
+    <h1>Living Context Driven Development</h1>
     <h3><em>Discover. Govern. Enforce. Observe.</em></h3>
 </div>
 
@@ -9,9 +9,9 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/livingcontext/living-context-driven-development/releases"><img src="https://img.shields.io/github/v/release/livingcontext/living-context-driven-development?label=spec%20version" alt="Spec Version"/></a>
-    <a href="https://github.com/livingcontext/living-context-driven-development/stargazers"><img src="https://img.shields.io/github/stars/livingcontext/living-context-driven-development?style=social" alt="GitHub stars"/></a>
-    <a href="LICENSE"><img src="https://img.shields.io/github/license/livingcontext/living-context-driven-development" alt="License"/></a>
+    <a href="https://github.com/Lelianto/living-context-driven-development/releases"><img src="https://img.shields.io/github/v/release/Lelianto/living-context-driven-development?label=spec%20version" alt="Spec Version"/></a>
+    <a href="https://github.com/Lelianto/living-context-driven-development/stargazers"><img src="https://img.shields.io/github/stars/Lelianto/living-context-driven-development?style=social" alt="GitHub stars"/></a>
+    <a href="LICENSE"><img src="https://img.shields.io/github/license/Lelianto/living-context-driven-development" alt="License"/></a>
     <a href="https://livingcontext.dev"><img src="https://img.shields.io/badge/docs-livingcontext.dev-green" alt="Documentation"/></a>
 </p>
 
@@ -23,28 +23,27 @@
 
 ## Table of Contents
 
-- [🌍 What is Living Context Driven Development?](#-what-is-living-context-driven-development)
-- [⚡ The Problem](#-the-problem)
-- [🧭 The LCDD Way](#-the-lcdd-way)
-- [📐 The Context — First-Class Governance Artifact](#-the-context--first-class-governance-artifact)
-- [🔁 The Context Lifecycle](#-the-context-lifecycle)
-- [🔍 The Discovery Pipeline](#-the-discovery-pipeline)
-- [🛡️ Governance by Rate of Change](#️-governance-by-rate-of-change)
-- [📖 Quick Start — Reading the Specification](#-quick-start--reading-the-specification)
-- [🗺️ Repository Map](#️-repository-map)
-- [📊 Comparison with Related Approaches](#-comparison-with-related-approaches)
-- [📚 Core Philosophy](#-core-philosophy)
-- [🗺️ Roadmap](#️-roadmap)
-- [🤝 Contributing](#-contributing)
-- [📄 Citation](#-citation)
-- [📖 Learn More](#-learn-more)
-- [💬 Support](#-support)
-- [🙏 Acknowledgements](#-acknowledgements)
-- [📄 License](#-license)
+- [■ What is Living Context Driven Development?](#-what-is-living-context-driven-development)
+- [▶ The Problem](#-the-problem)
+- [◈ The LCDD Way](#-the-lcdd-way)
+- [◆ The Context — First-Class Governance Artifact](#-the-context--first-class-governance-artifact)
+- [↻ The Context Lifecycle](#-the-context-lifecycle)
+- [→ The Discovery Pipeline](#-the-discovery-pipeline)
+- [◉ Governance by Rate of Change](#-governance-by-rate-of-change)
+- [☰ Quick Start — Reading the Specification](#-quick-start--reading-the-specification)
+- [⊞ Repository Map](#-repository-map)
+- [⇔ Comparison with Related Approaches](#-comparison-with-related-approaches)
+- [※ Core Philosophy](#-core-philosophy)
+- [☗ Roadmap](#-roadmap)
+- [✎ Contributing](#-contributing)
+- [▤ Learn More](#-learn-more)
+- [✉ Support](#-support)
+- [♥ Acknowledgements](#-acknowledgements)
+- [⚖ License](#-license)
 
 ---
 
-## 🌍 What is Living Context Driven Development?
+## ■ What is Living Context Driven Development?
 
 Living Context Driven Development (LCDD) is a **methodology and open specification** for governing software behavior in the age of AI-assisted development. It answers three questions that no existing methodology fully addresses:
 
@@ -58,7 +57,7 @@ Living Context Driven Development (LCDD) is a **methodology and open specificati
 
 ---
 
-## ⚡ The Problem
+## ▶ The Problem
 
 AI-assisted development has made code generation fast. But it has introduced **three new failure modes** that existing methodologies were not designed to address:
 
@@ -91,7 +90,7 @@ A PCI-DSS requirement and a preference for tabs over spaces are both "rules" —
 
 ---
 
-## 🧭 The LCDD Way
+## ◈ The LCDD Way
 
 ### The Four Values
 
@@ -121,7 +120,7 @@ A PCI-DSS requirement and a preference for tabs over spaces are both "rules" —
 
 ---
 
-## 📐 The Context — First-Class Governance Artifact
+## ◆ The Context — First-Class Governance Artifact
 
 The **Context** is the atomic unit of governance in LCDD. It is not a comment, not a ticket, not a Slack message. It is a **structured, versioned, machine-readable artifact** with:
 
@@ -162,7 +161,7 @@ Each Context is a **self-contained governance unit** — it knows its source, it
 
 ---
 
-## 🔁 The Context Lifecycle
+## ↻ The Context Lifecycle
 
 Constraints don't jump from "someone mentioned this" to "this blocks production." They move through six explicit stages:
 
@@ -182,7 +181,7 @@ Each transition is an auditable event. Contexts can be reactivated if conditions
 
 ---
 
-## 🔍 The Discovery Pipeline
+## → The Discovery Pipeline
 
 The LCDD Context Engineering Pipeline is what makes LCDD different from every other approach — it starts from **unknown constraints**, not known ones:
 
@@ -200,7 +199,7 @@ Discover ──→ Extract ──→ Normalize ──→ Classify ──→ Revi
 
 ---
 
-## 🛡️ Governance by Rate of Change
+## ◉ Governance by Rate of Change
 
 Directly inspired by AI Harness (Bunardzic, 2025), LCDD classifies every Context by how fast it should change:
 
@@ -217,7 +216,7 @@ Hardened contexts require formal RFC + explicit human approval. Local contexts c
 
 ---
 
-## 📖 Quick Start — Reading the Specification
+## ☰ Quick Start — Reading the Specification
 
 LCDD is currently in **Specification Phase (v0.1.0)**. There is no reference CLI yet — the methodology is being defined and refined.
 
@@ -246,7 +245,7 @@ LCDD is currently in **Specification Phase (v0.1.0)**. There is no reference CLI
 
 ---
 
-## 🗺️ Repository Map
+## ⊞ Repository Map
 
 ```
 living-context-driven-development/
@@ -317,7 +316,7 @@ living-context-driven-development/
 
 ---
 
-## 📊 Comparison with Related Approaches
+## ⇔ Comparison with Related Approaches
 
 | | TDD | DDD | SDD | CDD Tools | GrayBeam CDD | AI Harness | Policy-as-Code | **LCDD** |
 |---|---|---|---|---|---|---|---|---|
@@ -336,7 +335,7 @@ See the full [Comparison](docs/comparison.md) and [Literature Review](docs/resea
 
 ---
 
-## 📚 Core Philosophy
+## ※ Core Philosophy
 
 Living Context Driven Development is built on five axioms:
 
@@ -350,7 +349,7 @@ Living Context Driven Development is built on five axioms:
 
 ---
 
-## 🗺️ Roadmap
+## ☗ Roadmap
 
 | Milestone | Version | Status | Focus |
 |---|---|---|---|
@@ -364,7 +363,7 @@ See the full [Roadmap](specification/0016-roadmap.md) and [Vision](manifesto/vis
 
 ---
 
-## 🤝 Contributing
+## ✎ Contributing
 
 LCDD is an open specification. Contributions of all kinds are welcome:
 
@@ -377,39 +376,15 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the full process.
 
 ---
 
-## 📄 Citation
+---
 
-If you use LCDD in your research or writing, please cite:
+## ✉ Support
 
-```bibtex
-@software{lcdd2026,
-  author       = {LCDD Specification Team},
-  title        = {Living Context Driven Development Specification v0.1.0},
-  year         = 2026,
-  url          = {https://github.com/livingcontext/living-context-driven-development},
-  note         = {An open specification for constraint governance in AI-assisted software development}
-}
-```
-
-See [CITATION.cff](CITATION.cff) for the Citation File Format metadata.
+For questions, bug reports, or feature requests, please open a [GitHub issue](https://github.com/Lelianto/living-context-driven-development/issues/new). See [SUPPORT.md](SUPPORT.md) for support guidelines.
 
 ---
 
-## 📖 Learn More
-
-- **[LCDD Methodology Guide](lcdd-methodology.md)** — comprehensive walkthrough of the full methodology.
-- **[Literature Review](docs/research.md)** — deep analysis of prior art (GrayBeam CDD, AI Harness, CDD Tools).
-- **[Adoption Guide](docs/adoption.md)** — how to bring LCDD into your team, from Level 0 to Level 6.
-
----
-
-## 💬 Support
-
-For questions, bug reports, or feature requests, please open a [GitHub issue](https://github.com/livingcontext/living-context-driven-development/issues/new). See [SUPPORT.md](SUPPORT.md) for support guidelines.
-
----
-
-## 🙏 Acknowledgements
+## ♥ Acknowledgements
 
 LCDD builds on the foundational work of:
 
@@ -427,7 +402,7 @@ LCDD does not replace these works; it stands on their shoulders and addresses ga
 
 ---
 
-## 📄 License
+## ⚖ License
 
 Living Context Driven Development Specification is licensed under the Apache License 2.0. See [LICENSE](LICENSE).
 
