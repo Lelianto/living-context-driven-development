@@ -183,14 +183,17 @@ Each transition is an auditable event. Contexts can be reactivated if conditions
 The LCDD Context Engineering Pipeline is what makes LCDD different from every other approach — it starts from **unknown constraints**, not known ones:
 
 ```
-Discover ──→ Extract ──→ Normalize ──→ Classify ──→ Review ──→ Version ──→ Enforce ──→ Observe ──→ Improve
-    │            │            │             │            │           │           │            │            │
-    │ Monitor    │ LLM-parses │ Maps to     │ Assigns    │ Human or  │ Commits   │ CI, IDE,   │ Metrics,   │ Refine,
-    │ gov sites, │ regulations│ Context     │ authority, │ automated │ immutable │ AI agent,  │ dashboards,│ deprecate,
-    │ docs,       │ from       │ Schema      │ lifecycle, │ review    │ version   │ gateway    │ alerts     │ or create
-    │ Slack,      │ 200-page   │             │ severity   │           │           │            │            │
-    │ GitHub...   │ documents  │             │            │           │           │            │            │
+          01 Planned      02 Planned      03 Planned      04 Planned      05 Planned      06 ✅ Done       07 ✅ Done       08 ⚡ WIP        09 Planned
+          ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────
+          Discover  ──→  Extract   ──→  Normalize ──→  Classify  ──→  Review   ──→  Version  ──→  Enforce  ──→  Observe  ──→  Improve
+             │               │               │              │              │              │              │              │              │
+             │ Monitor       │ LLM-parses    │ Maps to      │ Assigns      │ Human or     │ Commits      │ CI, IDE,     │ Metrics,     │ Refine,
+             │ gov sites,    │ regulations   │ Context      │ authority,   │ automated    │ immutable    │ AI agent,    │ dashboards,  │ deprecate,
+             │ docs, Slack,  │ from 200-page │ Schema       │ lifecycle,   │ review       │ version      │ gateway      │ alerts       │ or create
+             │ GitHub...     │ documents     │              │ severity     │              │              │              │              │
 ```
+
+> **Implementation status:** Stages 01–05 (Discover through Review) and 09 (Improve) require LLM integration and are planned for v1.0+. Stages 06 (Version) and 07 (Enforce) are fully implemented in v0.2.1. Stage 08 (Observe) has basic event logging with full dashboards planned for v0.5.0. See [ROADMAP.md](ROADMAP.md).
 
 **Example:** A new regulation is published (ex. GDPR update, PCI-DSS revision) → Discover detects it → Extract parses it with an LLM → Normalize maps it to the Context Schema → Classify assigns it level 4 (Mandate) → Review routes it to the compliance team → Version commits it as Draft → Approve → Active → Block enforcement in CI. See the full [Context Builder](specification/0006-context-builder.md).
 
@@ -363,10 +366,25 @@ Living Context Driven Development is built on five axioms:
 | Milestone | Version | Status | Focus |
 |---|---|---|---|
 | **Foundation** | v0.1.0 | ✅ Complete | Specification — 17 docs, manifesto, examples, reference schema |
-| **Reference Implementation** | v0.2.0 | ✅ Complete | `@lcdd/core` SDK + `@lcdd/cli` CLI — published to npm |
+| **Reference Implementation** | v0.2.1 | ✅ Complete | `@lcdd/core` SDK + `@lcdd/cli` CLI — published to npm |
 | **MCP Server** | v0.3.0 | 🔴 Planned | AI agent integration, context injection, drift detection |
-| **Ecosystem** | v0.5.0 | 🔴 Planned | VS Code, GitHub App, Community Packs, Dashboard |
+| **Ecosystem** | v0.5.0 | 🔴 Planned | VS Code, GitHub App, Community Packs, Observability Dashboard |
+| **Discovery Pipeline** | v1.0.0 | 🔴 Planned | Automated stages 01–05 & 09: LLM extraction, review workflow, improvement loop |
 | **Adoption** | v1.0.0 | 🔴 Planned | Stabilized spec, conference talks, case studies |
+
+### Pipeline Stage Status
+
+| Stage | Status | Available In |
+|---|---|---|
+| 01 Discover | 🔴 Planned | v1.0+ |
+| 02 Extract | 🔴 Planned | v1.0+ |
+| 03 Normalize | 🔴 Planned | v1.0+ |
+| 04 Classify | 🔴 Planned | v1.0+ |
+| 05 Review | 🔴 Planned | v1.0+ |
+| 06 Version | ✅ Done | v0.2.1 — `lcd context add`, `lcd transition` |
+| 07 Enforce | ✅ Done | v0.2.1 — `lcd validate`, `ContextVerifier` |
+| 08 Observe | 🟡 Partial | v0.2.1 — Event log; Dashboard planned v0.5.0 |
+| 09 Improve | 🔴 Planned | v1.0+ |
 
 ### Install
 
