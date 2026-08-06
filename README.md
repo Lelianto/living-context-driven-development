@@ -16,10 +16,6 @@
     <a href="https://www.npmjs.com/package/@lcdd/cli"><img src="https://img.shields.io/npm/dm/@lcdd/cli?color=10b981" alt="npm downloads"/></a>
 </p>
 
-<p align="center">
-    English
-</p>
-
 ---
 
 ## Table of Contents
