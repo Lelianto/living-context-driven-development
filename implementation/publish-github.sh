@@ -12,7 +12,7 @@ fi
 TOKEN=$1
 REGISTRY="https://npm.pkg.github.com"
 OWNER="Lelianto"
-BASE=$(dirname "$0")
+BASE="$(cd "$(dirname "$0")" && pwd)"
 ROOT_NPMRC="$BASE/.npmrc"
 
 cleanup() {
