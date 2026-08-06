@@ -11,8 +11,8 @@
 <p align="center">
     <a href="https://github.com/Lelianto/living-context-driven-development/releases"><img src="https://img.shields.io/github/v/release/Lelianto/living-context-driven-development?label=spec%20version" alt="Spec Version"/></a>
     <a href="https://github.com/Lelianto/living-context-driven-development/stargazers"><img src="https://img.shields.io/github/stars/Lelianto/living-context-driven-development?style=social" alt="GitHub stars"/></a>
+    <a href="https://www.npmjs.com/package/@lcdd/cli"><img src="https://img.shields.io/npm/v/@lcdd/cli?color=10b981" alt="npm"/></a>
     <a href="LICENSE"><img src="https://img.shields.io/github/license/Lelianto/living-context-driven-development" alt="License"/></a>
-    <a href="https://livingcontext.dev"><img src="https://img.shields.io/badge/docs-livingcontext.dev-green" alt="Documentation"/></a>
 </p>
 
 <p align="center">
@@ -216,11 +216,20 @@ Hardened contexts require formal RFC + explicit human approval. Local contexts c
 
 ---
 
-## ☰ Quick Start — Reading the Specification
+## ☰ Quick Start
 
-LCDD is currently in **Specification Phase (v0.1.0)**. There is no reference CLI yet — the methodology is being defined and refined.
+LCDD is in **Specification Phase (v0.1.0)** with a working **Reference Implementation (v0.2.0)** published to npm.
 
-### For Readers (30 minutes)
+### Install the CLI (30 seconds)
+
+```bash
+npm install -g @lcdd/cli
+lcd init
+lcd context add
+lcd validate
+```
+
+### Read the Specification (30 minutes)
 
 1. [Manifesto](manifesto/manifesto.md) — the four values and twelve principles.
 2. [Problem Statement](specification/0000-problem.md) — the seven sub-problems LCDD solves.
@@ -260,7 +269,7 @@ living-context-driven-development/
 ├── 📜 SECURITY.md                       # Security policy
 ├── 📜 SUPPORT.md                        # Support guidelines
 ├── 📜 AGENTS.md                         # Instructions for AI agents
-├── 📜 CITATION.cff                      # Academic citation
+├── 📜 lcdd-methodology.md               # Comprehensive methodology guide
 │
 ├── 📂 manifesto/                        # The LCDD Manifesto
 │   ├── manifesto.md                     # Four Values + Twelve Principles
@@ -309,9 +318,12 @@ living-context-driven-development/
 │   └── education/                       # Hackathon Competition Rubric
 │
 ├── 📂 media/                            # Visual Identity
-│   └── logo.svg                         # LCDD Logo
+│   └── logo.png                         # LCDD Logo
 │
-└── 📂 papers/                           # Future: Academic Papers
+└── 📂 implementation/                   # Reference Implementation (v0.2.0)
+    ├── packages/core/                   # @lcdd/core — TypeScript SDK
+    ├── packages/cli/                    # @lcdd/cli — Command-line tool
+    └── .github/workflows/               # CI/CD enforcement
 ```
 
 ---
@@ -354,10 +366,19 @@ Living Context Driven Development is built on five axioms:
 | Milestone | Version | Status | Focus |
 |---|---|---|---|
 | **Foundation** | v0.1.0 | ✅ Complete | Specification — 17 docs, manifesto, examples, reference schema |
-| **Reference CLI** | v0.2.0 | 🔴 Planned | `lcd init`, `lcd context`, `lcd validate`, `lcd query` |
+| **Reference Implementation** | v0.2.0 | ✅ Complete | `@lcdd/core` SDK + `@lcdd/cli` CLI — published to npm |
 | **MCP Server** | v0.3.0 | 🔴 Planned | AI agent integration, context injection, drift detection |
 | **Ecosystem** | v0.5.0 | 🔴 Planned | VS Code, GitHub App, Community Packs, Dashboard |
-| **Adoption** | v1.0.0 | 🔴 Planned | Stabilized spec, paper, conference talks, case studies |
+| **Adoption** | v1.0.0 | 🔴 Planned | Stabilized spec, conference talks, case studies |
+
+### Install
+
+```bash
+npm install -g @lcdd/cli
+lcd init
+lcd context add
+lcd validate
+```
 
 See the full [Roadmap](specification/0016-roadmap.md) and [Vision](manifesto/vision.md).
 
