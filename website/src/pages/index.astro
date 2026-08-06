@@ -221,13 +221,18 @@ enforcement:
       <div class="reveal">
         <p class="label">Discovery Pipeline</p>
         <h2 class="h2">From unknown to enforced.</h2>
-        <p class="sub">
-          The core novelty of LCDD &mdash; a nine-stage pipeline that discovers constraints
-          from any source, not just known ones. Click any stage for details.
-        </p>
+      <p class="sub">
+        The core novelty of LCDD — a nine-stage pipeline that discovers constraints
+        from any source, not just known ones. <span style="font-size:12px;color:var(--s5);">(Stages 06–07 implemented, 08 partial, 01–05 &amp; 09 planned)</span>
+      </p>
       </div>
 
       <div class="pipeline-grid reveal" id="pipeline-grid"></div>
+      <p style="text-align:center;margin-top:20px;font-size:11px;color:var(--s5);">
+        <span style="color:var(--g);">● done</span> &nbsp;·&nbsp;
+        <span style="color:#f59e0b;">● wip</span> &nbsp;·&nbsp;
+        <span style="color:var(--s4);">● planned</span>
+      </p>
     </div>
   </section>
 
@@ -319,23 +324,32 @@ enforcement:
 <script>
   const steps = [
     { num: '01', name: 'Discover', desc: 'Monitor regulatory websites, docs, Slack, GitHub, APIs.',
-      detail: '<strong>Purpose:</strong> Identify potential sources of Contexts not yet in the Registry.<br/><br/><strong>Inputs:</strong> URLs of regulatory websites (GDPR, PCI-DSS, SOC 2, HIPAA), documentation repositories (Notion, Confluence), communication tools (Slack, Discord, Teams), meeting transcripts, incident postmortems, customer feedback channels, and AI-generated suggestions.<br/><br/><strong>Process:</strong> Each source is registered with URI, type, polling frequency, and ownership. Change detection monitors sources for new or updated content. Relevance filtering discards irrelevant changes using heuristics, keyword matching, and optional LLM-based scoring.<br/><br/><strong>Output:</strong> Candidate Source Items — pointers to raw material that may contain new or changed contexts.' },
+      status: 'planned',
+      detail: '<strong>Status: Planned (v1.0+)</strong><br/><br/><strong>Purpose:</strong> Identify potential sources of Contexts not yet in the Registry.<br/><br/><strong>Inputs:</strong> URLs of regulatory websites (GDPR, PCI-DSS, SOC 2, HIPAA), documentation repositories (Notion, Confluence), communication tools (Slack, Discord, Teams), meeting transcripts, incident postmortems, customer feedback channels, and AI-generated suggestions.<br/><br/><strong>Process:</strong> Each source is registered with URI, type, polling frequency, and ownership. Change detection monitors sources for new or updated content. Relevance filtering discards irrelevant changes using heuristics, keyword matching, and optional LLM-based scoring.<br/><br/><strong>Output:</strong> Candidate Source Items — pointers to raw material that may contain new or changed contexts.' },
     { num: '02', name: 'Extract', desc: 'LLM parses 200-page documents into candidates.',
-      detail: '<strong>Purpose:</strong> Transform raw source material into structured candidate Contexts.<br/><br/><strong>Methods:</strong> LLM-based extraction (recommended for unstructured sources), regex/rule-based extraction for structured documents, or manual human annotation.<br/><br/><strong>Quality:</strong> Each candidate receives a confidence score (0.0–1.0). Target recall > 80%, precision > 70%. Source location is preserved (page number, paragraph) for provenance.<br/><br/><strong>Output:</strong> Extracted Candidate Contexts with confidence scores and source backlinks.' },
+      status: 'planned',
+      detail: '<strong>Status: Planned (v1.0+)</strong><br/><br/><strong>Purpose:</strong> Transform raw source material into structured candidate Contexts.<br/><br/><strong>Methods:</strong> LLM-based extraction (recommended for unstructured sources), regex/rule-based extraction for structured documents, or manual human annotation.<br/><br/><strong>Quality:</strong> Each candidate receives a confidence score (0.0–1.0). Target recall > 80%, precision > 70%. Source location is preserved (page number, paragraph) for provenance.<br/><br/><strong>Output:</strong> Extracted Candidate Contexts with confidence scores and source backlinks.' },
     { num: '03', name: 'Normalize', desc: 'Map to unified schema. De-duplicate. Validate.',
-      detail: '<strong>Purpose:</strong> Map extracted candidates to the LCDD Context Schema, resolving format differences while preserving provenance.<br/><br/><strong>Process:</strong> Schema mapping of each field, ID generation (UUID v4 or human-readable slug), default application for unpopulated optional fields, JSON Schema validation, and deduplication against existing Draft/Candidate/Active contexts.<br/><br/><strong>Output:</strong> Normalized Contexts — valid against the Context Schema, in Draft lifecycle stage.' },
+      status: 'planned',
+      detail: '<strong>Status: Planned (v1.0+)</strong><br/><br/><strong>Purpose:</strong> Map extracted candidates to the LCDD Context Schema, resolving format differences while preserving provenance.<br/><br/><strong>Process:</strong> Schema mapping of each field, ID generation (UUID v4 or human-readable slug), default application for unpopulated optional fields, JSON Schema validation, and deduplication against existing Draft/Candidate/Active contexts.<br/><br/><strong>Output:</strong> Normalized Contexts — valid against the Context Schema, in Draft lifecycle stage.' },
     { num: '04', name: 'Classify', desc: 'Assign authority, lifecycle, severity, scope.',
-      detail: '<strong>Purpose:</strong> Assign lifecycle stage, authority level, governance classification, domain tags, and enforcement mode.<br/><br/><strong>Automated rules:</strong> Standard-body source → level 4 (Mandate), internal organization policy → level 3 (Standard), AI-extracted with low confidence → level 0 (Suggestion). Domain tagging via content analysis. All automated classifications are provisional — human reviewers can override.<br/><br/><strong>Output:</strong> Classified Contexts with populated authority, governance, tags, and severity.' },
+      status: 'planned',
+      detail: '<strong>Status: Planned (v1.0+)</strong><br/><br/><strong>Purpose:</strong> Assign lifecycle stage, authority level, governance classification, domain tags, and enforcement mode.<br/><br/><strong>Automated rules:</strong> Standard-body source → level 4 (Mandate), internal organization policy → level 3 (Standard), AI-extracted with low confidence → level 0 (Suggestion). Domain tagging via content analysis. All automated classifications are provisional — human reviewers can override.<br/><br/><strong>Output:</strong> Classified Contexts with populated authority, governance, tags, and severity.' },
     { num: '05', name: 'Review', desc: 'Human or automated review by classification.',
-      detail: '<strong>Purpose:</strong> Human and/or automated review of classified contexts before they become enforceable.<br/><br/><strong>Routing:</strong> Contexts routed by domain tags (→ domain experts), authority level (→ approval chain), and source (→ source owner).<br/><br/><strong>Checklist:</strong> Is the constraint correct? Is the authority appropriate? Is the scope correct? Does it conflict with existing Active contexts? Is it enforceable? Is the description clear for both humans and AI agents?<br/><br/><strong>Auto-review:</strong> Local-Guideline and Local-Experimental contexts with high extraction confidence (> 0.9) may be auto-approved.' },
+      status: 'planned',
+      detail: '<strong>Status: Planned (v1.0+)</strong><br/><br/><strong>Purpose:</strong> Human and/or automated review of classified contexts before they become enforceable.<br/><br/><strong>Routing:</strong> Contexts routed by domain tags (→ domain experts), authority level (→ approval chain), and source (→ source owner).<br/><br/><strong>Checklist:</strong> Is the constraint correct? Is the authority appropriate? Is the scope correct? Does it conflict with existing Active contexts? Is it enforceable? Is the description clear for both humans and AI agents?<br/><br/><strong>Auto-review:</strong> Local-Guideline and Local-Experimental contexts with high extraction confidence (> 0.9) may be auto-approved.' },
     { num: '06', name: 'Version', desc: 'Commit immutable version. Audit trail.',
-      detail: '<strong>Purpose:</strong> Commit the approved Context to the Registry with an immutable version number.<br/><br/><strong>Process:</strong> Final schema validation, conflict detection against existing Active contexts, version assignment (version 1 for new, current + 1 for updates), immutable commit to the Registry, event emission.<br/><br/><strong>Output:</strong> Versioned Context in the Registry — immutable, auditable, with complete event log.' },
+      status: 'done',
+      detail: '<strong>Status: Implemented (v0.2.1)</strong><br/><br/><strong>Purpose:</strong> Commit the approved Context to the Registry with an immutable version number.<br/><br/><strong>Process:</strong> Final schema validation, conflict detection against existing Active contexts, version assignment (version 1 for new, current + 1 for updates), immutable commit to the Registry, event emission.<br/><br/><strong>Output:</strong> Versioned Context in the Registry — immutable, auditable, with complete event log (JSON Lines in .lcdd/contexts/.events.log).<br/><br/><strong>CLI:</strong> <code>lcd context add</code>, <code>lcd transition</code>.' },
     { num: '07', name: 'Enforce', desc: 'CI, IDE, gateway, AI agent — pluggable.',
-      detail: '<strong>Purpose:</strong> Consume Active contexts through enforcement plugins and report violations.<br/><br/><strong>Plugins:</strong> CI/CD pipeline (block merges), IDE (real-time violation highlighting), pre-commit hooks (fast local checks), API gateway (runtime validation), Terraform plan (infrastructure compliance), AI agent prompts (context injection).<br/><br/><strong>Modes:</strong> Block (prevents progression), Warn (visible warning), Comment (informational), Silent (tracked only). Mode determined by governance classification and lifecycle stage.' },
+      status: 'done',
+      detail: '<strong>Status: Implemented (v0.2.1)</strong><br/><br/><strong>Purpose:</strong> Consume Active contexts through enforcement plugins and report violations.<br/><br/><strong>Plugins:</strong> CI/CD pipeline (block merges), IDE (real-time violation highlighting), pre-commit hooks (fast local checks), API gateway (runtime validation), Terraform plan (infrastructure compliance), AI agent prompts (context injection).<br/><br/><strong>Modes:</strong> Block (prevents progression), Warn (visible warning), Comment (informational), Silent (tracked only). Mode determined by governance classification and lifecycle stage.<br/><br/><strong>CLI:</strong> <code>lcd validate</code>, <code>lcd validate --strict</code>. Built-in verifiers: regex-pattern, file-exists. Extensible via <code>verifier.register()</code>.' },
     { num: '08', name: 'Observe', desc: 'Violations, trends, AI vs human ratio.',
-      detail: '<strong>Purpose:</strong> Collect and analyze enforcement outcomes to close the feedback loop.<br/><br/><strong>Metrics:</strong> Violation rate per context, violation trend, AI vs human violator ratio, context age vs violation rate, false positive ratio, time to compliance.<br/><br/><strong>Dashboards:</strong> Governance dashboard (CTO/CISO), team dashboard (engineering), agent dashboard (AI agent observability).<br/><br/><strong>Alerts:</strong> Violation spikes, AI violation anomalies, high false positive rates, stale contexts with zero violations.' },
+      status: 'partial',
+      detail: '<strong>Status: Partial (v0.2.1)</strong><br/><br/><strong>Purpose:</strong> Collect and analyze enforcement outcomes to close the feedback loop.<br/><br/><strong>Implemented:</strong> Event log written to <code>.lcdd/contexts/.events.log</code> (JSON Lines). Enforcement events include context ID, artifact path, status, actor attribution (human vs AI agent), timestamps, and verifier info.<br/><br/><strong>Not yet:</strong> Dashboards (Grafana), aggregated metrics (violation rate, trends, false positive ratio), alerting, violation trend analysis. Planned for v0.5.0.' },
     { num: '09', name: 'Improve', desc: 'Refine, deprecate. Close the feedback loop.',
-      detail: '<strong>Purpose:</strong> Use observation data to drive context evolution.<br/><br/><strong>Triggers:</strong> Zero violations for 90 days → "Still needed?", increasing violation rate → "Enforcement clear?", high false positive rate → "Scope too broad?", new regulation detected → "New context needed?"<br/><br/><strong>Actions:</strong> Refinement (update context), deprecation (retire context), new context creation (back to Discover), governance reclassification (promote/demote Hardened ↔ Local).<br/><br/><strong>Governance:</strong> All changes follow the governance model — Hardened changes require explicit human approval, Local changes may auto-merge with observation period.' },
+      status: 'planned',
+      detail: '<strong>Status: Planned (v1.0+)</strong><br/><br/><strong>Purpose:</strong> Use observation data to drive context evolution.<br/><br/><strong>Triggers:</strong> Zero violations for 90 days → "Still needed?", increasing violation rate → "Enforcement clear?", high false positive rate → "Scope too broad?", new regulation detected → "New context needed?"<br/><br/><strong>Actions:</strong> Refinement (update context), deprecation (retire context), new context creation (back to Discover), governance reclassification (promote/demote Hardened ↔ Local).' },
   ];
 
   const grid = document.getElementById('pipeline-grid');
@@ -344,7 +358,12 @@ enforcement:
       const el = document.createElement('div');
       el.className = 'pipeline-step';
       el.style.animationDelay = `${i * 50}ms`;
-      el.innerHTML = `<div class="num">${s.num}</div><div class="name">${s.name}</div><div class="desc">${s.desc}</div>`;
+      const badge = s.status === 'done'
+        ? '<span style="font-size:10px;font-weight:500;color:var(--g);border:1px solid var(--g);padding:1px 6px;border-radius:10px;margin-left:6px;">done</span>'
+        : s.status === 'partial'
+        ? '<span style="font-size:10px;font-weight:500;color:#f59e0b;border:1px solid #f59e0b;padding:1px 6px;border-radius:10px;margin-left:6px;">wip</span>'
+        : '<span style="font-size:10px;font-weight:500;color:var(--s5);border:1px solid var(--s4);padding:1px 6px;border-radius:10px;margin-left:6px;">planned</span>';
+      el.innerHTML = `<div class="num">${s.num}${badge}</div><div class="name">${s.name}</div><div class="desc">${s.desc}</div>`;
       el.addEventListener('click', () => openModal(i));
       grid.appendChild(el);
     });
