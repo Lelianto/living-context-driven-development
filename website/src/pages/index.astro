@@ -1,0 +1,341 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base>
+  <main>
+    <!-- NAV -->
+    <nav style="position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;background:rgba(3,7,18,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);">
+      <div class="container" style="display:flex;align-items:center;justify-content:space-between;">
+        <a href="/" style="display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;color:var(--white);text-decoration:none;letter-spacing:-0.02em;">
+          <svg width="28" height="28" viewBox="0 0 400 400"><circle cx="200" cy="200" r="180" fill="none" stroke="#10b981" stroke-width="6" opacity="0.4"/><rect x="110" y="110" width="180" height="180" rx="12" fill="none" stroke="#10b981" stroke-width="5" opacity="0.6"/><rect x="140" y="140" width="120" height="120" rx="8" fill="#10b981" opacity="0.85"/><text x="200" y="240" font-family="system-ui" font-size="72" font-weight="700" fill="#fff" text-anchor="middle">C</text></svg>
+          LCDD
+        </a>
+        <div style="display:flex;align-items:center;gap:32px;font-size:14px;font-weight:500;">
+          <a href="#what" style="color:var(--gray-400);text-decoration:none;">What</a>
+          <a href="#context" style="color:var(--gray-400);text-decoration:none;">Context</a>
+          <a href="#governance" style="color:var(--gray-400);text-decoration:none;">Governance</a>
+          <a href="#start" style="color:var(--gray-400);text-decoration:none;">Start</a>
+          <a href="https://github.com/Lelianto/living-context-driven-development" class="btn btn-outline" style="font-size:13px;padding:6px 16px;">GitHub</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section style="padding:200px 0 120px;text-align:center;position:relative;overflow:hidden;">
+      <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%, rgba(16,185,129,0.08) 0%, transparent 60%);"></div>
+      <div class="container" style="position:relative;">
+        <div style="margin-bottom:12px;">
+          <span class="badge badge-green">Specification v0.2.1</span>
+          <span class="badge badge-outline" style="margin-left:8px;">Reference Implementation v0.2.1</span>
+        </div>
+        <h1 style="font-size:clamp(40px, 8vw, 76px);font-weight:800;line-height:1.05;letter-spacing:-0.04em;color:var(--white);margin-bottom:24px;max-width:880px;margin-left:auto;margin-right:auto;">
+          Living Context Driven Development
+        </h1>
+        <p style="font-size:clamp(18px, 3vw, 24px);color:var(--green-bright);font-weight:500;letter-spacing:-0.02em;margin-bottom:12px;">
+          Discover. Govern. Enforce. Observe.
+        </p>
+        <p style="font-size:17px;color:var(--gray-400);max-width:620px;margin:0 auto 40px;line-height:1.6;">
+          An open specification and methodology for discovering, managing, and enforcing the constraints that govern AI-assisted software development.
+        </p>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <a href="#start" class="btn btn-primary">Get Started</a>
+          <a href="https://github.com/Lelianto/living-context-driven-development" class="btn btn-outline">View on GitHub</a>
+          <a href="https://www.npmjs.com/package/@lcdd/cli" class="btn btn-outline">npm i @lcdd/cli</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- WHAT -->
+    <section id="what" class="section" style="border-top:1px solid var(--gray-800);">
+      <div class="container">
+        <div class="section-label">What</div>
+        <h2 class="section-title">Software governance for the age of AI.</h2>
+        <p class="section-subtitle" style="margin-bottom:64px;">
+          AI coding agents generate code faster than humans can review it. They can rewrite tests to match broken code. They don't know your regulations, your standards, or your team's decisions. LCDD makes every rule a first-class, versioned, machine-readable artifact that governs both humans and AI agents.
+        </p>
+
+        <div class="grid-3">
+          <div class="card card-green">
+            <div style="font-size:32px;margin-bottom:12px;">&#9900;</div>
+            <h3 style="font-size:17px;font-weight:700;color:var(--white);margin-bottom:8px;">Discovery Pipeline</h3>
+            <p style="font-size:14px;color:var(--gray-400);line-height:1.6;">
+              Automatically detect new regulations, standards, and decisions from PDFs, Slack, GitHub, and websites. Nine stages from source to enforcement.
+            </p>
+          </div>
+          <div class="card card-green">
+            <div style="font-size:32px;margin-bottom:12px;">&#8635;</div>
+            <h3 style="font-size:17px;font-weight:700;color:var(--white);margin-bottom:8px;">Context Lifecycle</h3>
+            <p style="font-size:14px;color:var(--gray-400);line-height:1.6;">
+              Every rule moves through six explicit stages — Draft to Archived — with defined enforcement behavior, review requirements, and observability at each step.
+            </p>
+          </div>
+          <div class="card card-green">
+            <div style="font-size:32px;margin-bottom:12px;">&#9878;</div>
+            <h3 style="font-size:17px;font-weight:700;color:var(--white);margin-bottom:8px;">Specification Drift Prevention</h3>
+            <p style="font-size:14px;color:var(--gray-400);line-height:1.6;">
+              AI agents cannot modify Hardened contexts. Every violation is attributed to human or AI actor. Patterns trigger governance review.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THE PROBLEM -->
+    <section class="section" style="background:var(--gray-900);">
+      <div class="container">
+        <div class="section-label">The Problem</div>
+        <h2 class="section-title">Three failure modes no methodology addresses.</h2>
+
+        <div class="grid-3" style="margin-top:48px;">
+          <div>
+            <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--green);margin-bottom:16px;">Discovery Deficit</div>
+            <p style="font-size:15px;color:var(--gray-300);line-height:1.6;">
+              A fintech founder doesn't know which OJK regulations apply. An architectural decision lives in a 6-month-old Slack thread. A security requirement in a PDF is never checked against code. The rules are scattered, invisible, and unenforced.
+            </p>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--green);margin-bottom:16px;">Specification Drift</div>
+            <p style="font-size:15px;color:var(--gray-300);line-height:1.6;">
+              An AI agent optimizes for "all tests pass." It finds a failing test — and rewrites the assertion rather than fixing the implementation. The specification silently drifts to match broken behavior.
+            </p>
+          </div>
+          <div>
+            <div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--green);margin-bottom:16px;">Governance Asymmetry</div>
+            <p style="font-size:15px;color:var(--gray-300);line-height:1.6;">
+              A PCI-DSS requirement and a preference for tabs over spaces are both "rules" — but they get the same PR process. Critical constraints lack scrutiny. Trivial preferences create bureaucracy.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- THE CONTEXT -->
+    <section id="context" class="section">
+      <div class="container">
+        <div class="section-label">The Context</div>
+        <h2 class="section-title">A rule becomes a first-class artifact.</h2>
+        <p class="section-subtitle" style="margin-bottom:48px;">
+          The Context is the atomic unit of governance — a structured, versioned, machine-readable YAML file that answers: what, who, where, and how.
+        </p>
+
+        <pre style="max-width:720px;"><code>id: "ctx-no-secrets"
+version: 3
+title: "Secrets MUST NOT be committed to source code"
+description: >
+  API keys, tokens, and passwords must use environment
+  variables or a secrets manager.
+
+source:                          <span style="color:var(--gray-500)"># Where did this come from?</span>
+  type: "incident"
+  uri: "https://incidents.example.com/INC-2025-042"
+
+authority:                       <span style="color:var(--gray-500)"># Who says this is a rule?</span>
+  source:
+    type: "organization"
+    id: "security-team"
+    name: "Security Team"
+  level: 3                       <span style="color:var(--gray-500)"># Standard — org-wide policy</span>
+
+lifecycle: "active"              <span style="color:var(--gray-500)"># Enforced right now</span>
+
+governance:
+  classification: "hardened-standard"
+  approval_required: true        <span style="color:var(--gray-500)"># AI agents CANNOT modify</span>
+
+enforcement:
+  mode: "block"                  <span style="color:var(--gray-500)"># Violations block merges</span>
+  specification:
+    type: "regex-pattern"
+    config:
+      patterns:
+        - "(?i)(api_key|secret|password)"
+      should_not_match: true</code></pre>
+      </div>
+    </section>
+
+    <!-- LIFECYCLE -->
+    <section class="section" style="background:var(--gray-900);border-top:1px solid var(--gray-800);">
+      <div class="container">
+        <div class="section-label">Lifecycle</div>
+        <h2 class="section-title">Six stages. Every rule has a journey.</h2>
+        <p class="section-subtitle" style="margin-bottom:48px;">
+          Constraints don't jump from "someone mentioned this" to "this blocks production." Each stage has defined enforcement, review, and observability.
+        </p>
+
+        <div style="display:flex;gap:0;overflow-x:auto;padding-bottom:16px;">
+          {[
+            { stage: 'Draft', desc: 'Discovered but not reviewed. Visible, never enforced.', color: 'var(--gray-600)' },
+            { stage: 'Candidate', desc: 'Under formal review. Comment-only mode.', color: 'var(--gray-500)' },
+            { stage: 'Approved', desc: 'Approved, migration window. Warn mode.', color: 'var(--green-dim)' },
+            { stage: 'Active', desc: 'Fully enforced. Block or Warn mode.', color: 'var(--green)' },
+            { stage: 'Deprecated', desc: 'No longer applies. Warn with notice.', color: 'var(--gray-400)' },
+            { stage: 'Archived', desc: 'Retained for audit. Immutable.', color: 'var(--gray-600)' },
+          ].map((s, i) => (
+            <div style="flex:1;min-width:140px;padding:24px 16px;border-right:1px solid var(--gray-800);text-align:center;">
+              <div style="width:40px;height:40px;border-radius:50%;background:{s.color};margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--gray-950);font-size:16px;">{i + 1}</div>
+              <div style="font-weight:700;color:var(--white);margin-bottom:8px;font-size:15px;">{s.stage}</div>
+              <div style="font-size:12px;color:var(--gray-400);line-height:1.5;">{s.desc}</div>
+              {i < 5 && <div style="margin-top:12px;color:var(--gray-700);font-size:20px;">→</div>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- DISCOVERY PIPELINE -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">Discovery Pipeline</div>
+        <h2 class="section-title">From unknown to enforced. Automatically.</h2>
+        <p class="section-subtitle" style="margin-bottom:48px;">
+          LCDD's core novelty — a nine-stage pipeline that starts from undiscovered constraints, not known ones.
+        </p>
+
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;">
+          {[
+            { num: '01', title: 'Discover', desc: 'Monitor OJK PDFs, Slack, GitHub, websites for new constraints.' },
+            { num: '02', title: 'Extract', desc: 'LLM parses regulations from 200-page documents into candidates.' },
+            { num: '03', title: 'Normalize', desc: 'Map to unified Context Schema. De-duplicate. Validate.' },
+            { num: '04', title: 'Classify', desc: 'Assign authority, lifecycle, severity, scope, governance.' },
+            { num: '05', title: 'Review', desc: 'Human or automated review based on governance classification.' },
+            { num: '06', title: 'Version', desc: 'Commit immutable version to Registry with audit trail.' },
+            { num: '07', title: 'Enforce', desc: 'CI, IDE, API gateway, AI agent — pluggable enforcement.' },
+            { num: '08', title: 'Observe', desc: 'Violations, trends, AI vs human ratio, false positives.' },
+            { num: '09', title: 'Improve', desc: 'Refine, deprecate, or create. Close the feedback loop.' },
+          ].map(s => (
+            <div class="card" style="position:relative;padding-top:40px;">
+              <div style="position:absolute;top:12px;left:16px;font-size:11px;font-weight:800;color:var(--green);letter-spacing:1px;">{s.num}</div>
+              <div style="font-weight:700;color:var(--white);margin-bottom:6px;font-size:15px;">{s.title}</div>
+              <div style="font-size:13px;color:var(--gray-400);line-height:1.5;">{s.desc}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- GOVERNANCE -->
+    <section id="governance" class="section" style="background:var(--gray-900);">
+      <div class="container">
+        <div class="section-label">Governance</div>
+        <h2 class="section-title">Not all rules are equal.</h2>
+        <p class="section-subtitle" style="margin-bottom:48px;">
+          Governance scales with impact. Hardened contexts require explicit approval. Local contexts can evolve through AI suggestion.
+        </p>
+
+        <table>
+          <thead>
+            <tr><th>Classification</th><th>Authority</th><th>AI Can Modify?</th><th>Enforcement</th><th>Example</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Hardened-Mandate</td><td>4</td><td>Never</td><td>Block</td><td>OJK regulation</td></tr>
+            <tr><td>Hardened-Standard</td><td>3</td><td>Never</td><td>Block</td><td>CISO policy</td></tr>
+            <tr><td>Hardened-Local</td><td>2</td><td>Suggest only</td><td>Warn</td><td>Architecture decision</td></tr>
+            <tr><td>Local-Standard</td><td>2</td><td>With review</td><td>Warn</td><td>Team best practice</td></tr>
+            <tr><td>Local-Guideline</td><td>1</td><td>Auto-merge</td><td>Comment</td><td>Code style</td></tr>
+            <tr><td>Local-Experimental</td><td>0</td><td>Primary source</td><td>Silent</td><td>AI suggestion</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- COMPARISON -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">Comparison</div>
+        <h2 class="section-title">What LCDD does that nothing else does.</h2>
+        <p class="section-subtitle" style="margin-bottom:48px;">
+          LCDD is not a replacement for TDD, DDD, or existing tools. It fills a governance gap none of them address.
+        </p>
+
+        <table>
+          <thead>
+            <tr><th></th><th>TDD</th><th>DDD</th><th>CDD Tools</th><th>AI Harness</th><th style="color:var(--green);">LCDD</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Governs</td><td>Code behavior</td><td>Domain model</td><td>AI workflow</td><td>Integrity</td><td style="font-weight:700;color:var(--green-bright);">All sources</td></tr>
+            <tr><td>Discovery</td><td>No</td><td>No</td><td>No</td><td>No</td><td style="color:var(--green-bright);">Pipeline</td></tr>
+            <tr><td>Lifecycle</td><td>No</td><td>No</td><td>No</td><td>Binary</td><td style="color:var(--green-bright);">6-stage</td></tr>
+            <tr><td>AI-Aware</td><td>No</td><td>No</td><td>Workflow</td><td>Yes</td><td style="color:var(--green-bright);">Built-in</td></tr>
+            <tr><td>Drift Prevention</td><td>No</td><td>No</td><td>No</td><td>Yes</td><td style="color:var(--green-bright);">Yes</td></tr>
+            <tr><td>Observability</td><td>Tests</td><td>No</td><td>No</td><td>No</td><td style="color:var(--green-bright);">Full</td></tr>
+            <tr><td>Context Packs</td><td>No</td><td>No</td><td>No</td><td>No</td><td style="color:var(--green-bright);">Yes</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- GETTING STARTED -->
+    <section id="start" class="section" style="background:var(--gray-900);">
+      <div class="container">
+        <div class="section-label">Get Started</div>
+        <h2 class="section-title">Install the CLI. Create your first context.</h2>
+
+        <div class="grid-2" style="margin-top:48px;">
+          <div>
+            <h3 style="font-size:18px;font-weight:700;color:var(--white);margin-bottom:16px;">Install</h3>
+            <pre><code>npm install -g @lcdd/cli
+lcd init
+lcd context add</code></pre>
+            <p style="font-size:14px;color:var(--gray-400);margin-top:12px;">Also available on <a href="https://github.com/Lelianto/living-context-driven-development/pkgs/npm/lcdd-cli">GitHub Packages</a>.</p>
+          </div>
+          <div>
+            <h3 style="font-size:18px;font-weight:700;color:var(--white);margin-bottom:16px;">Validate in CI</h3>
+            <pre><code>lcd validate --strict</code></pre>
+            <p style="font-size:14px;color:var(--gray-400);margin-top:12px;">Add to your GitHub Actions workflow. Block merges on violations.</p>
+            <pre style="margin-top:12px;"><code># .github/workflows/ci.yml
+- name: LCDD Validate
+  run: npx @lcdd/cli validate --strict</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ECOSYSTEM -->
+    <section class="section" style="border-top:1px solid var(--gray-800);">
+      <div class="container">
+        <div class="section-label">Ecosystem</div>
+        <h2 class="section-title">Modular by design.</h2>
+
+        <div class="grid-4" style="margin-top:48px;">
+          <div class="card">
+            <div style="font-weight:700;color:var(--white);margin-bottom:4px;">@lcdd/core</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:8px;">SDK</div>
+            <div style="font-size:13px;color:var(--gray-400);line-height:1.5;">Context model, schema validation, registry, CQL parser, verifier.</div>
+          </div>
+          <div class="card">
+            <div style="font-weight:700;color:var(--white);margin-bottom:4px;">@lcdd/cli</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:8px;">CLI</div>
+            <div style="font-size:13px;color:var(--gray-400);line-height:1.5;">init, context, validate, query, transition. Interactive and CI modes.</div>
+          </div>
+          <div class="card">
+            <div style="font-weight:700;color:var(--white);margin-bottom:4px;">Specification</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:8px;">17 docs</div>
+            <div style="font-size:13px;color:var(--gray-400);line-height:1.5;">RFC-style spec covering lifecycle, authority, governance, schema, protocol.</div>
+          </div>
+          <div class="card">
+            <div style="font-weight:700;color:var(--white);margin-bottom:4px;">Context Packs</div>
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:8px;">5 domains</div>
+            <div style="font-size:13px;color:var(--gray-400);line-height:1.5;">Startup, Fintech/OJK, Healthcare/HIPAA, E-commerce, Hackathon.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer style="border-top:1px solid var(--gray-800);padding:64px 0;">
+      <div class="container" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:24px;">
+        <div>
+          <div style="font-weight:800;color:var(--white);margin-bottom:4px;">Living Context Driven Development</div>
+          <div style="font-size:13px;color:var(--gray-500);">v0.2.1 · Apache 2.0</div>
+        </div>
+        <div style="display:flex;gap:24px;font-size:13px;">
+          <a href="https://github.com/Lelianto/living-context-driven-development" style="color:var(--gray-500);text-decoration:none;">GitHub</a>
+          <a href="https://www.npmjs.com/package/@lcdd/cli" style="color:var(--gray-500);text-decoration:none;">npm</a>
+          <a href="https://github.com/Lelianto/living-context-driven-development/blob/main/lcdd-methodology.md" style="color:var(--gray-500);text-decoration:none;">Methodology</a>
+          <a href="https://github.com/Lelianto/living-context-driven-development/tree/main/specification" style="color:var(--gray-500);text-decoration:none;">Specification</a>
+        </div>
+      </div>
+    </footer>
+  </main>
+</Base>
