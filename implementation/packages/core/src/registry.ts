@@ -10,6 +10,7 @@ import type {
   ContextPackManifest,
   LifecycleEvent,
   LifecycleStage,
+  EnforcementEvent,
 } from './types.js';
 import { LifecycleManager } from './lifecycle.js';
 import { validateContextFull } from './schema.js';
@@ -276,6 +277,26 @@ export class FileRegistry {
     writeFileSync(eventLogPath, eventLine, { flag: 'a' });
 
     return result;
+  }
+
+  writeEnforcementEvent(event: EnforcementEvent): void {
+    const logPath = join(this.contextsDir, '.enforcements.log');
+    const eventLine = JSON.stringify(event) + '\n';
+    mkdirSync(dirname(logPath), { recursive: true });
+    writeFileSync(logPath, eventLine, { flag: 'a' });
+  }
+
+  readEnforcementEvents(): EnforcementEvent[] {
+    const logPath = join(this.contextsDir, '.enforcements.log');
+    if (!existsSync(logPath)) return [];
+    const content = readFileSync(logPath, 'utf-8').trim();
+    if (!content) return [];
+    return content.split('\n')
+      .filter(line => line.trim())
+      .map(line => {
+        try { return JSON.parse(line) as EnforcementEvent; } catch { return null; }
+      })
+      .filter((e): e is EnforcementEvent => e !== null);
   }
 
   snapshot(timestamp?: string): Snapshot {

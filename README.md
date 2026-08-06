@@ -186,16 +186,16 @@ Each transition is an auditable event. Contexts can be reactivated if conditions
 The LCDD Context Engineering Pipeline is what makes LCDD different from every other approach — it starts from **unknown constraints**, not known ones:
 
 ```
-          01 Planned      02 Planned      03 Planned      04 Planned      05 ✅ Done       06 ✅ Done       07 ⚡ WIP        08 Planned
-          ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────
-          Observe  ──→  Understand ──→  Govern   ──→  Distribute──→  Enforce  ──→  Verify   ──→  Learn    ──→  Improve
-             │               │               │              │              │              │              │              │
-             │ Source        │ Extract +     │ Review +     │ CI, IDE,     │ Validate     │ Metrics,     │ Refine,
-             │ monitoring    │ Normalize     │ Classify     │ AI agent,    │ artifacts    │ dashboards,  │ deprecate,
-             │               │               │              │ gateway      │              │ alerts       │ create
+           01 ⚡ Phase A    02 Planned      03 Planned      04 ⚡ Phase A    05 ⚡ Phase A    06 ✅ Done       07 ⚡ WIP        08 ⚡ Phase A
+           ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────
+           Observe  ──→  Understand ──→  Govern   ──→  Distribute──→  Enforce  ──→  Verify   ──→  Learn    ──→  Improve
+              │               │               │              │              │              │              │              │
+              │ Source        │ Extract +     │ Review +     │ Version +    │ Validate     │ Metrics,     │ Trigger
+              │ monitoring    │ Normalize     │ Classify     │ publish      │ artifacts    │ dashboards,  │ evaluator
+              │ (deterministic)│ (needs LLM)  │ (deterministic)│            │              │ alerts       │ + doctor
 ```
 
-> **Implementation status:** Stages 01–04 (Observe through Distribute) require LLM integration and are planned for v1.0+. Stages 05 (Enforce) and 06 (Verify) are fully implemented in v0.2.1. Stage 07 (Learn) has basic event logging with full dashboards planned for v0.5.0. See [ROADMAP.md](ROADMAP.md).
+> **Implementation status:** Stages 01 (Discover), 04 (Classify), 05 (Review), and 09 (Improve) have deterministic Phase A implementations in v0.3.0 — `lcd source add/check`, rule-based auto-classification, `lcd review` workflow, and `lcd doctor` with trigger evaluator. No LLM or API key required. Stage 02 (Extract) requires LLM integration and remains planned. See [ROADMAP.md](ROADMAP.md).
 
 **Example:** A new regulation is published (ex. GDPR update, PCI-DSS revision) → Discover detects it → Extract parses it with an LLM → Normalize maps it to the Context Schema → Classify assigns it level 4 (Mandate) → Review routes it to the compliance team → Version commits it as Draft → Approve → Active → Block enforcement in CI. See the full [Context Builder](specification/0006-context-builder.md).
 
@@ -225,29 +225,52 @@ Context Debt should be as visible as Technical Debt. `lcd doctor` gives you a he
 ```bash
 $ lcd doctor
 
-Living Context Health: 82%
-  89 contexts total
+LCDD Context Health Report
+Timestamp: 2026-08-06T22:57:29.547Z
+Contexts: 3
 
-  Stale (past review deadline):    14
-  Missing owner:                     3
-  Conflicting rules:                 2
-  Deprecated, not yet archived:     18
-  Draft > 90 days:                   6
+  Overall Score: ████████████████░░░░ 78% (78/100)  Grade: B
 
-  Recommendations:
-  • ctx-payment-rule: review overdue by 180 days
-  • ctx-old-api: deprecated in 2024, archive now
-  • ctx-v1-auth conflicts with ctx-v2-auth
+Health Metrics
+────────────────────────────────────────────────────────────
+  ✓ Stale Contexts
+    ████████████████████ 100% (15/15)
+
+  ⚠ Missing Owners
+    █████████████░░░░░░░ 67% (10/15)
+  └─ 1 context(s) without owner: ctx-d71b89ca
+
+  ✗ Deprecation Backlog
+    ░░░░░░░░░░░░░░░░░░░░ 0% (0/10)
+  └─ 1 deprecated context(s), 1 stale >180 days: ctx-7cef85e2
+
+  ⚠ Tag Hygiene
+    ████████████░░░░░░░░ 60% (6/10)
+  └─ 2 context(s) without tags: ctx-7cef85e2, ctx-d71b89ca
+
+Recommendations
+────────────────────────────────────────────────────────────
+  1. 1 context(s) without owner: ctx-d71b89ca
+  2. 1 deprecated context(s), 1 stale >180 days: ctx-7cef85e2
+  3. 2 context(s) without tags: ctx-7cef85e2, ctx-d71b89ca
+
+  Run lcd doctor --triggers for detailed trigger analysis.
 ```
+
+Add `--triggers` for five deterministic triggers (stale contexts, high false positives, increasing violations, AI drift, new source detected) with specific remediation commands.
 
 | Metric | What It Measures |
 |---|---|
-| **Context Freshness** | % of Active contexts reviewed within their cycle |
-| **Context Coverage** | % of artifacts governed by at least one Active context |
-| **Context Drift** | % of Active contexts with unresolved conflicts |
-| **Context Debt** | Accumulated stale, obsolete, and unowned contexts |
+| **Stale Contexts** | Active contexts with no events in 90+ days |
+| **Missing Owners** | Non-archived contexts without an assigned owner |
+| **Enforcement Conflicts** | Overlapping enforcement patterns with conflicting block modes |
+| **Deprecation Backlog** | Deprecated contexts not yet archived (especially >180 days) |
+| **Draft Stagnation** | Drafts stuck for >30 days |
+| **Authority Gaps** | Active contexts with weak authority levels (0–1) |
+| **Tag Hygiene** | Contexts missing tags for discoverability |
+| **Review Backlog** | Contexts awaiting review (pending, in-review, needs-revision) |
 
-> Context Health is planned for v0.5.0. Today you can already enforce, version, and query contexts with the CLI.
+> Context Health is available now in v0.3.0 via `lcd doctor`. No API key required. See `lcd doctor --help` for options.
 
 ---
 
@@ -406,23 +429,24 @@ Living Context Driven Development is built on five axioms:
 |---|---|---|---|
 | **Foundation** | v0.1.0 | ✅ Complete | Specification — 17 docs, manifesto, examples, reference schema |
 | **Reference Implementation** | v0.2.1 | ✅ Complete | `@lcdd/core` SDK + `@lcdd/cli` CLI — published to npm |
+| **Pipeline Automation** | v0.3.0 | 🟡 In Progress | Deterministic pipeline: `lcd doctor`, rule engine, `lcd review`, source connector, trigger evaluator |
 | **MCP Server** | v0.3.0 | 🔴 Planned | AI agent integration, context injection, drift detection |
-| **Ecosystem** | v0.5.0 | 🔴 Planned | VS Code, GitHub App, Community Packs, Observability Dashboard |
-| **Discovery Pipeline** | v1.0.0 | 🔴 Planned | Automated stages 01–05 & 09: LLM extraction, review workflow, improvement loop |
+| **Ecosystem** | v0.5.0 | 🔴 Planned | VS Code, GitHub App, Community Packs, Observability Dashboard, LLM extraction |
 | **Adoption** | v1.0.0 | 🔴 Planned | Stabilized spec, conference talks, case studies |
 
 ### Pipeline Stage Status
 
 | Stage | Status | Available In |
 |---|---|---|
-| 01 Observe | 🔴 Planned | v1.0+ — Source monitoring: detect new regulations, standards, decisions |
-| 02 Understand | 🔴 Planned | v1.0+ — Extract + normalize: parse documents into structured contexts |
-| 03 Govern | 🔴 Planned | v1.0+ — Review + classify: assign authority, approve or reject |
-| 04 Distribute | 🔴 Planned | v1.0+ — Version + publish: commit to Registry, push to enforcement plugins |
-| 05 Enforce | ✅ Done | v0.2.1 — `lcd validate`, `ContextVerifier`, CI integration |
-| 06 Verify | ✅ Done | v0.2.1 — Schema validation, semantic rules, lifecycle checks |
-| 07 Learn | 🟡 Partial | v0.2.1 — Event log; Dashboard planned v0.5.0 |
-| 08 Improve | 🔴 Planned | v1.0+ — `lcd doctor`, Context Health Score, auto-recommendations |
+| 01 Observe | 🟡 Partial | v0.3.0 — Deterministic source monitoring: `lcd source add/check`, Git diff, website checksum |
+| 02 Extract | 🔴 Planned | v1.0+ — LLM extraction from source documents (requires API key) |
+| 03 Normalize | 🔴 Planned | v1.0+ — Schema mapping, deduplication |
+| 04 Classify | 🟡 Partial | v0.3.0 — Deterministic rule engine: source type → authority, keyword → severity, domain → tags |
+| 05 Review | 🟡 Partial | v0.3.0 — `lcd review list/show/approve/reject/revision`, auto-approval for Local contexts |
+| 06 Enforce | ✅ Done | v0.2.1 — `lcd validate`, `ContextVerifier`, CI integration |
+| 07 Verify | ✅ Done | v0.2.1 — Schema validation, semantic rules, lifecycle checks |
+| 08 Learn | 🟡 Partial | v0.2.1 — Event log; v0.3.0 — Enforcement event persistence |
+| 09 Improve | 🟡 Partial | v0.3.0 — `lcd doctor`, Context Health Score, 5-trigger evaluator, structured recommendations |
 
 ### Install
 

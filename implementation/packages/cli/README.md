@@ -49,7 +49,7 @@ lcd init
 
 ### `lcd context add`
 
-Interactively create a new context.
+Interactively create a new context with auto-suggestions from the Rule Engine.
 
 ```bash
 lcd context add
@@ -61,12 +61,19 @@ Create a new Context
 Title: No secrets in source code
 Description: API keys and tokens must not be committed.
 Category: security
-Severity (critical/high/medium/low/info) [medium]: critical
-Owner: security-team
+Source type (individual/organization/standard-body/regulatory/community/ai-system) [individual]: organization
 
-✓ Context created: ctx-a1b2c3d4
-  lifecycle: draft
-  file: .lcdd/contexts/ctx-a1b2c3d4.yaml
+Auto-suggestions (based on deterministic rules):
+  Authority:     level 3 (organization)
+  Governance:    hardened-standard
+  Severity:      medium
+  Tags:          security
+  └─ Source type "organization" → authority level 3
+  └─ Authority level 3 → governance "hardened-standard"
+  └─ Keyword analysis → severity "medium"
+  └─ Generated 1 tag(s): security
+
+Accept auto-suggestions? [Y/n]:
 ```
 
 ### `lcd list`
@@ -102,6 +109,27 @@ API keys, tokens, and passwords MUST NOT appear in source code...
   Tags: security, critical
 ```
 
+### `lcd doctor`
+
+Run a context health check. Produces a score (0–100), letter grade (A–F), and actionable recommendations across 8 health metrics.
+
+```bash
+lcd doctor                        # Full health report
+lcd doctor --json                 # Machine-readable JSON output
+lcd doctor --triggers             # Show trigger evaluation details
+```
+
+```
+  Overall Score: ████████████████░░░░ 78% (78/100)  Grade: B
+
+  ✓ Stale Contexts        ████████████████████ 100% (15/15)
+  ⚠ Missing Owners        █████████████░░░░░░░ 67% (10/15)
+  ✗ Deprecation Backlog   ░░░░░░░░░░░░░░░░░░░░ 0% (0/10)
+  ⚠ Tag Hygiene           ████████████░░░░░░░░ 60% (6/10)
+```
+
+Metrics checked: Stale Contexts, Missing Owners, Enforcement Conflicts, Deprecation Backlog, Draft Stagnation, Authority Gaps, Tag Hygiene, Review Backlog.
+
 ### `lcd validate`
 
 Validate files against all active contexts. Detects violations and blocks on critical rules.
@@ -111,17 +139,6 @@ lcd validate                    # Validate entire project
 lcd validate src/               # Validate specific directory
 lcd validate src/auth.ts        # Validate single file
 lcd validate --strict           # Treat warnings as errors
-```
-
-```
-Validating against 3 active contexts...
-
-  ✗ src/auth.ts
-    [ctx-no-secrets] Forbidden pattern matched: (?i)(api_key|secret|password)
-  ⚠ src/utils.ts
-    [ctx-code-style] Prefer const over let
-
-✗ Validation FAILED — 1 blocking violation(s)
 ```
 
 ### `lcd query`
@@ -143,6 +160,31 @@ lcd transition ctx-a1b2c3d4 candidate --reason "Ready for review"
 lcd transition ctx-a1b2c3d4 approved --reason "Reviewed by security team"
 lcd transition ctx-a1b2c3d4 active --reason "Deploying enforcement"
 lcd transition ctx-a1b2c3d4 deprecated --reason "Replaced by ctx-new-policy"
+```
+
+### `lcd review`
+
+Manage the review workflow for contexts.
+
+```bash
+lcd review list                          # List pending reviews
+lcd review show <id>                     # Side-by-side source vs context details
+lcd review approve <id> --reason "..."   # Approve and auto-transition lifecycle
+lcd review reject <id> --reason "..."    # Reject with reason
+lcd review revision <id> --reason "..."  # Request revision
+lcd review auto-approve                  # Auto-approve Local contexts with high confidence
+```
+
+### `lcd source`
+
+Manage external sources for change detection (no API key required).
+
+```bash
+lcd source add <url> --type git --label "Express.js"
+lcd source add <url> --type website --label "OWASP Top 10"
+lcd source list                          # List registered sources
+lcd source check [id]                    # Check for changes (all or specific source)
+lcd source remove <id>                   # Remove a registered source
 ```
 
 ---

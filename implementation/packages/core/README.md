@@ -26,13 +26,18 @@ npm install @lcdd/core
 `@lcdd/core` is the foundation of the LCDD ecosystem. It provides everything you need to work with Living Contexts programmatically — from parsing and validating contexts, to querying a Registry, to enforcing constraints against artifacts.
 
 | Module | Purpose |
-|---|---|
+|---|---|---|
 | **Context Model** | Full TypeScript types for Contexts, Lifecycle, Authority, Governance, Enforcement |
 | **Schema Validator** | JSON Schema + semantic rule validation for Context artifacts |
 | **Lifecycle Manager** | 12 transition rules, enforcement mode derivation, audit events |
 | **File Registry** | File-based Context Registry — YAML storage, CQL querying, snapshots, event logging |
 | **CQL Parser** | Full lexer/parser for Context Query Language (SELECT/FROM/WHERE/ORDER BY/LIMIT) |
 | **Context Verifier** | Pluggable enforcement engine with built-in regex and file-exists verifiers |
+| **Context Doctor** | Health score computation: 8 metrics, letter grade A–F, 5 deterministic triggers |
+| **Rule Engine** | Deterministic auto-classification: source → authority, keyword → severity, domain → tags |
+| **Review Manager** | Review workflow: list, approve, reject, revision, auto-approval for Local contexts |
+| **Trigger Evaluator** | 5-trigger recommendation engine: stale, false-positive, increasing-violations, AI-drift, new-source |
+| **Source Connector** | External source management: Git (clone+fetch+diff), Website (HTTP GET+checksum) |
 
 ---
 
@@ -139,6 +144,70 @@ function parseCQL(input: string): RegistryQuery
 ```ts
 function validateContext(context: unknown): { valid: boolean; errors: string[] }
 function validateContextFull(context: Context): { valid: boolean; errors: string[] }
+```
+
+### `ContextDoctor`
+
+```ts
+class ContextDoctor {
+  constructor(projectRoot: string)
+  diagnose(contexts: Context[]): HealthReport
+}
+```
+
+Health metrics: Stale Contexts, Missing Owners, Enforcement Conflicts, Deprecation Backlog, Draft Stagnation, Authority Gaps, Tag Hygiene, Review Backlog. Five deterministic triggers: STALE_NO_VIOLATION, HIGH_FALSE_POSITIVE, INCREASING_VIOLATIONS, AI_DRIFT, NEW_SOURCE_DETECTED.
+
+### `RuleEngine`
+
+```ts
+class RuleEngine {
+  classify(params: {
+    title: string;
+    description: string;
+    category?: string;
+    source_type?: ContextSource['type'];
+  }): ClassificationSuggestion
+}
+```
+
+### `ReviewManager`
+
+```ts
+class ReviewManager {
+  constructor(registry: FileRegistry)
+
+  listPending(): ReviewItem[]
+  listAll(): ReviewItem[]
+  getReviewItem(id: string): ReviewItem | null
+  approve(id: string, actor: string, reason?: string): ReviewResult
+  reject(id: string, actor: string, reason?: string): ReviewResult
+  requestRevision(id: string, actor: string, reason?: string): ReviewResult
+  autoApprove(actor: string): ReviewResult[]
+  canAutoApprove(ctx: Context): boolean
+}
+```
+
+### `TriggerEvaluator`
+
+```ts
+class TriggerEvaluator {
+  evaluate(contexts: Context[], enforcements: EnforcementEvent[]): TriggerEvaluation
+}
+```
+
+Five deterministic triggers: stale-context (>90 days no violation), high-false-positive (>20% violation rate), increasing-violations (trend upward), AI-drift (agent violation ratio >2x human), new-source-detected (unregistered URI).
+
+### `SourceConnector`
+
+```ts
+class SourceConnector {
+  constructor(projectRoot: string)
+
+  addSource(params: { url: string; type?: 'git' | 'website'; label?: string }): RegisteredSource
+  removeSource(id: string): boolean
+  listSources(): RegisteredSource[]
+  checkSource(sourceId?: string): SourceCheckResult[]
+}
 ```
 
 ---

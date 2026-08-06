@@ -81,4 +81,114 @@ program
     await transitionCommand(id, stage, options);
   });
 
+program
+  .command('doctor')
+  .description('Run context health check and get recommendations')
+  .option('--json', 'Output in JSON format')
+  .option('--triggers', 'Show trigger evaluation details')
+  .action(async (options) => {
+    const { doctorCommand } = await import('./commands/doctor.js');
+    await doctorCommand(options);
+  });
+
+const reviewCmd = program
+  .command('review')
+  .description('Manage review workflow');
+
+reviewCmd
+  .command('list')
+  .description('List pending reviews')
+  .action(async () => {
+    const { reviewListCommand } = await import('./commands/review.js');
+    await reviewListCommand();
+  });
+
+reviewCmd
+  .command('show')
+  .description('Show review details for a context')
+  .argument('<id>', 'Context ID')
+  .action(async (id: string) => {
+    const { reviewShowCommand } = await import('./commands/review.js');
+    await reviewShowCommand(id);
+  });
+
+reviewCmd
+  .command('approve')
+  .description('Approve a pending review')
+  .argument('<id>', 'Context ID')
+  .option('--reason <text>', 'Reason for approval')
+  .action(async (id: string, options) => {
+    const { reviewApproveCommand } = await import('./commands/review.js');
+    await reviewApproveCommand(id, options);
+  });
+
+reviewCmd
+  .command('reject')
+  .description('Reject a pending review')
+  .argument('<id>', 'Context ID')
+  .option('--reason <text>', 'Reason for rejection')
+  .action(async (id: string, options) => {
+    const { reviewRejectCommand } = await import('./commands/review.js');
+    await reviewRejectCommand(id, options);
+  });
+
+reviewCmd
+  .command('revision')
+  .description('Request revision for a context under review')
+  .argument('<id>', 'Context ID')
+  .option('--reason <text>', 'Reason for revision request')
+  .action(async (id: string, options) => {
+    const { reviewRevisionCommand } = await import('./commands/review.js');
+    await reviewRevisionCommand(id, options);
+  });
+
+reviewCmd
+  .command('auto-approve')
+  .description('Auto-approve local contexts with high confidence')
+  .action(async () => {
+    const { reviewAutoApproveCommand } = await import('./commands/review.js');
+    await reviewAutoApproveCommand();
+  });
+
+const sourceCmd = program
+  .command('source')
+  .description('Manage external sources (Git repos, websites)');
+
+sourceCmd
+  .command('add')
+  .description('Register an external source for change detection')
+  .argument('<url>', 'Source URL (git repo or website)')
+  .option('--type <type>', 'Source type (git | website)')
+  .option('--label <label>', 'Human-readable label')
+  .action(async (url: string, options) => {
+    const { sourceAddCommand } = await import('./commands/source.js');
+    await sourceAddCommand(url, options);
+  });
+
+sourceCmd
+  .command('list')
+  .description('List registered sources')
+  .action(async () => {
+    const { sourceListCommand } = await import('./commands/source.js');
+    await sourceListCommand();
+  });
+
+sourceCmd
+  .command('check')
+  .description('Check sources for changes')
+  .argument('[id]', 'Source ID (omit to check all)')
+  .action(async (id?: string) => {
+    const { sourceCheckCommand } = await import('./commands/source.js');
+    await sourceCheckCommand(id);
+  });
+
+sourceCmd
+  .command('remove')
+  .description('Remove a registered source')
+  .argument('<id>', 'Source ID')
+  .action(async (id: string) => {
+    const { sourceRemoveCommand } = await import('./commands/source.js');
+    await sourceRemoveCommand(id);
+  });
+
 program.parse();

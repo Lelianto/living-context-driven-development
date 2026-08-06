@@ -4,3 +4,13 @@ export { validateContext, validateSemanticRules, validateContextFull } from './s
 export { FileRegistry } from './registry.js';
 export { ContextVerifier } from './verifier.js';
 export { parseCQL } from './cql.js';
+export { ContextDoctor } from './doctor.js';
+export type { HealthMetric, HealthReport, TriggerResult } from './doctor.js';
+export { RuleEngine } from './rule-engine.js';
+export type { ClassificationSuggestion } from './rule-engine.js';
+export { TriggerEvaluator } from './trigger-evaluator.js';
+export type { Recommendation, TriggerEvaluation } from './trigger-evaluator.js';
+export { ReviewManager } from './review-manager.js';
+export type { ReviewItem, ReviewResult } from './review-manager.js';
+export { SourceConnector } from './source-connector.js';
+export type { RegisteredSource, SourceCheckResult } from './source-connector.js';

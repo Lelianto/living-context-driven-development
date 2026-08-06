@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] — Unreleased
+
+### Added
+- `lcd doctor` — Context Health Score with 8 metrics: stale contexts, missing owners, conflicts, deprecation backlog, draft stagnation, authority gaps, tag hygiene, review backlog. Output letter grade (A–F) and actionable recommendations. Supports `--json` and `--triggers` flags. (~200 LOC)
+- **Rule Engine** — Deterministic auto-classification for `lcd context add`: source type → authority level, keyword analysis → severity, domain detection → tags. User can override all suggestions. No LLM required. (~150 LOC)
+- `lcd review` — Review workflow CLI: `lcd review list` (pending reviews), `lcd review show <id>` (side-by-side source vs context), `lcd review approve/reject/revision <id>`. Auto-approval for Local contexts with high confidence. (~200 LOC)
+- **Trigger Evaluator** — Five deterministic triggers on top of doctor data: STALE_NO_VIOLATION, HIGH_FALSE_POSITIVE, INCREASING_VIOLATIONS, AI_DRIFT, NEW_SOURCE_DETECTED. Output structured recommendations with severity and suggested CLI commands. (~150 LOC)
+- **Source Connector** — `lcd source add <url>`, `lcd source list`, `lcd source check [id]`, `lcd source remove <id>`. Git connector (clone + fetch + diff) and Website connector (HTTP GET + SHA-256 checksum). No API key required. (~200 LOC)
+- Enforcement event persistence — events written to `.lcdd/contexts/.enforcements.log`
+
+### Changed
+- `lcd context add` now auto-suggests authority level, governance classification, severity, and tags based on deterministic rules
+- Pipeline stages 01 (Discover), 04 (Classify), 05 (Review), 09 (Improve) now have deterministic Phase A implementations
+
+---
+
 ## [0.2.1] — 2026-08-06
 
 ### Added
@@ -96,13 +112,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned for v0.2.0
-- Reference CLI (`@lcdd/cli` and `@lcdd/core` SDK)
-- File-based Context Registry (YAML in `.lcdd/`)
-- GitHub Action for CI enforcement
-- Built-in static verifiers (regex, file-exists, dependency-check)
-
 ### Planned for v0.3.0
 - MCP Server for AI agent integration
 - Context injection into AI agent prompts
 - Specification drift detection
+
+### Planned for v0.5.0
+- LLM-based extraction (Stage 02) — requires API key
+- LLM refinement for ambiguous classifications
+- Scheduled source monitoring
+- Database-backed Registry
+- Observability Dashboard

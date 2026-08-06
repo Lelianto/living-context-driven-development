@@ -1,28 +1,28 @@
 # Pipeline Automation Plan — Stages 01–05 & 09
 
 **Status:** Planning  
-**Version:** 0.3.0  
+**Version:** 0.4.0  
 **Target Milestone:** v1.0.0  
-**Last Updated:** 2026-08-06
+**Last Updated:** 2026-08-07
 
 ---
 
 ## Abstract
 
-This document outlines the technical design for automating the currently manual stages of the LCDD Context Engineering Pipeline: Discover (01), Extract (02), Normalize (03), Classify (04), Review (05), and Improve (09). These stages require LLM integration, scheduled jobs, and infrastructure that does not exist in the current v0.2.1 reference implementation.
+This document outlines the technical design for automating the LCDD Context Engineering Pipeline: Discover (01), Extract (02), Normalize (03), Classify (04), Review (05), and Improve (09). Stages 01, 04, 05, and 09 now have deterministic Phase A implementations in v0.3.0 — no LLM required. Stage 02 (Extract) remains the only stage requiring LLM integration and an API key.
 
 ---
 
 ## Current State vs Target
 
-| Stage | Current (v0.2.1) | Target (v1.0.0) |
+| Stage | Current (v0.3.0) | Target (v1.0.0) |
 |---|---|---|
-| 01 Discover | Manual — user monitors sources themselves | Automated cron job detects changes in registered sources |
+| 01 Discover | 🟡 Deterministic Phase A: `lcd source add/check`, Git clone+fetch+diff, HTTP checksum | Automated cron job with LLM relevance scoring |
 | 02 Extract | Manual — user writes context YAML by hand | LLM parses source documents into candidate contexts |
 | 03 Normalize | Manual — user follows schema guide | Programmatic mapping + validation + deduplication |
-| 04 Classify | Manual — user assigns authority/tags | Heuristic + LLM classification with human override |
-| 05 Review | Manual — user decides to activate | Automated routing + checklist + auto-approve for low-risk |
-| 09 Improve | None — no feedback loop | Trigger-based recommendations from observability data |
+| 04 Classify | 🟡 Deterministic Phase A: Rule engine auto-suggests authority, governance, severity, tags | LLM refinement for ambiguous cases |
+| 05 Review | 🟡 Deterministic Phase A: `lcd review list/show/approve/reject/revision`, auto-approval for Local | Full routing + checklist + automated notifications |
+| 09 Improve | 🟡 Deterministic Phase A: `lcd doctor`, Context Health Score, 5-trigger evaluator, recommendations | ML-based trend analysis, automated improvement proposals |
 
 ---
 

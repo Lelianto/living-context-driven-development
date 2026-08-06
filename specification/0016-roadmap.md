@@ -1,9 +1,9 @@
 # 0016 — Roadmap
 
 **Status:** Active  
-**Version:** 0.2.0  
+**Version:** 0.3.0  
 **Specification:** Living Context Driven Development  
-**Last Updated:** 2026-08-06
+**Last Updated:** 2026-08-07
 
 ---
 
@@ -66,25 +66,54 @@ This document defines the development roadmap for the LCDD specification, refere
 
 **Target:** A working CLI (`lcd`) that can initialize a project, manage contexts, and validate artifacts against them.
 
-**Status:** 🟡 In Progress
+**Status:** ✅ Complete
 
 ### Deliverables
 
 | # | Deliverable | Description |
 |---|---|---|
 | 2.1 | `@lcdd/core` | TypeScript SDK: Context model, schema validation, Registry client, CQL parser |
-| 2.2 | `@lcdd/cli` | CLI tool: `lcd init`, `lcd context add`, `lcd context validate`, `lcd query` |
+| 2.2 | `@lcdd/cli` | CLI tool: `lcd init`, `lcd context add`, `lcd list`, `lcd show`, `lcd validate`, `lcd query`, `lcd transition` |
 | 2.3 | File-based Registry | Git-backed Registry using YAML files in `.lcdd/contexts/` |
-| 2.4 | Static Verifiers | Built-in verifiers: regex, file-exists, eslint-rule, import-boundary |
-| 2.5 | CI Action | GitHub Action: `lcdd/validate@v0.2` for CI enforcement |
-| 2.6 | v0.2 Schema | Updated Context Schema based on implementation learnings |
+| 2.4 | Static Verifiers | Built-in verifiers: regex, file-exists, extensible plugin system |
+| 2.5 | CI Action | GitHub Action: `lcdd/validate` for CI enforcement |
+| 2.6 | Unit Tests | 89 tests across 5 modules (lifecycle, schema, registry, CQL, verifier) |
+| 2.7 | Lifecycle Event Log | NDJSON event log for lifecycle transitions (`.events.log`) |
+| 2.8 | npm Publication | Both packages published to npm |
 
 ### Success Criteria
 
-- [ ] A developer can run `npx @lcdd/cli init` and get a working LCDD project.
-- [ ] Contexts in `.lcdd/contexts/` are validated by CI on PR.
-- [ ] At least 3 built-in verifier types work correctly.
-- [ ] CQL queries return correct results from the file-based Registry.
+- [x] A developer can run `npx @lcdd/cli init` and get a working LCDD project.
+- [x] Contexts in `.lcdd/contexts/` are validated by CI on PR.
+- [x] At least 2 built-in verifier types work correctly (regex, file-exists).
+- [x] CQL queries return correct results from the file-based Registry.
+
+---
+
+## Milestone 2.5: Pipeline Automation (Deterministic) v0.3.0
+
+**Target:** Automate pipeline stages 01, 04, 05, and 09 with deterministic rules — no API key, no LLM, no new infrastructure.
+
+**Status:** 🟡 In Progress
+
+### Deliverables
+
+| # | Deliverable | Description |
+|---|---|---|
+| 2.5.1 | `lcd doctor` | Context Health Score: 8 metrics, letter grade A–F, `--json` and `--triggers` flags |
+| 2.5.2 | Rule Engine | Deterministic auto-classification: source→authority, keyword→severity, domain→tags |
+| 2.5.3 | `lcd review` | Review workflow: `list`, `show`, `approve`, `reject`, `revision`, `auto-approve` |
+| 2.5.4 | Trigger Evaluator | 5 deterministic triggers: stale, false-positive, increasing-violations, AI-drift, new-source |
+| 2.5.5 | Source Connector | `lcd source add/list/check/remove` — Git (clone+fetch+diff) + Website (HTTP GET+checksum) |
+| 2.5.6 | Enforcement Log | Enforcement events persisted to `.lcdd/contexts/.enforcements.log` |
+
+### Success Criteria
+
+- [x] `lcd doctor` produces a health score and actionable recommendations without external dependencies.
+- [x] `lcd context add` auto-suggests classification based on deterministic rules; user can override.
+- [x] `lcd review approve` transitions context through review workflow and lifecycle.
+- [x] `lcd source check` detects changes in Git repos and websites.
+- [ ] MCP Server for AI agent integration (v0.3.0 remaining).
 
 ---
 

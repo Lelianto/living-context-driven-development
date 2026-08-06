@@ -1,4 +1,4 @@
-import { FileRegistry, LifecycleManager, type LifecycleStage, type Context } from '@lcdd/core';
+import { FileRegistry, LifecycleManager, RuleEngine, type LifecycleStage, type Context, type Severity } from '@lcdd/core';
 import chalk from 'chalk';
 import { createInterface } from 'readline';
 
@@ -7,28 +7,119 @@ function ask(q: string): Promise<string> {
   return new Promise(resolve => rl.question(q, (a: string) => { rl.close(); resolve(a); }));
 }
 
+function mapSourceTypeToAuthorityType(sourceType: string): Context['authority']['source']['type'] {
+  const valid: Context['authority']['source']['type'][] = ['individual', 'organization', 'standard-body', 'ai-system', 'community', 'automated'];
+  if (sourceType === 'regulatory') return 'standard-body';
+  if (sourceType === 'documentation') return 'organization';
+  if (sourceType === 'meeting') return 'individual';
+  if (sourceType === 'incident') return 'automated';
+  if (sourceType === 'unknown') return 'individual';
+  if (valid.includes(sourceType as Context['authority']['source']['type'])) {
+    return sourceType as Context['authority']['source']['type'];
+  }
+  return 'individual';
+}
+
 export async function contextAddCommand(): Promise<void> {
   const registry = new FileRegistry(process.cwd());
+  const ruleEngine = new RuleEngine();
 
   console.log(chalk.bold('\nCreate a new Context\n'));
 
   const title = await ask('Title: ');
   const description = await ask('Description: ');
   const category = await ask('Category (e.g., security, performance, compliance): ');
-  const severity = await ask('Severity (critical/high/medium/low/info) [medium]: ');
-  const owner = await ask('Owner: ');
+  const sourceType = await ask('Source type (individual/organization/standard-body/regulatory/community/ai-system) [individual]: ');
+
+  const sourceTypeValid = [
+    'individual', 'organization', 'standard-body', 'regulatory', 'community', 'ai-system', 'automated', 'documentation', 'meeting', 'incident'
+  ].includes(sourceType.toLowerCase()) ? sourceType.toLowerCase() : 'individual';
+
+  const suggestion = ruleEngine.classify({
+    title,
+    description,
+    category: category || undefined,
+    source_type: sourceTypeValid as Context['source']['type'],
+  });
+
+  console.log('');
+  console.log(chalk.bold('Auto-suggestions (based on deterministic rules):'));
+  console.log(chalk.dim(`  Authority:     level ${suggestion.authority_level} (${chalk.cyan(suggestion.authority_source_type)})`));
+  console.log(chalk.dim(`  Governance:    ${chalk.cyan(suggestion.governance)}`));
+  console.log(chalk.dim(`  Severity:      ${chalk.cyan(suggestion.severity)}`));
+  if (suggestion.tags.length > 0) {
+    console.log(chalk.dim(`  Tags:          ${chalk.cyan(suggestion.tags.join(', '))}`));
+  }
+  for (const r of suggestion.reasoning) {
+    console.log(chalk.dim(`  └─ ${r}`));
+  }
+  console.log('');
+
+  const useSuggested = await ask(chalk.dim('Accept auto-suggestions? [Y/n]: '));
+  const override = useSuggested.toLowerCase() === 'n' || useSuggested.toLowerCase() === 'no';
+
+  let authorityLevel = suggestion.authority_level;
+  let governanceClass = suggestion.governance;
+  let severityVal = suggestion.severity;
+  let tags = suggestion.tags;
+
+  if (override) {
+    const sev = await ask('Severity (critical/high/medium/low/info) [medium]: ');
+    severityVal = (sev || 'medium') as Severity;
+    const owner = await ask('Owner: ');
+    const tagsInput = await ask('Tags (comma-separated): ');
+
+    const authSourceType = mapSourceTypeToAuthorityType(sourceTypeValid);
+
+    const context = registry.create({
+      title,
+      description,
+      category: category || undefined,
+      severity: severityVal,
+      owner: owner || undefined,
+      authority: {
+        source: {
+          type: authSourceType,
+          id: process.env.USER || 'unknown',
+          name: process.env.USER || 'unknown',
+        },
+        level: sourceTypeValid === 'standard-body' || sourceTypeValid === 'regulatory' ? 4 :
+               sourceTypeValid === 'organization' ? 3 : 2,
+      },
+      tags: tagsInput ? tagsInput.split(',').map(t => t.trim()).filter(Boolean) : (category ? [category.toLowerCase()] : []),
+    });
+
+    console.log('');
+    console.log(chalk.green(`✓ Context created: ${context.id}`));
+    console.log(chalk.dim(`  lifecycle: ${context.lifecycle}`));
+    console.log(chalk.dim(`  file: .lcdd/contexts/${context.id}.yaml`));
+    return;
+  }
+
+  const authSourceType = mapSourceTypeToAuthorityType(suggestion.authority_source_type);
 
   const context = registry.create({
     title,
     description,
     category: category || undefined,
-    severity: (severity || 'medium') as Context['severity'],
-    owner: owner || undefined,
+    severity: severityVal,
+    owner: process.env.USER || undefined,
     authority: {
-      source: { type: 'individual', id: process.env.USER || 'unknown', name: process.env.USER || 'unknown' },
-      level: 2,
+      source: {
+        type: authSourceType,
+        id: process.env.USER || 'unknown',
+        name: process.env.USER || 'unknown',
+      },
+      level: suggestion.authority_level,
     },
-    tags: category ? [category.toLowerCase()] : [],
+    governance: {
+      classification: suggestion.governance,
+      approval_required: suggestion.authority_level >= 3,
+    },
+    tags,
+    source: {
+      type: sourceTypeValid as Context['source']['type'],
+    },
   });
 
   console.log('');
