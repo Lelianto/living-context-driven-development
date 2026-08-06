@@ -1,0 +1,26 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DavidAnson/markdownlint-cli2/main/schema/markdownlint-config-schema.json",
+  "config": {
+    "default": true,
+    "MD013": {
+      "line_length": 200,
+      "tables": false,
+      "code_blocks": false
+    },
+    "MD024": {
+      "siblings_only": true
+    },
+    "MD033": false,
+    "MD041": false,
+    "MD046": {
+      "style": "fenced"
+    },
+    "MD049": false,
+    "MD050": false
+  },
+  "globs": [
+    "**/*.md",
+    "!node_modules/**",
+    "!implementation/**"
+  ]
+}

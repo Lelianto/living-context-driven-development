@@ -1,0 +1,148 @@
+# Healthcare Context Pack — HIPAA Compliance
+
+**Domain:** Healthcare Technology (US Market)  
+**Version:** 0.1.0  
+**Maintainer:** LCDD Community  
+**Source:** HIPAA (Health Insurance Portability and Accountability Act)
+
+---
+
+## Overview
+
+This Context Pack provides governance contexts for healthcare applications handling Protected Health Information (PHI) under HIPAA regulations. It covers data encryption, access controls, audit logging, and breach notification requirements.
+
+---
+
+## Included Contexts
+
+### 1. PHI Encryption at Rest and in Transit
+
+```yaml
+id: "ctx-hipaa-encryption"
+version: 1
+title: "Protected Health Information (PHI) MUST be encrypted at rest and in transit"
+description: >
+  All PHI must be encrypted using industry-standard algorithms.
+  At rest: AES-256 or equivalent. In transit: TLS 1.2+ with strong cipher suites.
+category: "security"
+severity: "critical"
+authority:
+  source:
+    type: "standard-body"
+    id: "hhs"
+    name: "U.S. Department of Health and Human Services"
+  level: 4
+  trust_model: "direct"
+lifecycle: "active"
+governance: { classification: "hardened-mandate", approval_required: true }
+enforcement:
+  mode: "block"
+  specification:
+    type: "composite"
+    config:
+      operator: "and"
+      verifiers:
+        - type: "terraform-resource-constraint"
+          config:
+            resource_types: ["aws_s3_bucket", "aws_db_instance"]
+            required_properties:
+              encryption: { enabled: true }
+        - type: "regex-pattern"
+          config:
+            patterns: ["TLSv1\\.(0|1)[^2]"]
+            should_not_match: true
+    violation_message_template: "PHI must be encrypted: AES-256 at rest, TLS 1.2+ in transit."
+tags: ["security", "healthcare", "hipaa", "encryption", "critical"]
+```
+
+### 2. Access Control — Minimum Necessary
+
+```yaml
+id: "ctx-hipaa-minimum-necessary"
+version: 1
+title: "PHI access MUST follow the minimum necessary standard"
+description: >
+  Users and systems must only access the minimum PHI necessary
+  to perform their function. Implement role-based access control
+  (RBAC) with periodic access reviews.
+category: "security"
+severity: "critical"
+authority:
+  source:
+    type: "standard-body"
+    id: "hhs"
+    name: "U.S. Department of Health and Human Services"
+  level: 4
+lifecycle: "active"
+governance: { classification: "hardened-mandate", approval_required: true }
+enforcement:
+  mode: "block"
+  specification:
+    type: "llm-evaluation"
+    config:
+      prompt: "Does this code implement role-based access control for PHI with the minimum necessary principle?"
+    violation_message_template: "PHI access must follow the minimum necessary standard. Implement RBAC."
+tags: ["security", "healthcare", "hipaa", "access-control", "critical"]
+```
+
+### 3. Audit Logging for PHI Access
+
+```yaml
+id: "ctx-hipaa-audit-logging"
+version: 1
+title: "All PHI access MUST be logged with immutable audit records"
+description: >
+  Every access to PHI must be logged: who accessed what, when,
+  from where, and what action was performed. Logs must be immutable
+  and retained for minimum 6 years.
+category: "compliance"
+severity: "high"
+authority:
+  source:
+    type: "standard-body"
+    id: "hhs"
+    name: "U.S. Department of Health and Human Services"
+  level: 4
+lifecycle: "active"
+governance: { classification: "hardened-mandate", approval_required: true }
+enforcement:
+  mode: "block"
+  specification:
+    type: "file-exists"
+    config:
+      files: ["**/audit*.ts", "**/audit*.go", "**/hipaa-logging*"]
+      at_least_one: true
+    violation_message_template: "PHI access audit logging must be implemented. Retain logs for 6+ years."
+tags: ["compliance", "healthcare", "hipaa", "audit"]
+```
+
+### 4. Breach Notification Readiness
+
+```yaml
+id: "ctx-hipaa-breach-notification"
+version: 1
+title: "Systems MUST support breach notification within 60 days"
+description: >
+  In the event of a PHI breach, affected individuals must be notified
+  within 60 days. Systems must maintain accurate PHI access records
+  and contact information for affected individuals.
+category: "compliance"
+severity: "high"
+authority:
+  source:
+    type: "standard-body"
+    id: "hhs"
+    name: "U.S. Department of Health and Human Services"
+  level: 4
+lifecycle: "active"
+governance: { classification: "hardened-mandate", approval_required: true }
+enforcement:
+  mode: "warn"
+  specification:
+    type: "file-exists"
+    config:
+      files: ["BREACH-RESPONSE.md", "docs/breach-response.md"]
+      at_least_one: false
+    violation_message_template: "Consider documenting breach response procedures. HIPAA requires 60-day notification."
+tags: ["compliance", "healthcare", "hipaa", "breach"]
+```

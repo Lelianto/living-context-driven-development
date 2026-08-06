@@ -1,0 +1,193 @@
+# Hackathon Context Pack
+
+**Domain:** Hackathon / Competition Rubrics  
+**Version:** 0.1.0  
+**Maintainer:** LCDD Community
+
+---
+
+## Overview
+
+This Context Pack demonstrates how LCDD can encode competition rubrics as enforceable contexts. When a hackathon team uses this pack, the judging criteria are automatically checked throughout their development, not just during the final presentation.
+
+---
+
+## Included Contexts
+
+### 1. Innovation — Unique Technical Approach
+
+```yaml
+id: "ctx-hackathon-innovation"
+version: 1
+title: "Project MUST demonstrate a novel technical approach"
+description: >
+  The project must use technology in an innovative way.
+  Points are awarded for: novel algorithm, creative use of APIs,
+  unique architecture, or solving a problem in an unexpected way.
+
+  This is a judgment call — the AI can remind you but cannot
+  objectively verify this context.
+category: "competition"
+severity: "high"
+authority:
+  source:
+    type: "organization"
+    id: "hackathon-judges"
+    name: "Hackathon Judging Panel"
+  level: 2
+lifecycle: "active"
+governance:
+  classification: "local-standard"
+  approval_required: false
+enforcement:
+  mode: "comment"
+  specification:
+    type: "llm-evaluation"
+    config:
+      prompt: >
+        Review the project codebase below. Does it demonstrate a novel
+        technical approach? Consider: novel algorithm, creative API usage,
+        unique architecture, or unexpected problem-solving approach.
+        Respond with a brief assessment.
+    violation_message_template: >
+      [Hackathon Rubric] Innovation Check: Does your project demonstrate
+      a novel technical approach? Consider how you can highlight unique
+      aspects of your architecture or algorithm.
+tags: ["hackathon", "competition", "innovation"]
+```
+
+### 2. Technical Implementation — Working Prototype
+
+```yaml
+id: "ctx-hackathon-working-prototype"
+version: 1
+title: "Project MUST be a working prototype with a live demo"
+description: >
+  The project must be deployed and demonstrable. A live URL
+  must be provided. The demo must work end-to-end for at
+  least one complete user flow.
+category: "competition"
+severity: "critical"
+authority:
+  source:
+    type: "organization"
+    id: "hackathon-judges"
+    name: "Hackathon Judging Panel"
+  level: 2
+lifecycle: "active"
+governance:
+  classification: "local-standard"
+  approval_required: false
+enforcement:
+  mode: "block"
+  specification:
+    type: "file-exists"
+    config:
+      files: ["DEPLOYMENT.md", "README.md"]
+      at_least_one: false
+    violation_message_template: >
+      [Hackathon Rubric] Deployment Doc Missing: Add a DEPLOYMENT.md
+      with your live demo URL. The project MUST be demonstrable.
+tags: ["hackathon", "competition", "deployment", "critical"]
+```
+
+### 3. Code Quality — README Required
+
+```yaml
+id: "ctx-hackathon-readme"
+version: 1
+title: "Repository MUST have a clear, comprehensive README"
+description: >
+  README must include: project description, setup instructions,
+  architecture overview, technology choices and rationale,
+  team members, and live demo link.
+category: "competition"
+severity: "high"
+authority:
+  source:
+    type: "organization"
+    id: "hackathon-judges"
+    name: "Hackathon Judging Panel"
+  level: 2
+lifecycle: "active"
+governance:
+  classification: "local-standard"
+  approval_required: false
+enforcement:
+  mode: "block"
+  specification:
+    type: "file-exists"
+    config:
+      files: ["README.md"]
+      at_least_one: false
+    violation_message_template: "[Hackathon Rubric] README.md is required for judging."
+tags: ["hackathon", "competition", "documentation"]
+```
+
+### 4. Presentation — Pitch Deck
+
+```yaml
+id: "ctx-hackathon-pitch"
+version: 1
+title: "Team MUST prepare a presentation (slides or video)"
+description: >
+  Prepare a 3-5 minute presentation covering: problem statement,
+  solution overview, technical architecture, live demo, market
+  opportunity, and team introduction.
+category: "competition"
+severity: "high"
+authority:
+  source:
+    type: "organization"
+    id: "hackathon-judges"
+    name: "Hackathon Judging Panel"
+  level: 2
+lifecycle: "active"
+effective_date: "2026-08-10T00:00:00Z"
+deprecated_date: "2026-08-12T23:59:59Z"
+governance:
+  classification: "local-standard"
+  approval_required: false
+enforcement:
+  mode: "warn"
+  specification:
+    type: "file-exists"
+    config:
+      files: ["presentation/*.pdf", "presentation/*.pptx", "PITCH.md"]
+      at_least_one: true
+    violation_message_template: "[Hackathon Rubric] Presentation file not found. Prepare your pitch deck."
+tags: ["hackathon", "competition", "presentation"]
+```
+
+### 5. Team Collaboration — Git History
+
+```yaml
+id: "ctx-hackathon-git-history"
+version: 1
+title: "All team members MUST have commits in the repository"
+description: >
+  Every team member must have at least one commit in the
+  repository to demonstrate collaboration. Solo projects
+  are permitted but must be declared.
+category: "competition"
+severity: "medium"
+authority:
+  source:
+    type: "organization"
+    id: "hackathon-judges"
+    name: "Hackathon Judging Panel"
+  level: 2
+lifecycle: "active"
+governance:
+  classification: "local-standard"
+  approval_required: false
+enforcement:
+  mode: "comment"
+  specification:
+    type: "custom-script"
+    config:
+      command: "git shortlog -sn --all | wc -l"
+      exit_zero_on: "contributor count >= declared team size"
+    violation_message_template: "[Hackathon Rubric] Team member contribution check: ensure all members have commits."
+tags: ["hackathon", "competition", "collaboration"]
+```

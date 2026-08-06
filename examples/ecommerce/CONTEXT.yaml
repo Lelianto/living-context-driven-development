@@ -1,0 +1,177 @@
+# E-commerce Context Pack
+
+**Domain:** E-commerce Best Practices  
+**Version:** 0.1.0  
+**Maintainer:** LCDD Community
+
+---
+
+## Overview
+
+Essential governance contexts for e-commerce applications covering payment security, performance, accessibility, and user trust.
+
+---
+
+## Included Contexts
+
+### 1. PCI-DSS — Never Store CVV
+
+```yaml
+id: "ctx-ecom-no-cvv-storage"
+version: 1
+title: "CVV/CVC codes MUST NEVER be stored after authorization"
+description: >
+  Card Verification Value (CVV/CVC) codes must never be stored
+  after transaction authorization, per PCI-DSS requirements.
+  This applies to logs, databases, and any persistent storage.
+category: "security"
+severity: "critical"
+authority:
+  source:
+    type: "standard-body"
+    id: "pci-council"
+    name: "PCI Security Standards Council"
+  level: 4
+lifecycle: "active"
+governance: { classification: "hardened-mandate", approval_required: true }
+enforcement:
+  mode: "block"
+  specification:
+    type: "regex-pattern"
+    config:
+      patterns: ["cvv", "cvc", "cvv2", "card_security_code"]
+      should_not_match: true
+      file_patterns: ["**/*.sql", "**/models/**", "**/schema/**", "**/*.log"]
+    violation_message_template: "CVV/CVC must never be stored after authorization. Remove from schema and logs."
+tags: ["security", "ecommerce", "pci-dss", "critical"]
+```
+
+### 2. HTTPS Everywhere
+
+```yaml
+id: "ctx-ecom-https"
+version: 1
+title: "All e-commerce pages MUST be served over HTTPS"
+description: >
+  The entire e-commerce site must use HTTPS. HTTP requests must
+  be redirected to HTTPS. This includes all assets (images, scripts,
+  stylesheets). Mixed content (HTTP assets on HTTPS pages) is blocked.
+category: "security"
+severity: "critical"
+authority:
+  source:
+    type: "standard-body"
+    id: "pci-council"
+    name: "PCI Security Standards Council"
+  level: 4
+lifecycle: "active"
+governance: { classification: "hardened-mandate", approval_required: true }
+enforcement:
+  mode: "block"
+  specification:
+    type: "regex-pattern"
+    config:
+      patterns: ["http://"]
+      should_not_match: true
+      file_patterns: ["**/*.html", "**/*.jsx", "**/*.tsx", "**/*.js"]
+      exclude_patterns: ["http://localhost", "http://127.0.0.1"]
+    violation_message_template: "Hardcoded HTTP URL detected. Use HTTPS for all production URLs."
+tags: ["security", "ecommerce", "pci-dss", "https"]
+```
+
+### 3. Performance — Lighthouse Threshold
+
+```yaml
+id: "ctx-ecom-performance"
+version: 1
+title: "Product and checkout pages SHOULD meet performance thresholds"
+description: >
+  Key e-commerce pages should meet minimum performance scores:
+  - Product Listing Page: Lighthouse Performance >= 70
+  - Product Detail Page: Lighthouse Performance >= 60
+  - Checkout: Lighthouse Performance >= 50
+
+  Poor performance directly impacts conversion rates.
+category: "performance"
+severity: "medium"
+authority:
+  source:
+    type: "community"
+    id: "lcdd-ecommerce-pack"
+    name: "LCDD E-commerce Pack"
+  level: 2
+lifecycle: "active"
+governance: { classification: "local-guideline", approval_required: false }
+enforcement:
+  mode: "warn"
+  specification:
+    type: "custom-script"
+    config:
+      command: "lhci autorun --config=lighthouserc.js"
+      exit_zero_on: "all thresholds met"
+    violation_message_template: "Page performance below e-commerce threshold. Optimize for conversion."
+tags: ["performance", "ecommerce", "lighthouse", "ux"]
+```
+
+### 4. Accessibility Baseline
+
+```yaml
+id: "ctx-ecom-accessibility"
+version: 1
+title: "E-commerce pages SHOULD meet WCAG 2.1 AA standards"
+description: >
+  All customer-facing pages should meet Web Content Accessibility
+  Guidelines (WCAG) 2.1 Level AA. This ensures the store is usable
+  by customers with disabilities and reduces legal risk.
+category: "accessibility"
+severity: "medium"
+authority:
+  source:
+    type: "community"
+    id: "lcdd-ecommerce-pack"
+    name: "LCDD E-commerce Pack"
+  level: 2
+lifecycle: "active"
+governance: { classification: "local-guideline", approval_required: false }
+enforcement:
+  mode: "warn"
+  specification:
+    type: "custom-script"
+    config:
+      command: "npx axe-cli pages/"
+      exit_zero_on: "no critical or serious violations"
+    violation_message_template: "Accessibility violations detected. Aim for WCAG 2.1 AA compliance."
+tags: ["accessibility", "ecommerce", "wcag", "ux"]
+```
+
+### 5. Checkout Idempotency
+
+```yaml
+id: "ctx-ecom-idempotency"
+version: 1
+title: "Payment and order creation MUST be idempotent"
+description: >
+  Payment processing and order creation endpoints must be idempotent.
+  Duplicate requests (e.g., user double-clicks "Place Order") must
+  not result in duplicate charges or orders. Use idempotency keys.
+category: "reliability"
+severity: "critical"
+authority:
+  source:
+    type: "community"
+    id: "lcdd-ecommerce-pack"
+    name: "LCDD E-commerce Pack"
+  level: 3
+lifecycle: "active"
+governance: { classification: "hardened-standard", approval_required: true }
+enforcement:
+  mode: "block"
+  specification:
+    type: "regex-pattern"
+    config:
+      patterns: ["Idempotency-Key", "idempotency_key", "idempotencyKey"]
+      should_match: true
+      file_patterns: ["**/checkout/**", "**/payment/**", "**/order/**"]
+    violation_message_template: "Checkout/payment handler missing idempotency. Add idempotency key support."
+tags: ["reliability", "ecommerce", "payment", "checkout", "critical"]
+```

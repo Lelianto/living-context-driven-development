@@ -1,0 +1,163 @@
+# Startup Context Pack
+
+**Domain:** General Startup Best Practices  
+**Version:** 0.1.0  
+**Maintainer:** LCDD Community
+
+---
+
+## Overview
+
+This Context Pack provides essential governance contexts for early-stage startups. It covers security basics, code quality, deployment hygiene, and common-sense practices that startups often discover too late.
+
+---
+
+## Included Contexts
+
+### 1. No Secrets in Source Code
+
+```yaml
+id: "ctx-startup-no-secrets"
+version: 1
+title: "Secrets MUST NOT be committed to source code"
+description: >
+  API keys, tokens, passwords, private keys, and other secrets
+  MUST be stored in environment variables or a secrets manager
+  (e.g., Vault, AWS Secrets Manager, Doppler). They MUST NOT
+  appear in source code, configuration files, or documentation
+  checked into version control.
+category: "security"
+severity: "critical"
+authority: { level: 3, source: { type: "community", id: "lcdd-startup-pack", name: "LCDD Startup Pack" } }
+lifecycle: "active"
+governance: { classification: "hardened-standard", approval_required: true }
+enforcement:
+  mode: "block"
+  specification:
+    type: "regex-pattern"
+    config:
+      patterns:
+        - "(?i)(api[_-]?key|secret|password|token|private[_-]?key)\\s*[:=]\\s*['\"][^'\"]+['\"]"
+        - "(?i)-----BEGIN (RSA |EC )?PRIVATE KEY-----"
+      should_not_match: true
+    violation_message_template: >
+      Potential secret detected in ${file.path}:${file.line}.
+      Move the secret to an environment variable or secrets manager.
+tags: ["security", "startup", "secrets", "critical"]
+```
+
+### 2. Environment Parity
+
+```yaml
+id: "ctx-startup-env-parity"
+version: 1
+title: "Development, staging, and production environments SHOULD be as similar as possible"
+description: >
+  Minimize the gap between development and production to reduce
+  "works on my machine" failures. Use the same database engine,
+  same runtime version, and same operating system across environments.
+  Containerization (Docker) is the recommended approach.
+category: "devops"
+severity: "medium"
+authority: { level: 2, source: { type: "community", id: "lcdd-startup-pack", name: "LCDD Startup Pack" } }
+lifecycle: "active"
+governance: { classification: "local-guideline", approval_required: false }
+enforcement:
+  mode: "warn"
+  specification:
+    type: "file-exists"
+    config:
+      files: ["Dockerfile", "docker-compose.yml"]
+      at_least_one: true
+    violation_message_template: >
+      No Dockerfile or docker-compose.yml found.
+      Consider containerizing your application for environment parity.
+      See: https://12factor.net/dev-prod-parity
+tags: ["devops", "startup", "12factor"]
+```
+
+### 3. Dependency Audit
+
+```yaml
+id: "ctx-startup-dependency-audit"
+version: 1
+title: "Dependencies MUST be audited for known vulnerabilities"
+description: >
+  Run a dependency vulnerability scanner (npm audit, pip audit,
+  cargo audit, trivy) in CI. Merges MUST NOT be blocked by
+  low-severity findings, but critical and high vulnerabilities
+  SHOULD be addressed or explicitly waived.
+category: "security"
+severity: "high"
+authority: { level: 3, source: { type: "community", id: "lcdd-startup-pack", name: "LCDD Startup Pack" } }
+lifecycle: "active"
+governance: { classification: "hardened-standard", approval_required: true }
+enforcement:
+  mode: "block"
+  specification:
+    type: "custom-script"
+    config:
+      command: "npm audit --audit-level=high"
+      exit_zero_on: "no high or critical vulnerabilities"
+    violation_message_template: >
+      High or critical vulnerabilities found in dependencies.
+      Run `npm audit fix` or review and waive specific findings.
+tags: ["security", "dependencies", "startup"]
+```
+
+### 4. Branch Protection
+
+```yaml
+id: "ctx-startup-branch-protection"
+version: 1
+title: "Main branch MUST be protected from direct pushes"
+description: >
+  The main/master branch MUST require pull requests with at least
+  one approval before merging. Direct pushes to main are blocked.
+  This prevents accidental deployments and ensures code review.
+category: "process"
+severity: "high"
+authority: { level: 3, source: { type: "community", id: "lcdd-startup-pack", name: "LCDD Startup Pack" } }
+lifecycle: "active"
+governance: { classification: "hardened-standard", approval_required: true }
+enforcement:
+  mode: "block"
+  specification:
+    type: "custom-script"
+    config:
+      command: "gh api repos/:owner/:repo/branches/main/protection"
+      exit_zero_on: "branch protection enabled"
+    violation_message_template: >
+      Main branch is not protected. Enable branch protection
+      requiring PR reviews before merging.
+tags: ["process", "github", "startup"]
+```
+
+### 5. Error Monitoring
+
+```yaml
+id: "ctx-startup-error-monitoring"
+version: 1
+title: "Production applications SHOULD have error monitoring configured"
+description: >
+  At minimum, production applications should log errors to a
+  centralized service (Sentry, Datadog, LogRocket). Without error
+  monitoring, you are flying blind in production.
+category: "observability"
+severity: "medium"
+authority: { level: 2, source: { type: "community", id: "lcdd-startup-pack", name: "LCDD Startup Pack" } }
+lifecycle: "active"
+governance: { classification: "local-guideline", approval_required: false }
+enforcement:
+  mode: "warn"
+  specification:
+    type: "regex-pattern"
+    config:
+      patterns: ["@sentry/", "datadog", "logrocket", "rollbar", "bugsnag"]
+      should_match: true
+      file_patterns: ["package.json", "requirements.txt", "go.mod"]
+    violation_message_template: >
+      No error monitoring SDK detected in dependencies.
+      Consider adding Sentry, Datadog, or similar for production error tracking.
+tags: ["observability", "startup", "production"]
+```

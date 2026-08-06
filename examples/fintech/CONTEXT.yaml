@@ -1,0 +1,249 @@
+# Fintech Context Pack — OJK Compliance (Indonesia)
+
+**Domain:** Financial Technology (Fintech) — Indonesian Market  
+**Version:** 0.1.0  
+**Maintainer:** LCDD Fintech Community  
+**Source:** OJK (Otoritas Jasa Keuangan) regulations
+
+---
+
+## Overview
+
+This Context Pack provides governance contexts for Indonesian fintech startups and companies that must comply with OJK regulations. These contexts are derived from POJK (Peraturan OJK) documents and represent key compliance requirements for digital lending, payments, and financial services.
+
+**Disclaimer:** This pack is for informational and educational purposes only. It does not constitute legal advice. Consult with a qualified compliance professional for your specific situation.
+
+---
+
+## Included Contexts
+
+### 1. Data Residency — Indonesian User Data
+
+```yaml
+id: "ctx-ojk-data-residency"
+version: 1
+title: "Indonesian customer PII and financial data MUST be stored in Indonesia"
+description: >
+  Personal Identifiable Information (PII) and financial transaction data
+  of Indonesian customers must be stored on servers physically located
+  in Indonesia, in accordance with OJK data residency requirements.
+
+  This applies to:
+  - Customer names, NIK, NPWP, phone numbers, addresses
+  - Bank account numbers and financial transaction records
+  - Credit scoring data and loan application details
+
+  Use ap-southeast-3 (Jakarta) region for AWS, asia-southeast2 for GCP,
+  or Southeast Asia region for Azure.
+category: "compliance"
+severity: "critical"
+authority:
+  source:
+    type: "standard-body"
+    id: "ojk"
+    name: "Otoritas Jasa Keuangan (OJK)"
+  level: 4
+  trust_model: "direct"
+  challenge_policy:
+    process: "compliance-review"
+    sla_hours: 168
+lifecycle: "active"
+governance:
+  classification: "hardened-mandate"
+  approval_required: true
+  approvers: ["compliance-officer", "cto"]
+  min_review_period_hours: 336
+enforcement:
+  mode: "block"
+  specification:
+    type: "terraform-resource-constraint"
+    config:
+      resource_types: ["aws_s3_bucket", "aws_db_instance", "aws_rds_cluster"]
+      required_region: "ap-southeast-3"
+      violation_message_template: >
+        Resource ${resource.type} '${resource.name}' is deployed in ${resource.region}.
+        Indonesian customer data MUST be stored in ap-southeast-3 (Jakarta).
+        See: https://ojk.go.id/regulasi for applicable regulations.
+tags: ["compliance", "fintech", "ojk", "data-residency", "critical"]
+```
+
+### 2. KYC/AML — Customer Verification
+
+```yaml
+id: "ctx-ojk-kyc-aml"
+version: 1
+title: "Customer identity MUST be verified before financial transactions"
+description: >
+  Know Your Customer (KYC) and Anti-Money Laundering (AML) checks
+  MUST be completed before a customer can perform financial transactions
+  (lending, borrowing, payments, investments).
+
+  Verification includes:
+  - Identity document validation (KTP/SIM/Paspor)
+  - Biometric verification (face matching with ID document)
+  - PEP (Politically Exposed Person) screening
+  - Sanctions list screening
+category: "compliance"
+severity: "critical"
+authority:
+  source:
+    type: "standard-body"
+    id: "ojk"
+    name: "Otoritas Jasa Keuangan (OJK)"
+  level: 4
+lifecycle: "active"
+governance:
+  classification: "hardened-mandate"
+  approval_required: true
+enforcement:
+  mode: "block"
+  specification:
+    type: "custom-script"
+    config:
+      command: "node scripts/verify-kyc-compliance.js"
+      exit_zero_on: "KYC flow is complete and verified"
+    violation_message_template: >
+      KYC/AML verification flow is incomplete or not properly implemented.
+      Customer identity MUST be verified before financial transactions.
+      Required: ID validation, biometric matching, PEP/sanctions screening.
+tags: ["compliance", "fintech", "ojk", "kyc", "aml", "critical"]
+```
+
+### 3. Interest Rate Transparency
+
+```yaml
+id: "ctx-ojk-interest-transparency"
+version: 1
+title: "Interest rates and all fees MUST be clearly disclosed to customers"
+description: >
+  All lending products MUST clearly disclose:
+  - Annual interest rate (APR)
+  - All fees (administration, late payment, early repayment)
+  - Total repayment amount
+  - Repayment schedule
+
+  Disclosures MUST be presented BEFORE the customer accepts the loan agreement.
+category: "compliance"
+severity: "high"
+authority:
+  source:
+    type: "standard-body"
+    id: "ojk"
+    name: "Otoritas Jasa Keuangan (OJK)"
+  level: 4
+lifecycle: "active"
+governance:
+  classification: "hardened-mandate"
+  approval_required: true
+enforcement:
+  mode: "block"
+  specification:
+    type: "llm-evaluation"
+    config:
+      prompt: >
+        Review the loan application UI code below. Determine if ALL of the
+        following are clearly displayed BEFORE the accept button:
+        - Annual interest rate (APR)
+        - All fees with descriptions
+        - Total repayment amount
+        - Repayment schedule with dates and amounts
+      expected: "all four items present and visible before accept action"
+    violation_message_template: >
+      Loan product disclosure is incomplete. All of the following MUST be
+      shown before the customer accepts: APR, all fees, total repayment
+      amount, and repayment schedule.
+tags: ["compliance", "fintech", "ojk", "transparency", "lending"]
+```
+
+### 4. Customer Data Protection
+
+```yaml
+id: "ctx-ojk-data-protection"
+version: 1
+title: "Customer financial data MUST be encrypted at rest and in transit"
+description: >
+  All customer financial data MUST be encrypted:
+  - At rest: AES-256 or equivalent
+  - In transit: TLS 1.2 or higher
+
+  Access to financial data MUST be logged and auditable.
+  Access MUST follow least-privilege principle.
+category: "security"
+severity: "critical"
+authority:
+  source:
+    type: "standard-body"
+    id: "ojk"
+    name: "Otoritas Jasa Keuangan (OJK)"
+  level: 4
+lifecycle: "active"
+governance:
+  classification: "hardened-mandate"
+  approval_required: true
+enforcement:
+  mode: "block"
+  specification:
+    type: "composite"
+    config:
+      operator: "and"
+      verifiers:
+        - type: "terraform-resource-constraint"
+          config:
+            resource_types: ["aws_s3_bucket"]
+            required_properties:
+              server_side_encryption_configuration: { present: true }
+        - type: "regex-pattern"
+          config:
+            patterns: ["TLSv1\\.(0|1)[^2]"]
+            should_not_match: true
+            file_patterns: ["**/nginx.conf", "**/*.tf", "**/*.yaml"]
+    violation_message_template: >
+      Customer financial data is not properly encrypted.
+      Required: AES-256 at rest, TLS 1.2+ in transit,
+      access logging enabled, least-privilege access.
+tags: ["security", "fintech", "ojk", "encryption", "critical"]
+```
+
+### 5. Audit Trail
+
+```yaml
+id: "ctx-ojk-audit-trail"
+version: 1
+title: "All financial transactions MUST have an immutable audit trail"
+description: >
+  Every financial transaction (loan disbursement, repayment, fee charge,
+  interest calculation) MUST produce an immutable audit log entry
+  containing:
+  - Timestamp (server-side, not client-supplied)
+  - Transaction type and amount
+  - Customer ID
+  - System/user that initiated the transaction
+  - Result (success/failure with reason)
+
+  Audit logs MUST be retained for minimum 5 years.
+  Audit logs MUST be write-once, read-many (WORM).
+category: "compliance"
+severity: "high"
+authority:
+  source:
+    type: "standard-body"
+    id: "ojk"
+    name: "Otoritas Jasa Keuangan (OJK)"
+  level: 4
+lifecycle: "active"
+governance:
+  classification: "hardened-mandate"
+  approval_required: true
+enforcement:
+  mode: "block"
+  specification:
+    type: "file-exists"
+    config:
+      files: ["**/audit*.ts", "**/audit*.go", "**/audit*.py"]
+      at_least_one: true
+    violation_message_template: >
+      No audit logging implementation found. All financial transactions
+      MUST produce immutable audit log entries. Implement a WORM-compliant
+      audit logging system with minimum 5-year retention.
+tags: ["compliance", "fintech", "ojk", "audit", "logging"]
+```

@@ -1,0 +1,124 @@
+# Example: API Input Validation Context
+#
+# This file demonstrates a complete, well-formed LCDD Context in YAML format.
+# Use this as a template for authoring your own contexts.
+
+id: "ctx-api-input-validation"
+version: 1
+created_at: "2026-01-15T08:00:00Z"
+updated_at: "2026-08-01T14:30:00Z"
+
+title: "All API endpoints MUST validate input against an OpenAPI schema"
+description: >
+  Every API endpoint exposed by the system must have a corresponding
+  OpenAPI 3.x schema. Request validation MUST be performed against
+  that schema at the API gateway layer.
+
+  This prevents injection attacks, ensures API contract compliance,
+  and provides a machine-readable specification for client SDK generation.
+
+  ## Examples
+
+  ### Compliant
+  ```typescript
+  // handlers/users.ts
+  import { validateRequest } from '@/middleware/validation';
+  import { createUserSchema } from '@/schemas/users';
+
+  export const createUser = validateRequest(createUserSchema)(async (req, res) => {
+    // handler logic
+  });
+  ```
+
+  ### Non-Compliant
+  ```typescript
+  // handlers/users.ts
+  export const createUser = async (req, res) => {
+    const { name, email } = req.body; // No validation
+    // handler logic
+  };
+  ```
+
+source:
+  type: "organization"
+  uri: "https://wiki.internal.example.com/security/api-standards"
+  document_id: "SEC-STD-042"
+  extraction_method: "manual"
+
+authority:
+  source:
+    type: "organization"
+    id: "ciso-office"
+    name: "CISO Office"
+    uri: "https://security.internal.example.com"
+  level: 3
+  delegation:
+    - from: "cto-office"
+      to: "ciso-office"
+      scope: "security"
+      effective_date: "2025-01-01"
+  trust_model: "delegated"
+
+category: "security"
+severity: "high"
+applies_to:
+  - "api/src/handlers/**/*.ts"
+  - "api/src/handlers/**/*.go"
+  - "gateway/routes/**"
+
+lifecycle: "active"
+
+governance:
+  classification: "hardened-standard"
+  approval_required: true
+  approvers:
+    - "org/appsec-team"
+  min_review_period_hours: 168
+
+effective_date: "2026-02-01T00:00:00Z"
+deprecated_date: null
+owner: "appsec-team"
+review_status: "approved"
+
+enforcement:
+  mode: "block"
+  specification:
+    type: "openapi-validation"
+    config:
+      schema_directory: "/schemas"
+      fail_on_missing_schema: true
+      allow_inline_schemas: false
+    violation_message_template: >
+      Endpoint '${endpoint.method} ${endpoint.path}' in ${file.path}:${file.line}
+      does not validate input against an OpenAPI schema.
+
+      Action required:
+      1. Create or update the schema in ${schema_directory}/
+      2. Import the schema in your handler file
+      3. Wrap your handler with validateRequest(schema)
+
+      See: https://wiki.internal.example.com/security/api-standards
+
+evidence:
+  - type: "security-incident"
+    uri: "https://incidents.internal.example.com/INC-2025-087"
+    description: "SQL injection via unvalidated API input (2025-11-03)"
+  - type: "compliance-requirement"
+    uri: "https://standards.internal.example.com/SEC-STD-042"
+    description: "Internal security standard requiring input validation on all APIs"
+
+tags:
+  - "security"
+  - "api"
+  - "input-validation"
+  - "owasp"
+  - "schema"
+
+supersedes:
+  - "ctx-old-input-validation"
+superseded_by: []
+
+metadata:
+  review_cycle_months: 6
+  last_reviewed: "2026-07-01"
+  next_review: "2027-01-01"
