@@ -27,6 +27,8 @@
 - [↻ The Context Lifecycle](#-the-context-lifecycle)
 - [→ The Discovery Pipeline](#-the-discovery-pipeline)
 - [◉ Governance by Rate of Change](#-governance-by-rate-of-change)
+- [◈ Context Health](#-context-health)
+- [◈ AI Agent Integration](#-ai-agent-integration)
 - [☰ Quick Start — Reading the Specification](#-quick-start--reading-the-specification)
 - [⊞ Repository Map](#-repository-map)
 - [⇔ Comparison with Related Approaches](#-comparison-with-related-approaches)
@@ -274,9 +276,47 @@ Add `--triggers` for five deterministic triggers (stale contexts, high false pos
 
 ---
 
+## ◈ AI Agent Integration
+
+LCDD contexts are natively available to AI coding agents through **MCP (Model Context Protocol)**. Any MCP-compatible agent (Claude Desktop, Cursor, Cline, etc.) can query, validate, and enforce LCDD governance:
+
+```bash
+npm install -g @lcdd/mcp
+```
+
+**Claude Desktop config** (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "lcdd": {
+      "command": "npx",
+      "args": ["@lcdd/mcp"],
+      "env": {
+        "LCDD_PROJECT_ROOT": "/path/to/your/project"
+      }
+    }
+  }
+}
+```
+
+**What AI agents can do via MCP:**
+
+| Agent asks | Tool called | What happens |
+|---|---|---|
+| "Are there security rules I should know?" | `lcdd_query_contexts` | Returns all active security contexts via CQL |
+| "Check this file for violations" | `lcdd_validate_artifact` | Validates code against all active enforcement rules |
+| "What's the governance health?" | `lcdd_get_health` | Context Health Score + recommendations |
+| "Show me violation trends" | `lcdd_get_dashboard` | Enforcement metrics: trends, actor breakdown |
+| "What needs review?" | `lcdd_list_reviews` | Pending reviews with auto-approval status |
+
+> Zero configuration beyond pointing to your project. No API key, no LLM, no cloud dependency. The MCP reads `.lcdd/` directly from your filesystem.
+
+---
+
 ## ☰ Quick Start
 
-LCDD is in **Specification Phase (v0.1.0)** with a working **Reference Implementation (v0.2.0)** published to npm.
+LCDD is in **Specification Phase (v0.1.0)** with a working **Reference Implementation (v0.3.1)** published to npm.
 
 ### Install the CLI (30 seconds)
 
@@ -285,6 +325,14 @@ npm install -g @lcdd/cli
 lcd init
 lcd context add
 lcd validate
+lcd doctor
+```
+
+### Add AI Agent Support (1 minute)
+
+```bash
+npm install -g @lcdd/mcp
+# Add to claude_desktop_config.json (see section above)
 ```
 
 ### Read the Specification (30 minutes)
@@ -378,9 +426,10 @@ living-context-driven-development/
 ├── 📂 media/                            # Visual Identity
 │   └── logo.png                         # LCDD Logo
 │
-└── 📂 implementation/                   # Reference Implementation (v0.3.0)
+└── 📂 implementation/                   # Reference Implementation (v0.3.1)
     ├── packages/core/                   # @lcdd/core — TypeScript SDK
     ├── packages/cli/                    # @lcdd/cli — Command-line tool
+    ├── packages/mcp/                    # @lcdd/mcp — MCP Server for AI agents
     └── .github/workflows/               # CI/CD enforcement
 ```
 
@@ -427,8 +476,8 @@ Living Context Driven Development is built on five axioms:
 |---|---|---|---|
 | **Foundation** | v0.1.0 | ✅ Complete | Specification — 17 docs, manifesto, examples, reference schema |
 | **Reference Implementation** | v0.2.1 | ✅ Complete | `@lcdd/core` SDK + `@lcdd/cli` CLI — published to npm |
-| **Pipeline Automation** | v0.3.0 | 🟡 In Progress | Deterministic pipeline: `lcd doctor`, rule engine, `lcd review`, source connector, trigger evaluator |
-| **MCP Server** | v0.3.0 | 🔴 Planned | AI agent integration, context injection, drift detection |
+| **Pipeline Automation** | v0.3.1 | ✅ Complete | Deterministic pipeline: `lcd doctor`, rule engine, `lcd review`, source connector, trigger evaluator |
+| **MCP Server** | v0.3.1 | ✅ Complete | AI agent integration — 7 tools via Model Context Protocol |
 | **Ecosystem** | v0.5.0 | 🔴 Planned | VS Code, GitHub App, Community Packs, Observability Dashboard, LLM extraction |
 | **Adoption** | v1.0.0 | 🔴 Planned | Stabilized spec, conference talks, case studies |
 
