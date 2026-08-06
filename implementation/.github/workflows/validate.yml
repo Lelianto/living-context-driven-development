@@ -1,0 +1,40 @@
+name: LCDD Validate
+
+on:
+  pull_request:
+    branches: [main, master]
+  push:
+    branches: [main, master]
+
+jobs:
+  validate:
+    name: Context Validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install LCDD CLI
+        run: |
+          cd implementation
+          npm install
+          npm run build --workspaces
+          npm link --workspace=packages/cli
+
+      - name: List Active Contexts
+        run: lcd list --lifecycle active
+
+      - name: Validate
+        run: lcd validate --strict
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## LCDD Validation Results" >> $GITHUB_STEP_SUMMARY
+          echo "Validated against all active contexts in .lcdd/contexts/" >> $GITHUB_STEP_SUMMARY

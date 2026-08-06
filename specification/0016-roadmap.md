@@ -1,7 +1,7 @@
 # 0016 — Roadmap
 
-**Status:** Draft  
-**Version:** 0.1.0  
+**Status:** Active  
+**Version:** 0.2.0  
 **Specification:** Living Context Driven Development  
 **Last Updated:** 2026-08-06
 
@@ -17,7 +17,7 @@ This document defines the development roadmap for the LCDD specification, refere
 
 **Target:** Define the methodology. No code, only specification.
 
-**Status:** 🟡 In Progress
+**Status:** ✅ Complete (2026-08-06)
 
 ### Deliverables
 
@@ -44,17 +44,20 @@ This document defines the development roadmap for the LCDD specification, refere
 | 1.19 | Security (0014-security.md) | ✅ Complete |
 | 1.20 | Reference Architecture (0015-reference-architecture.md) | ✅ Complete |
 | 1.21 | Glossary (docs/glossary.md) | ✅ Complete |
-| 1.22 | Companion documents (introduction, philosophy, comparison, adoption, FAQ) | 🟡 Pending |
-| 1.23 | README.md + Repository scaffolding | 🟡 Pending |
-| 1.24 | Example Context Packs (startup, fintech, healthcare) | 🟡 Pending |
-| 1.25 | Reference schema files (JSON Schema, YAML example) | 🟡 Pending |
+| 1.22 | Companion documents (introduction, philosophy, comparison, adoption, FAQ) | ✅ Complete |
+| 1.23 | README.md + Repository scaffolding | ✅ Complete |
+| 1.24 | Example Context Packs (startup, fintech, healthcare, ecommerce, hackathon) | ✅ Complete |
+| 1.25 | Reference schema files (JSON Schema, YAML example) | ✅ Complete |
+| 1.26 | Methodology Guide (lcdd-methodology.md) | ✅ Complete |
+| 1.27 | AGENTS.md + SUPPORT.md + Governance docs | ✅ Complete |
+| 1.28 | Logo and visual identity (media/) | ✅ Complete |
 
 ### Success Criteria
 
-- [ ] Specification is internally consistent (no contradictory requirements).
-- [ ] All terms used in specs are defined in the glossary.
-- [ ] The novelty (discovery pipeline, unified constraint model, lifecycle) is clearly distinguishable from prior art.
-- [ ] Repository is public on GitHub with Apache 2.0 license.
+- [x] Specification is internally consistent (no contradictory requirements).
+- [x] All terms used in specs are defined in the glossary.
+- [x] The novelty (discovery pipeline, unified constraint model, lifecycle) is clearly distinguishable from prior art.
+- [x] Repository is public on GitHub with Apache 2.0 license.
 - [ ] Website (livingcontext.dev) publishes the specification.
 
 ---
@@ -63,7 +66,7 @@ This document defines the development roadmap for the LCDD specification, refere
 
 **Target:** A working CLI (`lcd`) that can initialize a project, manage contexts, and validate artifacts against them.
 
-**Status:** 🔴 Not Started
+**Status:** 🟡 In Progress
 
 ### Deliverables
 
