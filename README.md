@@ -5,18 +5,19 @@
 </div>
 
 <p align="center">
-    <strong>An open specification and methodology for discovering, managing, and enforcing the constraints that govern AI-assisted software development — across any source, any tool, any stack.</strong>
+    <strong>An open specification and methodology for discovering, managing, and enforcing<br>the constraints that govern AI-assisted software development.</strong>
 </p>
 
 <p align="center">
-    <a href="https://github.com/Lelianto/living-context-driven-development/releases"><img src="https://img.shields.io/github/v/release/Lelianto/living-context-driven-development?label=spec%20version" alt="Spec Version"/></a>
+    <a href="https://github.com/Lelianto/living-context-driven-development/releases"><img src="https://img.shields.io/github/v/tag/Lelianto/living-context-driven-development?label=Spec%20v0.2.1&color=10b981" alt="Spec Version"/></a>
     <a href="https://github.com/Lelianto/living-context-driven-development/stargazers"><img src="https://img.shields.io/github/stars/Lelianto/living-context-driven-development?style=social" alt="GitHub stars"/></a>
     <a href="https://www.npmjs.com/package/@lcdd/cli"><img src="https://img.shields.io/npm/v/@lcdd/cli?color=10b981" alt="npm"/></a>
-    <a href="LICENSE"><img src="https://img.shields.io/github/license/Lelianto/living-context-driven-development" alt="License"/></a>
+    <a href="LICENSE"><img src="https://img.shields.io/github/license/Lelianto/living-context-driven-development?color=10b981" alt="Apache 2.0"/></a>
+    <a href="https://www.npmjs.com/package/@lcdd/cli"><img src="https://img.shields.io/npm/dm/@lcdd/cli?color=10b981" alt="npm downloads"/></a>
 </p>
 
 <p align="center">
-    <strong>English</strong>
+    English
 </p>
 
 ---
