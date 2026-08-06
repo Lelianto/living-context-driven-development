@@ -1,10 +1,6 @@
 import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel/serverless';
 
 export default defineConfig({
-  output: 'server',
-  adapter: vercel(),
-  srcDir: 'src',
-  publicDir: 'public',
+  output: 'static',
   site: 'https://livingcontext.dev',
 });
