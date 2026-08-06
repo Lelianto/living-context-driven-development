@@ -191,4 +191,14 @@ sourceCmd
     await sourceRemoveCommand(id);
   });
 
+program
+  .command('dashboard')
+  .description('View enforcement metrics and lifecycle observability')
+  .option('--web', 'Start a web dashboard with charts (default: terminal)')
+  .option('--port <number>', 'Web server port', '9321')
+  .action(async (options) => {
+    const { dashboardCommand } = await import('./commands/dashboard.js');
+    await dashboardCommand(options);
+  });
+
 program.parse();

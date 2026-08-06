@@ -14,3 +14,5 @@ export { ReviewManager } from './review-manager.js';
 export type { ReviewItem, ReviewResult } from './review-manager.js';
 export { SourceConnector } from './source-connector.js';
 export type { RegisteredSource, SourceCheckResult } from './source-connector.js';
+export { DashboardService } from './dashboard.js';
+export type { DashboardMetrics, ViolationTrend, ActorBreakdown, ContextViolationRanking } from './dashboard.js';

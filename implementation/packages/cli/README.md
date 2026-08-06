@@ -187,6 +187,18 @@ lcd source check [id]                    # Check for changes (all or specific so
 lcd source remove <id>                   # Remove a registered source
 ```
 
+### `lcd dashboard`
+
+View enforcement metrics and lifecycle observability.
+
+```bash
+lcd dashboard                        # Terminal report
+lcd dashboard --web                  # Web dashboard with charts at localhost:9321
+lcd dashboard --web --port 3000      # Custom port
+```
+
+Terminal view shows: violation trends (7d/30d/90d), actor breakdown (human vs AI), top violated contexts, enforcement mode distribution, and lifecycle velocity. Web mode adds interactive Chart.js visualizations.
+
 ---
 
 ## CI/CD Integration

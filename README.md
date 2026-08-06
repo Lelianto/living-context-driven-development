@@ -186,16 +186,16 @@ Each transition is an auditable event. Contexts can be reactivated if conditions
 The LCDD Context Engineering Pipeline is what makes LCDD different from every other approach — it starts from **unknown constraints**, not known ones:
 
 ```
-           01 ⚡ Phase A    02 Planned      03 Planned      04 ⚡ Phase A    05 ⚡ Phase A    06 ✅ Done       07 ⚡ WIP        08 ⚡ Phase A
-           ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────
+           01 ⚡ Phase A    02 Planned      03 Planned      04 ✅ Done       05 ✅ Done       06 ✅ Done       07 ✅ Done       08 ✅ Done       09 ✅ Done
+           ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────
            Observe  ──→  Understand ──→  Govern   ──→  Distribute──→  Enforce  ──→  Verify   ──→  Learn    ──→  Improve
               │               │               │              │              │              │              │              │
               │ Source        │ Extract +     │ Review +     │ Version +    │ Validate     │ Metrics,     │ Trigger
-              │ monitoring    │ Normalize     │ Classify     │ publish      │ artifacts    │ dashboards,  │ evaluator
-              │ (deterministic)│ (needs LLM)  │ (deterministic)│            │              │ alerts       │ + doctor
+              │ monitoring    │ Normalize     │ Classify     │ publish      │ artifacts    │ dashboard,   │ evaluator
+              │ (deterministic)│ (needs LLM)  │ (done)       │              │              │ web, events  │ + doctor
 ```
 
-> **Implementation status:** Stages 01 (Discover), 04 (Classify), 05 (Review), and 09 (Improve) have deterministic Phase A implementations in v0.3.0 — `lcd source add/check`, rule-based auto-classification, `lcd review` workflow, and `lcd doctor` with trigger evaluator. No LLM or API key required. Stage 02 (Extract) requires LLM integration and remains planned. See [ROADMAP.md](ROADMAP.md).
+> **Implementation status:** Stages 04–09 are fully implemented in v0.3.0 as deterministic. Stage 01 has Phase A (source connectors). Stages 02–03 require LLM integration and remain planned for v1.0+. No API key, no LLM, no new infrastructure needed for stages 04–09. See [ROADMAP.md](ROADMAP.md).
 
 **Example:** A new regulation is published (ex. GDPR update, PCI-DSS revision) → Discover detects it → Extract parses it with an LLM → Normalize maps it to the Context Schema → Classify assigns it level 4 (Mandate) → Review routes it to the compliance team → Version commits it as Draft → Approve → Active → Block enforcement in CI. See the full [Context Builder](specification/0006-context-builder.md).
 
@@ -439,12 +439,12 @@ Living Context Driven Development is built on five axioms:
 | 01 Observe | 🟡 Partial | v0.3.0 — Deterministic source monitoring: `lcd source add/check`, Git diff, website checksum |
 | 02 Extract | 🔴 Planned | v1.0+ — LLM extraction from source documents (requires API key) |
 | 03 Normalize | 🔴 Planned | v1.0+ — Schema mapping, deduplication |
-| 04 Classify | 🟡 Partial | v0.3.0 — Deterministic rule engine: source type → authority, keyword → severity, domain → tags |
-| 05 Review | 🟡 Partial | v0.3.0 — `lcd review list/show/approve/reject/revision`, auto-approval for Local contexts |
+| 04 Classify | ✅ Done | v0.3.0 — Deterministic rule engine: source type → authority, keyword → severity, domain → tags |
+| 05 Review | ✅ Done | v0.3.0 — `lcd review list/show/approve/reject/revision`, auto-approval for Local contexts |
 | 06 Enforce | ✅ Done | v0.2.1 — `lcd validate`, `ContextVerifier`, CI integration |
 | 07 Verify | ✅ Done | v0.2.1 — Schema validation, semantic rules, lifecycle checks |
-| 08 Learn | 🟡 Partial | v0.2.1 — Event log; v0.3.0 — Enforcement event persistence |
-| 09 Improve | 🟡 Partial | v0.3.0 — `lcd doctor`, Context Health Score, 5-trigger evaluator, structured recommendations |
+| 08 Learn | ✅ Done | v0.3.0 — `lcd dashboard` (terminal + web), enforcement metrics, violation trends, actor breakdown |
+| 09 Improve | ✅ Done | v0.3.0 — `lcd doctor`, Context Health Score, 5-trigger evaluator, structured recommendations |
 
 ### Install
 

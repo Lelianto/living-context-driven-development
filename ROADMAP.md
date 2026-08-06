@@ -47,6 +47,8 @@
 - [x] Trigger Evaluator — 5 deterministic triggers with structured recommendations
 - [x] Source Connector — `lcd source add/list/check/remove` (Git + Website)
 - [x] Enforcement event persistence (`.enforcements.log`)
+- [x] `lcd dashboard` — Terminal + Web dashboard (violation trends, actor breakdown, velocity)
+- [x] Stages 04–09 (Classify through Improve) fully implemented as deterministic
 
 ### Planned
 - [ ] MCP Server (`@lcdd/mcp`)
