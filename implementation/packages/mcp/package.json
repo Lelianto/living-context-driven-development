@@ -1,30 +1,29 @@
 {
-  "name": "@lcdd/core",
+  "name": "@lcdd/mcp",
   "version": "0.3.1",
-  "description": "LCDD Core SDK — Context model, schema, Registry, CQL, verifier, doctor, rule engine, review, triggers, source connector",
+  "description": "LCDD MCP Server — AI agent integration via Model Context Protocol",
   "type": "module",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "bin": {
+    "lcdd-mcp": "dist/index.js"
+  },
   "files": [
     "dist",
     "README.md"
   ],
   "scripts": {
     "build": "tsc",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "lint": "eslint src/",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build"
   },
   "keywords": [
     "lcdd",
-    "living-context",
+    "mcp",
+    "model-context-protocol",
+    "ai-agent",
+    "claude",
     "context-driven-development",
-    "constraint-governance",
-    "specification",
-    "ai-governance",
-    "software-governance"
+    "constraint-governance"
   ],
   "repository": {
     "type": "git",
@@ -32,17 +31,12 @@
   },
   "homepage": "https://github.com/Lelianto/living-context-driven-development#readme",
   "dependencies": {
-    "ajv": "^8.17.1",
-    "js-yaml": "^4.1.0",
-    "uuid": "^10.0.0",
-    "glob": "^11.0.0"
+    "@lcdd/core": "^0.3.1",
+    "@modelcontextprotocol/sdk": "^1.30.0"
   },
   "devDependencies": {
-    "@types/js-yaml": "^4.0.9",
     "@types/node": "^22.0.0",
-    "@types/uuid": "^10.0.0",
-    "typescript": "^5.6.0",
-    "vitest": "^2.0.0"
+    "typescript": "^5.6.0"
   },
   "engines": {
     "node": ">=18.0.0"
