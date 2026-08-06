@@ -378,7 +378,7 @@ living-context-driven-development/
 ├── 📂 media/                            # Visual Identity
 │   └── logo.png                         # LCDD Logo
 │
-└── 📂 implementation/                   # Reference Implementation (v0.2.0)
+└── 📂 implementation/                   # Reference Implementation (v0.3.0)
     ├── packages/core/                   # @lcdd/core — TypeScript SDK
     ├── packages/cli/                    # @lcdd/cli — Command-line tool
     └── .github/workflows/               # CI/CD enforcement
@@ -398,8 +398,6 @@ living-context-driven-development/
 | **Observability** | Test results | ❌ | ❌ | ❌ | ❌ | ✅ Full |
 | **Spec Drift Prevention** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
 | **Community Sharing** | Test suites | ❌ | ❌ | ❌ | ❌ | ✅ Context Packs |
-
-**AGENTS.md vs LCDD:** AGENTS.md files give AI agents instructions. But they're unstructured, unversioned, ungoverned, and unenforced. Nothing prevents the agent from ignoring them. Nothing measures whether they're being followed. LCDD takes the same idea and makes it structured, versioned, governed, and enforced.
 
 **AGENTS.md vs LCDD:** AGENTS.md files give AI agents instructions — but they're unstructured, unversioned, ungoverned, and unenforced. Nothing prevents the agent from ignoring them. Nothing measures whether they're being followed. LCDD takes the same idea and makes it structured, versioned, governed, and enforced. Context is a first-class artifact, not a text file.
 
