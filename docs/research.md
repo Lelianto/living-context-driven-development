@@ -296,9 +296,9 @@ Both GrayBeam CDD and the CDD ecosystem tools (Conductor, PAW, etc.) begin with 
 **"How do you know what constraints you need?"**
 
 For a startup or small team, this is the actual bottleneck. Founders and engineers do not know:
-- Which government regulations apply (OJK, POJK, Permendag, Kemenkop).
+- Which government regulations apply (ex. OJK for Indonesian fintech, GDPR for EU data, HIPAA for US healthcare).
 - Which competition rubrics will be used to judge their product.
-- Which industry standards they must comply with.
+- Which industry standards they must comply with (ex. PCI-DSS, SOC 2, ISO 27001).
 - Which architectural invariants they should protect.
 
 Enforcement is not the bottleneck. Workflow is not the bottleneck. **Discovery is the bottleneck.**

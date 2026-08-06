@@ -186,13 +186,13 @@ The LCDD Context Engineering Pipeline is what makes LCDD different from every ot
 Discover ──→ Extract ──→ Normalize ──→ Classify ──→ Review ──→ Version ──→ Enforce ──→ Observe ──→ Improve
     │            │            │             │            │           │           │            │            │
     │ Monitor    │ LLM-parses │ Maps to     │ Assigns    │ Human or  │ Commits   │ CI, IDE,   │ Metrics,   │ Refine,
-    │ OJK PDFs,  │ regulations│ Context     │ authority, │ automated │ immutable │ AI agent,  │ dashboards,│ deprecate,
-    │ Slack,     │ from       │ Schema      │ lifecycle, │ review    │ version   │ gateway    │ alerts     │ or create
-    │ GitHub,    │ 200-page   │             │ severity   │           │           │            │            │
-    │ etc.       │ documents  │             │            │           │           │            │            │
+    │ gov sites, │ regulations│ Context     │ authority, │ automated │ immutable │ AI agent,  │ dashboards,│ deprecate,
+    │ docs,       │ from       │ Schema      │ lifecycle, │ review    │ version   │ gateway    │ alerts     │ or create
+    │ Slack,      │ 200-page   │             │ severity   │           │           │            │            │
+    │ GitHub...   │ documents  │             │            │           │           │            │            │
 ```
 
-**Example:** A new OJK regulation is published → Discover detects it → Extract parses it with an LLM → Normalize maps it to the Context Schema → Classify assigns it level 4 (Mandate) → Review routes it to the compliance team → Version commits it as Draft → Approve → Active → Block enforcement in CI. See the full [Context Builder](specification/0006-context-builder.md).
+**Example:** A new regulation is published (ex. GDPR update, PCI-DSS revision) → Discover detects it → Extract parses it with an LLM → Normalize maps it to the Context Schema → Classify assigns it level 4 (Mandate) → Review routes it to the compliance team → Version commits it as Draft → Approve → Active → Block enforcement in CI. See the full [Context Builder](specification/0006-context-builder.md).
 
 ---
 
@@ -202,7 +202,7 @@ Directly inspired by AI Harness (Bunardzic, 2025), LCDD classifies every Context
 
 | Classification | Authority | Change Speed | AI Can Modify? | Default Enforcement | Example |
 |---|---|---|---|---|---|
-| **Hardened-Mandate** | 4 (Mandate) | Very slow | ❌ Never | Block | OJK regulation, PCI-DSS |
+| **Hardened-Mandate** | 4 (Mandate) | Very slow | ❌ Never | Block | Regulatory requirement (ex. GDPR, PCI-DSS, HIPAA) |
 | **Hardened-Standard** | 3 (Standard) | Slow | ❌ Never | Block | CISO security policy |
 | **Hardened-Local** | 2 (Guideline) | Moderate | ❌ (can suggest) | Warn | Team architecture decision |
 | **Local-Standard** | 2 (Guideline) | Moderate | ✅ With review | Warn | Recommended libraries |
