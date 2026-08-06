@@ -19,8 +19,7 @@ import Base from '../layouts/Base.astro';
   </nav>
 
   <section class="hero">
-    <div class="hero-bg"></div>
-    <div class="wrap" style="position:relative;">
+    <div class="content">
       <div style="margin-bottom:12px;">
         <span class="badge badge-fill">Spec v0.2.1</span>
         <span class="badge badge-stroke" style="margin-left:6px;">Impl v0.2.1</span>
@@ -42,18 +41,20 @@ import Base from '../layouts/Base.astro';
   <!-- WHAT -->
   <section class="section">
     <div class="wrap">
-      <p class="label">The Problem</p>
-      <h2 class="h2">AI writes code faster than humans can govern it.</h2>
-      <p class="sub">
-        When an AI agent faces a failing test, it sometimes rewrites the assertion instead of fixing
-        the code. When a new regulation is published, nobody notices for months. When an architectural
-        decision is made in a Slack thread, it's forgotten by everyone except the person who wrote it.
-        <br /><br />
-        LCDD makes every rule, constraint, and piece of governance knowledge a first-class artifact
-        &mdash; versioned, structured, machine-readable, and enforceable.
-      </p>
+      <div class="reveal">
+        <p class="label">The Problem</p>
+        <h2 class="h2">AI writes code faster than humans can govern it.</h2>
+        <p class="sub">
+          When an AI agent faces a failing test, it sometimes rewrites the assertion instead of fixing
+          the code. When a new regulation is published, nobody notices for months. When an architectural
+          decision is made in a Slack thread, it's forgotten by everyone except the person who wrote it.
+          <br /><br />
+          LCDD makes every rule, constraint, and piece of governance knowledge a first-class artifact
+          &mdash; versioned, structured, machine-readable, and enforceable.
+        </p>
+      </div>
 
-      <div class="triple" style="margin-top:56px;">
+      <div class="triple reveal" style="margin-top:56px;">
         <div class="feature">
           <h4>Discovery Pipeline</h4>
           <p>Nine stages from source detection to continuous improvement. Ingest regulations from PDFs, standards from wikis, decisions from Slack.</p>
@@ -73,7 +74,7 @@ import Base from '../layouts/Base.astro';
   <!-- CONTEXT -->
   <section id="context" class="section alt">
     <div class="wrap">
-      <div class="split">
+      <div class="split reveal">
         <div>
           <p class="label">The Context</p>
           <h2 class="h2">Every rule becomes a structured artifact.</h2>
@@ -123,14 +124,16 @@ enforcement:
   <!-- LIFECYCLE -->
   <section class="section">
     <div class="wrap">
-      <p class="label">Lifecycle</p>
-      <h2 class="h2">Every rule has a journey.</h2>
-      <p class="sub">
-        Constraints don't jump from &ldquo;someone mentioned this&rdquo; to &ldquo;this blocks production.&rdquo;
-        Each stage has defined enforcement, review, and observability.
-      </p>
+      <div class="reveal">
+        <p class="label">Lifecycle</p>
+        <h2 class="h2">Every rule has a journey.</h2>
+        <p class="sub">
+          Constraints don't jump from &ldquo;someone mentioned this&rdquo; to &ldquo;this blocks production.&rdquo;
+          Each stage has defined enforcement, review, and observability.
+        </p>
+      </div>
 
-      <div class="lifecycle-row">
+      <div class="lifecycle-row reveal">
         {[
           ['Draft', 'Discovered. Visible but never enforced.', 'var(--s4)'],
           ['Candidate', 'Under review. Comment-only.', 'var(--s5)'],
@@ -139,7 +142,7 @@ enforcement:
           ['Deprecated', 'No longer applies. Warn with notice.', 'var(--s5)'],
           ['Archived', 'Retained for audit. Immutable.', 'var(--s4)'],
         ].map(([name, desc, color], i) => (
-          <div class="lc-stage">
+          <div class="lc-stage" style={`animation-delay:${i * 80}ms`}>
             <div class="lc-num" style={`background:${color};color:var(--b);`}>{i + 1}</div>
             <div class="lc-name">{name}</div>
             <div class="lc-desc">{desc}</div>
@@ -152,68 +155,73 @@ enforcement:
   <!-- GOVERNANCE -->
   <section id="governance" class="section alt">
     <div class="wrap">
-      <p class="label">Governance</p>
-      <h2 class="h2">Not all rules are equal.</h2>
-      <p class="sub">
-        Governance scales with impact. Hardened contexts require explicit human approval.
-        Local contexts can evolve through AI suggestion and fitness-based optimization.
-      </p>
+      <div class="reveal">
+        <p class="label">Governance</p>
+        <h2 class="h2">Not all rules are equal.</h2>
+        <p class="sub">
+          Governance scales with impact. Hardened contexts require explicit human approval.
+          Local contexts can evolve through AI suggestion and fitness-based optimization.
+        </p>
 
-      <table>
-        <thead>
-          <tr><th>Classification</th><th>Authority</th><th>AI Can Modify?</th><th>Enforcement</th></tr>
-        </thead>
-        <tbody>
-          <tr><td style="color:var(--w);font-weight:500;">Hardened-Mandate</td><td>4</td><td><span class="no">Never</span></td><td><span style="color:var(--g);">Block</span></td></tr>
-          <tr><td style="color:var(--w);font-weight:500;">Hardened-Standard</td><td>3</td><td><span class="no">Never</span></td><td><span style="color:var(--g);">Block</span></td></tr>
-          <tr><td style="color:var(--w);font-weight:500;">Hardened-Local</td><td>2</td><td><span style="color:var(--s5);">Suggest only</span></td><td>Warn</td></tr>
-          <tr><td style="color:var(--w);font-weight:500;">Local-Standard</td><td>2</td><td><span style="color:var(--s6);">With review</span></td><td>Warn</td></tr>
-          <tr><td style="color:var(--w);font-weight:500;">Local-Guideline</td><td>1</td><td><span class="yes">Auto-merge</span></td><td>Comment</td></tr>
-          <tr><td style="color:var(--w);font-weight:500;">Local-Experimental</td><td>0</td><td><span class="yes">Primary source</span></td><td>Silent</td></tr>
-        </tbody>
-      </table>
+        <table>
+          <thead>
+            <tr><th>Classification</th><th>Authority</th><th>AI Can Modify?</th><th>Enforcement</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="color:var(--w);font-weight:500;">Hardened-Mandate</td><td>4</td><td><span class="no">Never</span></td><td><span style="color:var(--g);">Block</span></td></tr>
+            <tr><td style="color:var(--w);font-weight:500;">Hardened-Standard</td><td>3</td><td><span class="no">Never</span></td><td><span style="color:var(--g);">Block</span></td></tr>
+            <tr><td style="color:var(--w);font-weight:500;">Hardened-Local</td><td>2</td><td><span style="color:var(--s5);">Suggest only</span></td><td>Warn</td></tr>
+            <tr><td style="color:var(--w);font-weight:500;">Local-Standard</td><td>2</td><td><span style="color:var(--s6);">With review</span></td><td>Warn</td></tr>
+            <tr><td style="color:var(--w);font-weight:500;">Local-Guideline</td><td>1</td><td><span class="yes">Auto-merge</span></td><td>Comment</td></tr>
+            <tr><td style="color:var(--w);font-weight:500;">Local-Experimental</td><td>0</td><td><span class="yes">Primary source</span></td><td>Silent</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
   <!-- COMPARISON -->
   <section class="section">
     <div class="wrap">
-      <p class="label">Comparison</p>
-      <h2 class="h2">What LCDD does that nothing else does.</h2>
-      <p class="sub">
-        LCDD is not a replacement for TDD, DDD, or existing tools. It fills a governance gap
-        none of them address &mdash; discovering, managing, and enforcing constraints from any source.
-      </p>
+      <div class="reveal">
+        <p class="label">Comparison</p>
+        <h2 class="h2">What LCDD does that nothing else does.</h2>
+        <p class="sub">
+          LCDD is not a replacement for TDD, DDD, or existing tools. It fills a governance gap
+          none of them address &mdash; discovering, managing, and enforcing constraints from any source.
+        </p>
 
-      <table>
-        <thead>
-          <tr><th></th><th>TDD</th><th>DDD</th><th>CDD Tools</th><th>AI Harness</th><th style="color:var(--g);">LCDD</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Governs</td><td>Code behavior</td><td>Domain model</td><td>AI workflow</td><td>Integrity</td><td style="color:var(--gb);font-weight:500;">All sources</td></tr>
-          <tr><td>Discovery</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="yes">Pipeline</td></tr>
-          <tr><td>Lifecycle</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td>Binary</td><td class="yes">6-stage</td></tr>
-          <tr><td>AI-Aware</td><td class="no">No</td><td class="no">No</td><td>Workflow</td><td class="yes">Yes</td><td class="yes">Built-in</td></tr>
-          <tr><td>Drift Prevention</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
-          <tr><td>Observability</td><td>Tests</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="yes">Full</td></tr>
-          <tr><td>Context Packs</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td></tr>
-        </tbody>
-      </table>
+        <table>
+          <thead>
+            <tr><th></th><th>TDD</th><th>DDD</th><th>CDD Tools</th><th>AI Harness</th><th style="color:var(--g);">LCDD</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Governs</td><td>Code behavior</td><td>Domain model</td><td>AI workflow</td><td>Integrity</td><td style="color:var(--gb);font-weight:500;">All sources</td></tr>
+            <tr><td>Discovery</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="yes">Pipeline</td></tr>
+            <tr><td>Lifecycle</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td>Binary</td><td class="yes">6-stage</td></tr>
+            <tr><td>AI-Aware</td><td class="no">No</td><td class="no">No</td><td>Workflow</td><td class="yes">Yes</td><td class="yes">Built-in</td></tr>
+            <tr><td>Drift Prevention</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td><td class="yes">Yes</td></tr>
+            <tr><td>Observability</td><td>Tests</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="yes">Full</td></tr>
+            <tr><td>Context Packs</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="no">No</td><td class="yes">Yes</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </section>
 
   <!-- DISCOVERY PIPELINE -->
   <section class="section alt">
     <div class="wrap">
-      <p class="label">Discovery Pipeline</p>
-      <h2 class="h2">From unknown to enforced.</h2>
-      <p class="sub">
-        The core novelty of LCDD &mdash; a nine-stage pipeline that discovers constraints
-        from any source, not just known ones. A new OJK regulation published today can block
-        non-compliant code within days, not months.
-      </p>
+      <div class="reveal">
+        <p class="label">Discovery Pipeline</p>
+        <h2 class="h2">From unknown to enforced.</h2>
+        <p class="sub">
+          The core novelty of LCDD &mdash; a nine-stage pipeline that discovers constraints
+          from any source, not just known ones.
+        </p>
+      </div>
 
-      <div class="pipeline-grid">
+      <div class="pipeline-grid reveal">
         {[
           ['01', 'Discover', 'Monitor OJK PDFs, Slack, GitHub, websites.'],
           ['02', 'Extract', 'LLM parses 200-page documents into candidates.'],
@@ -221,7 +229,7 @@ enforcement:
           ['04', 'Classify', 'Assign authority, lifecycle, severity, scope.'],
           ['05', 'Review', 'Human or automated review by classification.'],
           ['06', 'Version', 'Commit immutable version. Audit trail.'],
-          ['07', 'Enforce', 'CI, IDE, gateway, AI agent &mdash; pluggable.'],
+          ['07', 'Enforce', 'CI, IDE, gateway, AI agent — pluggable.'],
           ['08', 'Observe', 'Violations, trends, AI vs human ratio.'],
           ['09', 'Improve', 'Refine, deprecate. Close the feedback loop.'],
         ].map(([num, name, desc]) => (
@@ -238,10 +246,12 @@ enforcement:
   <!-- GET STARTED -->
   <section id="start" class="section">
     <div class="wrap">
-      <p class="label">Get Started</p>
-      <h2 class="h2">Install. Create. Validate.</h2>
+      <div class="reveal">
+        <p class="label">Get Started</p>
+        <h2 class="h2">Install. Create. Validate.</h2>
+      </div>
 
-      <div class="split" style="margin-top:40px;">
+      <div class="split reveal" style="margin-top:40px;">
         <div>
           <p style="font-size:15px;font-weight:500;color:var(--w);margin-bottom:12px;">Install the CLI</p>
           <div class="yarn">npm install -g @lcdd/cli</div>
@@ -268,14 +278,14 @@ enforcement:
   <section class="section alt">
     <div class="wrap">
       <p class="label">Ecosystem</p>
-      <div class="quad" style="margin-top:32px;">
+      <div class="quad reveal" style="margin-top:32px;">
         <div class="feature">
           <h4>@lcdd/core</h4>
-          <p>SDK &mdash; Context model, schema, registry, CQL parser, verifier.</p>
+          <p>SDK — Context model, schema, registry, CQL parser, verifier.</p>
         </div>
         <div class="feature">
           <h4>@lcdd/cli</h4>
-          <p>CLI &mdash; init, context, validate, query, transition.</p>
+          <p>CLI — init, context, validate, query, transition.</p>
         </div>
         <div class="feature">
           <h4>Specification</h4>
@@ -283,7 +293,7 @@ enforcement:
         </div>
         <div class="feature">
           <h4>Context Packs</h4>
-          <p>5 domains &mdash; Startup, Fintech, Healthcare, E-commerce, Hackathon.</p>
+          <p>5 domains — Startup, Fintech, Healthcare, E-commerce, Hackathon.</p>
         </div>
       </div>
     </div>
@@ -306,3 +316,35 @@ enforcement:
     </div>
   </footer>
 </Base>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Pulse animation for lifecycle stages on section enter
+  const lcObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.lc-stage').forEach((el, i) => {
+          (el as HTMLElement).style.animation = `lcPulse 0.5s ${i * 80}ms ease-out both`;
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.lifecycle-row').forEach(el => lcObserver.observe(el));
+</script>
+
+<style>
+  @keyframes lcPulse {
+    0% { opacity: 0; transform: translateY(12px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+</style>
