@@ -1,5 +1,5 @@
 {
-  "name": "@lcdd/core",
+  "name": "@Lelianto/lcdd-core",
   "version": "0.2.1",
   "description": "LCDD Core SDK — Context model, schema validation, Registry client, CQL parser, verifier",
   "type": "module",
@@ -7,7 +7,6 @@
   "types": "dist/index.d.ts",
   "files": [
     "dist",
-    "src",
     "README.md"
   ],
   "scripts": {
@@ -49,6 +48,7 @@
     "node": ">=18.0.0"
   },
   "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
     "access": "public"
   },
   "license": "Apache-2.0"
