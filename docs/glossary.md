@@ -38,6 +38,18 @@ Each stage has defined entry criteria, exit criteria, enforcement behavior, and 
 
 A declaration of who (or what) asserts a Context and why it should be trusted. Authority is not binary but graduated: a PCI-DSS requirement carries different authority than a team member's personal preference. Authority includes: source identity, trust level, and delegation chain.
 
+### Context Decay
+
+The natural tendency of software knowledge to become obsolete over time. READMEs go unread. Architecture decisions become folklore. Regulations change without notice. Team conventions evolve without documentation. Context decay is not a bug — it is the default state. LCDD treats this decay as something to be actively measured and reversed, not passively accepted.
+
+### Context Debt
+
+The accumulated cost of outdated, missing, or incorrect project knowledge. Just as Technical Debt represents the cost of degraded code quality, Context Debt represents the cost of degraded context quality. High Context Debt leads to: wrong AI agent output, compliance violations, architectural drift, and engineering decisions based on obsolete assumptions. Context Debt can be quantified via a **Context Debt Score** or **Living Context Health** metric.
+
+### Context Debt Score
+
+A numerical metric (0–100) representing the health of a project's knowledge base. Computed from factors including: stale context count, contexts past review deadline, contexts with missing owners, conflicting active rules, deprecated but not archived contexts, and contexts with zero recent violations (possibly obsolete). A higher score indicates healthier, more reliable context. The inverse is Context Debt — a lower score means more accumulated decay.
+
 ### Context Source
 
 The origin of a Context before normalization — a government PDF, a team Markdown file, a Slack thread, an AI-generated suggestion, a production incident postmortem, etc. Every Context preserves a reference to its original source for provenance.

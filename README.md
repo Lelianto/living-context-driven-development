@@ -1,11 +1,11 @@
 <div align="center">
     <img src="media/logo.png" alt="LCDD Logo" width="180" height="180"/>
     <h1>Living Context Driven Development</h1>
-    <h3><em>Discover. Govern. Enforce. Observe.</em></h3>
+    <h3><em>Living Context is the continuously evolving representation of project knowledge.</em></h3>
 </div>
 
 <p align="center">
-    <strong>An open specification and methodology for discovering, managing, and enforcing<br>the constraints that govern AI-assisted software development.</strong>
+    <strong>Documentation dies. Specifications drift. Knowledge changes. Yet AI keeps coding as if nothing happened.<br>LCDD treats context as a living artifact — versioned, governed, enforced, and evolved.</strong>
 </p>
 
 <p align="center">
@@ -42,47 +42,53 @@
 
 ## ■ What is Living Context Driven Development?
 
-Living Context Driven Development (LCDD) is a **methodology and open specification** for governing software behavior in the age of AI-assisted development. It answers three questions that no existing methodology fully addresses:
+**Software knowledge decays.** Your README goes stale. Your architecture decisions become obsolete. Your compliance requirements change. Your team's conventions evolve. But your code — and the AI agents generating it — still operate on assumptions from six months ago.
+
+This is **Context Debt**. Just as technical debt accumulates when code quality degrades, context debt accumulates when the knowledge that governs your software becomes outdated. The result: wrong AI output, wrong architecture, wrong business rules.
+
+LCDD treats context not as static documentation, but as a **living artifact** with a lifecycle. Every constraint, rule, policy, and piece of governance knowledge is versioned, actively enforced, continuously observed, and deliberately evolved.
 
 | Question | LCDD's Answer |
 |---|---|
-| **How do I discover** what rules my software should follow? | The **Context Engineering Pipeline** — nine stages from source detection to continuous improvement, ingesting regulations, standards, team decisions, incident postmortems, and AI suggestions from any format. |
+| **What happens when context decays?** | Context Debt — outdated knowledge leads to wrong decisions. LCDD measures and reduces it. |
 | **How do I manage** constraints as they evolve? | The **Context Lifecycle** — six explicit stages (Draft → Candidate → Approved → Active → Deprecated → Archived), each with defined enforcement behavior, review requirements, and observability expectations. |
-| **How do I ensure** AI agents respect constraints? | **Specification Drift Prevention** — AI agents cannot modify Hardened contexts. Every violation is attributed to human or AI actor. Violation patterns trigger governance review. |
+| **How do I ensure** AI agents respect constraints? | **Specification Drift Prevention** — AI agents cannot modify Hardened contexts. Every violation is attributed to human or AI actor. |
 
-> **Analogy:** If TDD governs *how* you test, and DDD governs *how* you model, then LCDD governs *what rules* constrain everything you build — and ensures those rules are discovered, not assumed.
+> **Analogy:** Technical debt is to code what context debt is to knowledge. LCDD is the toolchain for keeping your context alive — continuously discovered, governed, enforced, and evolved.
 
 ---
 
 ## ▶ The Problem
 
-AI-assisted development has made code generation fast. But it has introduced **three new failure modes** that existing methodologies were not designed to address:
+Software development in the age of AI has three failure modes that existing methodologies were not designed to address:
 
-### 1. Specification Drift
+### 1. Context Decay
+
+Documentation rots. READMEs go unread. Architecture decisions become folklore. Regulations change without notice. The knowledge that should govern your software is **continuously decaying** — and nobody is tracking it. This is **Context Debt**: just as technical debt accumulates when code degrades, context debt accumulates when knowledge becomes outdated.
+
+### 2. Specification Drift
 
 When an AI agent faces a failing test, it sometimes **fixes the test instead of the code** — rewriting what "correct" means rather than fixing what's broken. The agent optimizes for "all tests pass" by modifying the specification itself.
 
-### 2. Discovery Deficit
-
-A startup founder doesn't know which government regulations apply to their fintech product. A team's architectural decisions live in a 6-month-old Slack thread remembered by one person. A security requirement in a PDF is never checked against actual code. **The rules are scattered, invisible, and unenforced.**
-
 ### 3. Governance Asymmetry
 
-A PCI-DSS requirement and a preference for tabs over spaces are both "rules" — but they go through the same PR process. Critical constraints don't get the scrutiny they deserve, and trivial preferences get more process than they need.
+A regulatory requirement (ex. GDPR, PCI-DSS) and a preference for tabs over spaces are both "rules" — but they go through the same PR process. Critical constraints don't get the scrutiny they deserve, and trivial preferences get more process than they need.
 
 ```
-             Discovery Deficit              Specification Drift
-             ────────────────              ───────────────────
-    "I don't know what rules        "The AI changed the test to match
-     I should be following."         the broken code I wrote."
+           Context Decay                Specification Drift
+           ─────────────               ───────────────────
+  "My README says PostgreSQL 14,     "The AI changed the test to match
+   but we migrated to 16 last year.   the broken code I wrote."
+   Nobody updated it."
 
-                    └────────┬───────┘
-                             │
-                    ┌────────▼───────┐
-                    │     LCDD       │
-                    │  closes both   │
-                    │     gaps       │
-                    └────────────────┘
+                  └────────┬───────┘
+                           │
+                  ┌────────▼───────┐
+                  │     LCDD       │
+                  │  treats context│
+                  │  as a living   │
+                  │  artifact      │
+                  └────────────────┘
 ```
 
 ---
@@ -93,9 +99,9 @@ A PCI-DSS requirement and a preference for tabs over spaces are both "rules" —
 
 | Value | What It Means |
 |---|---|
-| **Context Discovery** over Constraint Enforcement | Finding what rules to follow matters more than perfectly enforcing rules you already know. |
-| **Living Evolution** over Static Specification | Contexts that evolve with the system. Tested daily, not read once and forgotten. |
+| **Living Evolution** over Static Specification | Contexts decay. They must be continuously observed and deliberately evolved. Tested daily, not written once and forgotten. |
 | **Explicit Governance** over Implicit Trust | Every context answers: who says this is a rule, why, and who can change it? |
+| **Context Discovery** over Constraint Enforcement | Finding what rules to follow matters more than perfectly enforcing rules you already know. |
 | **Machine-Readable Context** over Human-Only Documentation | If an AI agent cannot consume it, it will be ignored at scale. |
 
 ### The Twelve Principles

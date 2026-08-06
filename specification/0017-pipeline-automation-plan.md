@@ -406,7 +406,49 @@ Auto-approved contexts still enter the Registry as Candidate → Approved → Ac
 
 ### What It Does
 
-Uses observability data from Stage 08 to generate actionable recommendations: refine, deprecate, or create contexts.
+Uses observability data from Stage 08 to generate actionable recommendations: refine, deprecate, or create contexts. Also powers the **Context Debt Score** — a numerical metric of project knowledge health.
+
+### Context Debt Score
+
+```
+Living Context Health: 92%
+├── Stale Contexts:        14  (past review deadline)
+├── Missing Owners:         3  (no accountable owner)
+├── Conflicting Rules:      2  (equal-authority conflicts)
+├── Deprecated (not archived): 18
+├── Review Needed:          6  (Candidate stage > 30 days)
+└── Orphaned:               5  (owner left org, no reassignment)
+```
+
+The score is computed as:
+
+```
+Score = 100 - (stale_weight * stale_count + missing_weight * missing_count + ...) / total_contexts
+```
+
+A score below 70 triggers a review recommendation. A score below 50 triggers an alert.
+
+### `lcd audit` Command (v0.5.0)
+
+```bash
+$ lcd audit
+
+Living Context Health: 82%
+  89 contexts total
+
+  Stale (past review deadline):    14
+  Missing owner:                     3
+  Conflicting rules:                 2
+  Deprecated, not yet archived:     18
+  Draft > 90 days:                   6
+  Orphaned contexts:                 5
+
+  Recommendations:
+  • ctx-payment-rule: review overdue by 180 days
+  • ctx-old-api: deprecated in 2024, archive now
+  • ctx-v1-auth conflicts with ctx-v2-auth (equal authority)
+  • ctx-temp-experiment: in Draft for 120 days, archive or promote
+```
 
 ### Technical Design
 

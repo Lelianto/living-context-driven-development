@@ -12,7 +12,13 @@ First principles are the foundational propositions that cannot be deduced from a
 
 ---
 
-## The Five Axioms
+## The Six Axioms
+
+### Axiom 0: Context continuously decays. Left unmanaged, all software knowledge becomes obsolete.
+
+Every README goes unread. Every architecture decision becomes folklore. Every regulation changes without notice. Every team convention evolves without documentation. This decay is not a bug — it is the natural state of project knowledge. The question is not whether context decays, but whether you have a system to detect and reverse that decay.
+
+**Corollary:** Measuring and reducing Context Debt is as fundamental as measuring and reducing Technical Debt.
 
 ### Axiom 1: All software is governed by constraints, whether acknowledged or not.
 
@@ -48,17 +54,19 @@ A constraint that is observed but not enforced is a suggestion. A constraint tha
 
 ## Derived Principles
 
-From these five axioms, we derive the operational principles that guide specification design:
+From these six axioms, we derive the operational principles that guide specification design:
 
 | Principle | Derived From |
 |---|---|
 | Contexts must be versioned immutably | Axiom 1 (visible constraints require traceable history) |
-| Contexts must have explicit lifecycle stage | Axiom 2 (governance requires knowing what's active) |
+| Contexts must have explicit lifecycle stage | Axiom 0 (context decays — lifecycle tracks freshness) |
+| Contexts must be periodically reviewed for staleness | Axiom 0 (context decay requires active maintenance) |
 | Authority model must support graduated trust levels | Axiom 3 (spectrum of authority) |
 | Schema must be source-agnostic | Axiom 4 (heterogeneous sources) |
 | Every Active context must link to both enforcement and observability | Axiom 5 (living constraint) |
 | Conflict between contexts must be surfaced, not resolved silently | Axiom 3 (equal authority can conflict) |
 | Contexts are queryable by authority, source, domain, and lifecycle stage | Axiom 2 (governance requires retrieval) |
+| Context Debt Score measures the health of project knowledge | Axiom 0 (decay must be measurable) |
 
 ---
 
