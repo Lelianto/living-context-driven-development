@@ -1,17 +1,18 @@
-import Ajv, { type ValidateFunction } from 'ajv';
-import { readFileSync } from 'fs';
-import { join } from 'path';
+import { Ajv } from 'ajv';
+import type { ValidateFunction } from 'ajv';
 import type { Context } from './types.js';
+import schema from './context-schema.json' with { type: 'json' };
 
 const ajv = new Ajv({ allErrors: true, strict: false });
 
-let _validate: ValidateFunction | null = null;
+let _validate: ValidateFunction | undefined;
 
 function loadValidator(): ValidateFunction {
   if (_validate) return _validate;
-  const schemaPath = join(__dirname, '..', '..', '..', '..', 'reference', 'schema', 'context-schema.json');
-  const schema = JSON.parse(readFileSync(schemaPath, 'utf-8'));
-  _validate = ajv.compile(schema);
+  const localSchema = { ...schema };
+  delete (localSchema as Record<string, unknown>).$schema;
+  delete (localSchema as Record<string, unknown>).$id;
+  _validate = ajv.compile(localSchema);
   return _validate;
 }
 

@@ -68,13 +68,22 @@ export class ContextVerifier {
     const shouldMatch = config.should_match as boolean | undefined;
     const shouldNotMatch = config.should_not_match as boolean | undefined;
 
-    for (const pattern of patterns) {
+    for (const rawPattern of patterns) {
       try {
-        const regex = new RegExp(pattern, 'gm');
+        let flags = 'gm';
+        let pattern = rawPattern;
+
+        const inlineFlags = rawPattern.match(/^\(\?([gimsuy]+)\)/);
+        if (inlineFlags) {
+          flags = inlineFlags[1];
+          pattern = rawPattern.slice(inlineFlags[0].length);
+        }
+
+        const regex = new RegExp(pattern, flags);
         const match = regex.test(artifactContent);
 
         if (shouldNotMatch && match) {
-          const msg = spec.violation_message_template || `Forbidden pattern matched: ${pattern}`;
+          const msg = spec.violation_message_template || `Forbidden pattern matched: ${rawPattern}`;
           return {
             context_id: '',
             artifact_path: artifactPath,
@@ -85,7 +94,7 @@ export class ContextVerifier {
         }
 
         if (shouldMatch && !match) {
-          const msg = spec.violation_message_template || `Required pattern not found: ${pattern}`;
+          const msg = spec.violation_message_template || `Required pattern not found: ${rawPattern}`;
           return {
             context_id: '',
             artifact_path: artifactPath,
@@ -99,7 +108,7 @@ export class ContextVerifier {
           context_id: '',
           artifact_path: artifactPath,
           status: 'error',
-          violations: [{ description: `Invalid regex pattern: ${pattern}` }],
+          violations: [{ description: `Invalid regex pattern: ${rawPattern}` }],
           confidence: 0,
         };
       }
@@ -242,10 +251,12 @@ export class ContextVerifier {
   private matchGlob(str: string, pattern: string): boolean {
     const regex = pattern
       .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-      .replace(/\*\*/g, '<<GLOBSTAR>>')
+      .replace(/\?/g, '.')
+      .replace(/\*\*\//g, '\x00SLASH\x00')
+      .replace(/\*\*/g, '\x00STAR\x00')
       .replace(/\*/g, '[^/]*')
-      .replace(/<<GLOBSTAR>>/g, '.*')
-      .replace(/\?/g, '.');
+      .replace(/\x00SLASH\x00/g, '(.*\\/)?')
+      .replace(/\x00STAR\x00/g, '.*');
     return new RegExp(`^${regex}$`).test(str);
   }
 }

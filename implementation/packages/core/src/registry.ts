@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, statSync } from 'fs';
 import { join, dirname } from 'path';
-import { parse as parseYaml, stringify as stringifyYaml } from 'js-yaml';
+import yaml from 'js-yaml';
 import { v4 as uuid } from 'uuid';
 import type {
   Context,
@@ -56,9 +56,17 @@ export class FileRegistry {
 
   load(id: string): Context | null {
     const filePath = this.getFilePath(id);
-    if (!existsSync(filePath)) return null;
-    const content = readFileSync(filePath, 'utf-8');
-    return parseYaml(content) as Context;
+    if (existsSync(filePath)) {
+      return yaml.load(readFileSync(filePath, 'utf-8')) as Context;
+    }
+    const allFiles = this.listFiles(this.contextsDir);
+    for (const file of allFiles) {
+      try {
+        const ctx = yaml.load(readFileSync(file, 'utf-8')) as Context;
+        if (ctx.id === id) return ctx;
+      } catch { /* skip */ }
+    }
+    return null;
   }
 
   save(context: Context): void {
@@ -88,7 +96,7 @@ export class FileRegistry {
 
     const dir = dirname(filePath);
     mkdirSync(dir, { recursive: true });
-    writeFileSync(filePath, stringifyYaml(context, { lineWidth: 120 }));
+    writeFileSync(filePath, yaml.dump(context, { lineWidth: 120 }));
   }
 
   create(
@@ -126,7 +134,7 @@ export class FileRegistry {
     let contexts = allFiles
       .map(f => {
         try {
-          return parseYaml(readFileSync(f, 'utf-8')) as Context;
+          return yaml.load(readFileSync(f, 'utf-8')) as Context;
         } catch {
           return null;
         }
@@ -137,7 +145,7 @@ export class FileRegistry {
       contexts = contexts.filter(c => {
         for (const [key, value] of Object.entries(filter)) {
           if (value === undefined) continue;
-          const ctxVal = (c as Record<string, unknown>)[key];
+          const ctxVal = (c as unknown as Record<string, unknown>)[key];
           if (ctxVal !== value) return false;
         }
         return true;
@@ -157,10 +165,12 @@ export class FileRegistry {
     if (q.order_by && q.order_by.length > 0) {
       const order = q.order_by[0];
       contexts.sort((a, b) => {
-        const av = this.getFieldValue(a, order.field);
-        const bv = this.getFieldValue(b, order.field);
-        if (av < bv) return order.desc ? 1 : -1;
-        if (av > bv) return order.desc ? -1 : 1;
+        const av = this.getFieldValue(a as unknown as Record<string, unknown>, order.field);
+        const bv = this.getFieldValue(b as unknown as Record<string, unknown>, order.field);
+        const an = Number(av);
+        const bn = Number(bv);
+        if (an < bn) return order.desc ? 1 : -1;
+        if (an > bn) return order.desc ? -1 : 1;
         return 0;
       });
     }
@@ -239,10 +249,12 @@ export class FileRegistry {
   private matchGlob(str: string, pattern: string): boolean {
     const regex = pattern
       .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-      .replace(/\*\*/g, '<<GLOBSTAR>>')
+      .replace(/\?/g, '.')
+      .replace(/\*\*\//g, '\x00SLASH\x00')
+      .replace(/\*\*/g, '\x00STAR\x00')
       .replace(/\*/g, '[^/]*')
-      .replace(/<<GLOBSTAR>>/g, '.*')
-      .replace(/\?/g, '.');
+      .replace(/\x00SLASH\x00/g, '(.*\\/)?')
+      .replace(/\x00STAR\x00/g, '.*');
     return new RegExp(`^${regex}$`).test(str);
   }
 

@@ -34,7 +34,7 @@ export class LifecycleManager {
     if (!rule) return false;
 
     if (rule.requires_approval) {
-      if (context.governance.approval_required && !context.review_status) return false;
+      if (context.governance.approval_required && context.lifecycle === 'candidate' && !context.review_status) return false;
     }
 
     return true;
@@ -64,6 +64,7 @@ export class LifecycleManager {
       lifecycle: to,
       version: context.version + 1,
       updated_at: event.timestamp,
+      review_status: to === 'candidate' ? 'pending' : to === 'approved' ? 'approved' : context.review_status,
     };
 
     if (to === 'active') {

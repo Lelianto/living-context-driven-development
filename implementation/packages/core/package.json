@@ -1,16 +1,37 @@
 {
   "name": "@lcdd/core",
   "version": "0.2.0",
-  "description": "LCDD Core SDK — Context model, schema validation, Registry client, CQL parser",
+  "description": "LCDD Core SDK — Context model, schema validation, Registry client, CQL parser, verifier",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint src/",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "prepublishOnly": "npm run build"
   },
+  "keywords": [
+    "lcdd",
+    "living-context",
+    "context-driven-development",
+    "constraint-governance",
+    "specification",
+    "ai-governance",
+    "software-governance"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Lelianto/living-context-driven-development"
+  },
+  "homepage": "https://github.com/Lelianto/living-context-driven-development#readme",
   "dependencies": {
     "ajv": "^8.17.1",
     "js-yaml": "^4.1.0",
@@ -26,6 +47,9 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "license": "Apache-2.0"
 }
