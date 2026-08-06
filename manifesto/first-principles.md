@@ -18,6 +18,11 @@ First principles are the foundational propositions that cannot be deduced from a
 
 Every README goes unread. Every architecture decision becomes folklore. Every regulation changes without notice. Every team convention evolves without documentation. This decay is not a bug — it is the natural state of project knowledge. The question is not whether context decays, but whether you have a system to detect and reverse that decay.
 
+> ### Context Decay Law
+> **The reliability of project context decreases as software evolves, unless context is continuously governed.**
+>
+> Like Conway's Law observes organizational structure in systems, the Context Decay Law observes knowledge entropy in software. Context does not stay fresh by accident. It stays fresh by design — through lifecycle, governance, enforcement, and observability.
+
 **Corollary:** Measuring and reducing Context Debt is as fundamental as measuring and reducing Technical Debt.
 
 ### Axiom 1: All software is governed by constraints, whether acknowledged or not.

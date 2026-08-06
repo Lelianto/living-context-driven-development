@@ -1,7 +1,7 @@
 <div align="center">
     <img src="media/logo.png" alt="LCDD Logo" width="180" height="180"/>
     <h1>Living Context Driven Development</h1>
-    <h3><em>Living Context is the continuously evolving representation of project knowledge.</em></h3>
+    <h3><em>Code evolves. Knowledge decays. AI never notices. Until now.</em></h3>
 </div>
 
 <p align="center">
@@ -42,52 +42,49 @@
 
 ## ■ What is Living Context Driven Development?
 
-**Software knowledge decays.** Your README goes stale. Your architecture decisions become obsolete. Your compliance requirements change. Your team's conventions evolve. But your code — and the AI agents generating it — still operate on assumptions from six months ago.
+**The problem is not that AI needs context. The problem is that context decays.**
 
-This is **Context Debt**. Just as technical debt accumulates when code quality degrades, context debt accumulates when the knowledge that governs your software becomes outdated. The result: wrong AI output, wrong architecture, wrong business rules.
+Your README says PostgreSQL 14. You migrated to 16 last year. Your AI agent just generated a migration script for 14. Your architecture decisions are in a Slack thread from March. Your compliance requirements changed in June. Nobody updated anything.
 
-LCDD treats context not as static documentation, but as a **living artifact** with a lifecycle. Every constraint, rule, policy, and piece of governance knowledge is versioned, actively enforced, continuously observed, and deliberately evolved.
+This is **Context Debt** — the accumulated cost of outdated knowledge. Just as Technical Debt degrades code quality, Context Debt degrades decision quality. Every line of code generated against stale context is a liability.
+
+**Context is a first-class artifact.** LCDD treats every rule, constraint, policy, and piece of governance knowledge as a living artifact with structure, versioning, lifecycle, enforcement, and observability. Not static documentation. Not tribal knowledge. Not "someone mentioned this once."
 
 | Question | LCDD's Answer |
 |---|---|
-| **What happens when context decays?** | Context Debt — outdated knowledge leads to wrong decisions. LCDD measures and reduces it. |
-| **How do I manage** constraints as they evolve? | The **Context Lifecycle** — six explicit stages (Draft → Candidate → Approved → Active → Deprecated → Archived), each with defined enforcement behavior, review requirements, and observability expectations. |
-| **How do I ensure** AI agents respect constraints? | **Specification Drift Prevention** — AI agents cannot modify Hardened contexts. Every violation is attributed to human or AI actor. |
-
-> **Analogy:** Technical debt is to code what context debt is to knowledge. LCDD is the toolchain for keeping your context alive — continuously discovered, governed, enforced, and evolved.
+| **What happens when context decays?** | Context Debt. Stale rules. Wrong AI output. LCDD measures it with a **Context Health Score**. |
+| **How do you prevent it?** | The **Context Lifecycle** — six stages from Draft to Archived, each with defined enforcement, review cycles, and observability. |
+| **Can AI agents bypass it?** | No. Hardened contexts are immutable to AI. Specification Drift is detected and blocked. |
 
 ---
 
 ## ▶ The Problem
 
-Software development in the age of AI has three failure modes that existing methodologies were not designed to address:
+**Context decays.** Every README, every architecture decision, every compliance document, every coding standard — all of it becomes outdated the moment it's written. But your AI agents keep operating on it as if nothing changed.
 
-### 1. Context Decay
+This decay has two consequences:
 
-Documentation rots. READMEs go unread. Architecture decisions become folklore. Regulations change without notice. The knowledge that should govern your software is **continuously decaying** — and nobody is tracking it. This is **Context Debt**: just as technical debt accumulates when code degrades, context debt accumulates when knowledge becomes outdated.
+### 1. Context Debt
+
+Your codebase has Technical Debt. Your knowledge base has Context Debt. The Postgres version you document is not the one you run. The regulation you cite was amended last month. The architectural pattern you enforce is the one you decided to replace two sprints ago. **Nobody measures this debt. Nobody pays it down.** Over time, every decision made against stale context becomes a liability.
 
 ### 2. Specification Drift
 
-When an AI agent faces a failing test, it sometimes **fixes the test instead of the code** — rewriting what "correct" means rather than fixing what's broken. The agent optimizes for "all tests pass" by modifying the specification itself.
-
-### 3. Governance Asymmetry
-
-A regulatory requirement (ex. GDPR, PCI-DSS) and a preference for tabs over spaces are both "rules" — but they go through the same PR process. Critical constraints don't get the scrutiny they deserve, and trivial preferences get more process than they need.
+AI agents optimize for "all tests pass." When context is absent or outdated, they fill the gap — rewriting tests, relaxing schemas, removing validation. The specification silently drifts to match the code, not the other way around.
 
 ```
-           Context Decay                Specification Drift
-           ─────────────               ───────────────────
-  "My README says PostgreSQL 14,     "The AI changed the test to match
-   but we migrated to 16 last year.   the broken code I wrote."
-   Nobody updated it."
+        Context Debt                    Specification Drift
+        ────────────                    ───────────────────
+  "We migrated to Postgres 16     "The AI changed the test to match
+   last year. Our README still     the broken code because nobody
+   says 14. And so does our AI."   told it the constraint exists."
 
                   └────────┬───────┘
                            │
                   ┌────────▼───────┐
-                  │     LCDD       │
-                  │  treats context│
-                  │  as a living   │
-                  │  artifact      │
+                  │  LCDD treats   │
+                  │  context as a  │
+                  │  living artifact│
                   └────────────────┘
 ```
 
@@ -189,17 +186,16 @@ Each transition is an auditable event. Contexts can be reactivated if conditions
 The LCDD Context Engineering Pipeline is what makes LCDD different from every other approach — it starts from **unknown constraints**, not known ones:
 
 ```
-          01 Planned      02 Planned      03 Planned      04 Planned      05 Planned      06 ✅ Done       07 ✅ Done       08 ⚡ WIP        09 Planned
-          ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────
-          Discover  ──→  Extract   ──→  Normalize ──→  Classify  ──→  Review   ──→  Version  ──→  Enforce  ──→  Observe  ──→  Improve
-             │               │               │              │              │              │              │              │              │
-             │ Monitor       │ LLM-parses    │ Maps to      │ Assigns      │ Human or     │ Commits      │ CI, IDE,     │ Metrics,     │ Refine,
-             │ gov sites,    │ regulations   │ Context      │ authority,   │ automated    │ immutable    │ AI agent,    │ dashboards,  │ deprecate,
-             │ docs, Slack,  │ from 200-page │ Schema       │ lifecycle,   │ review       │ version      │ gateway      │ alerts       │ or create
-             │ GitHub...     │ documents     │              │ severity     │              │              │              │              │
+          01 Planned      02 Planned      03 Planned      04 Planned      05 ✅ Done       06 ✅ Done       07 ⚡ WIP        08 Planned
+          ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────     ──────────
+          Observe  ──→  Understand ──→  Govern   ──→  Distribute──→  Enforce  ──→  Verify   ──→  Learn    ──→  Improve
+             │               │               │              │              │              │              │              │
+             │ Source        │ Extract +     │ Review +     │ CI, IDE,     │ Validate     │ Metrics,     │ Refine,
+             │ monitoring    │ Normalize     │ Classify     │ AI agent,    │ artifacts    │ dashboards,  │ deprecate,
+             │               │               │              │ gateway      │              │ alerts       │ create
 ```
 
-> **Implementation status:** Stages 01–05 (Discover through Review) and 09 (Improve) require LLM integration and are planned for v1.0+. Stages 06 (Version) and 07 (Enforce) are fully implemented in v0.2.1. Stage 08 (Observe) has basic event logging with full dashboards planned for v0.5.0. See [ROADMAP.md](ROADMAP.md).
+> **Implementation status:** Stages 01–04 (Observe through Distribute) require LLM integration and are planned for v1.0+. Stages 05 (Enforce) and 06 (Verify) are fully implemented in v0.2.1. Stage 07 (Learn) has basic event logging with full dashboards planned for v0.5.0. See [ROADMAP.md](ROADMAP.md).
 
 **Example:** A new regulation is published (ex. GDPR update, PCI-DSS revision) → Discover detects it → Extract parses it with an LLM → Normalize maps it to the Context Schema → Classify assigns it level 4 (Mandate) → Review routes it to the compliance team → Version commits it as Draft → Approve → Active → Block enforcement in CI. See the full [Context Builder](specification/0006-context-builder.md).
 
@@ -219,6 +215,39 @@ Directly inspired by AI Harness (Bunardzic, 2025), LCDD classifies every Context
 | **Local-Experimental** | 0 (Suggestion) | Very fast | ✅ Primary source | Silent | AI-generated suggestions |
 
 Hardened contexts require formal RFC + explicit human approval. Local contexts can evolve through AI suggestion and fitness-based optimization. See the full [Governance Model](specification/0004-governance.md).
+
+---
+
+## ◈ Context Health
+
+Context Debt should be as visible as Technical Debt. `lcd doctor` gives you a health check:
+
+```bash
+$ lcd doctor
+
+Living Context Health: 82%
+  89 contexts total
+
+  Stale (past review deadline):    14
+  Missing owner:                     3
+  Conflicting rules:                 2
+  Deprecated, not yet archived:     18
+  Draft > 90 days:                   6
+
+  Recommendations:
+  • ctx-payment-rule: review overdue by 180 days
+  • ctx-old-api: deprecated in 2024, archive now
+  • ctx-v1-auth conflicts with ctx-v2-auth
+```
+
+| Metric | What It Measures |
+|---|---|
+| **Context Freshness** | % of Active contexts reviewed within their cycle |
+| **Context Coverage** | % of artifacts governed by at least one Active context |
+| **Context Drift** | % of Active contexts with unresolved conflicts |
+| **Context Debt** | Accumulated stale, obsolete, and unowned contexts |
+
+> Context Health is planned for v0.5.0. Today you can already enforce, version, and query contexts with the CLI.
 
 ---
 
@@ -336,18 +365,22 @@ living-context-driven-development/
 
 ## ⇔ Comparison with Related Approaches
 
-| | TDD | DDD | SDD | CDD Tools | GrayBeam CDD | AI Harness | Policy-as-Code | **LCDD** |
-|---|---|---|---|---|---|---|---|---|
-| **Governs** | Code behavior | Domain model | API contracts | AI workflow | Business rules | Arch. integrity | Infra policies | **All sources** |
-| **Discovery** | ❌ | ❌ | ❌ | ❌ | ✅ (code only) | ❌ | ❌ | ✅ Pipeline |
-| **Lifecycle** | ❌ | ❌ | ❌ | ❌ | ❌ | Binary | ❌ | ✅ Full (6-stage) |
-| **AI-Aware** | ❌ | ❌ | ❌ | ✅ (workflow) | ⚠️ Planned | ✅ | ❌ | ✅ Built-in |
-| **Source-Agnostic** | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ |
-| **Observability** | Test results | ❌ | ❌ | ❌ | ❌ | ❌ | Violations | ✅ Full |
-| **Spec Drift Prevention** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ✅ |
-| **Community Sharing** | Test suites | ❌ | OpenAPI specs | ❌ | ❌ | ❌ | Rego libs | ✅ Context Packs |
+| | TDD | DDD | AGENTS.md | CDD Tools | AI Harness | **LCDD** |
+|---|---|---|---|---|---|---|---|
+| **Governs** | Code behavior | Domain model | Agent prompts | AI workflow | Arch. integrity | **All sources** |
+| **Context as artifact** | ❌ | ❌ | ❌ (unstructured) | ❌ (informal) | ❌ | ✅ Structured schema |
+| **Lifecycle** | ❌ | ❌ | ❌ | ❌ | Binary | ✅ Full (6-stage) |
+| **Context Debt** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ Measurable |
+| **AI-Aware** | ❌ | ❌ | ✅ (one-way) | ✅ (workflow) | ✅ | ✅ Built-in + enforced |
+| **Observability** | Test results | ❌ | ❌ | ❌ | ❌ | ✅ Full |
+| **Spec Drift Prevention** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| **Community Sharing** | Test suites | ❌ | ❌ | ❌ | ❌ | ✅ Context Packs |
 
-**Key difference from CDD Tools (Conductor, PAW, Draft):** CDD tools manage AI agent *workflow* (Spec → Plan → Implement). LCDD manages AI agent *governance* (what rules must be obeyed). They are complementary — a team can use Conductor for process *and* LCDD for constraints simultaneously.
+**AGENTS.md vs LCDD:** AGENTS.md files give AI agents instructions. But they're unstructured, unversioned, ungoverned, and unenforced. Nothing prevents the agent from ignoring them. Nothing measures whether they're being followed. LCDD takes the same idea and makes it structured, versioned, governed, and enforced.
+
+**AGENTS.md vs LCDD:** AGENTS.md files give AI agents instructions — but they're unstructured, unversioned, ungoverned, and unenforced. Nothing prevents the agent from ignoring them. Nothing measures whether they're being followed. LCDD takes the same idea and makes it structured, versioned, governed, and enforced. Context is a first-class artifact, not a text file.
+
+**CDD Tools (Conductor, PAW):** Manage AI agent *workflow* (Spec → Plan → Implement). LCDD manages AI agent *governance* (what rules must be obeyed). Complementary — use both.
 
 See the full [Comparison](docs/comparison.md) and [Literature Review](docs/research.md).
 
@@ -382,15 +415,14 @@ Living Context Driven Development is built on five axioms:
 
 | Stage | Status | Available In |
 |---|---|---|
-| 01 Discover | 🔴 Planned | v1.0+ |
-| 02 Extract | 🔴 Planned | v1.0+ |
-| 03 Normalize | 🔴 Planned | v1.0+ |
-| 04 Classify | 🔴 Planned | v1.0+ |
-| 05 Review | 🔴 Planned | v1.0+ |
-| 06 Version | ✅ Done | v0.2.1 — `lcd context add`, `lcd transition` |
-| 07 Enforce | ✅ Done | v0.2.1 — `lcd validate`, `ContextVerifier` |
-| 08 Observe | 🟡 Partial | v0.2.1 — Event log; Dashboard planned v0.5.0 |
-| 09 Improve | 🔴 Planned | v1.0+ |
+| 01 Observe | 🔴 Planned | v1.0+ — Source monitoring: detect new regulations, standards, decisions |
+| 02 Understand | 🔴 Planned | v1.0+ — Extract + normalize: parse documents into structured contexts |
+| 03 Govern | 🔴 Planned | v1.0+ — Review + classify: assign authority, approve or reject |
+| 04 Distribute | 🔴 Planned | v1.0+ — Version + publish: commit to Registry, push to enforcement plugins |
+| 05 Enforce | ✅ Done | v0.2.1 — `lcd validate`, `ContextVerifier`, CI integration |
+| 06 Verify | ✅ Done | v0.2.1 — Schema validation, semantic rules, lifecycle checks |
+| 07 Learn | 🟡 Partial | v0.2.1 — Event log; Dashboard planned v0.5.0 |
+| 08 Improve | 🔴 Planned | v1.0+ — `lcd doctor`, Context Health Score, auto-recommendations |
 
 ### Install
 

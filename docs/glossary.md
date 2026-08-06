@@ -50,7 +50,23 @@ The accumulated cost of outdated, missing, or incorrect project knowledge. Just 
 
 A numerical metric (0–100) representing the health of a project's knowledge base. Computed from factors including: stale context count, contexts past review deadline, contexts with missing owners, conflicting active rules, deprecated but not archived contexts, and contexts with zero recent violations (possibly obsolete). A higher score indicates healthier, more reliable context. The inverse is Context Debt — a lower score means more accumulated decay.
 
-### Context Source
+### Context Health
+
+The measurable state of a project's knowledge governance. Analogous to code health metrics (coverage, duplication, complexity), Context Health measures: freshness (how recently contexts were reviewed), coverage (what percentage of artifacts are governed), drift (how many active contexts have unresolved conflicts or challenges), and debt (accumulated stale/obsolete contexts). Reported via `lcd doctor`.
+
+### `lcd doctor`
+
+A CLI command that produces a Context Health report. Output includes a numerical Context Health Score (0–100), breakdowns of stale contexts, missing owners, conflicting rules, deprecated-but-not-archived contexts, and actionable recommendations. Modeled after `npm doctor` and `brew doctor`.
+
+### Context Freshness
+
+The percentage of Active contexts that have been reviewed within their defined review cycle. A context with a 6-month review cycle that was last reviewed 8 months ago is stale. Freshness below 80% triggers a health warning.
+
+### Context Coverage
+
+The percentage of project artifacts (files, services, endpoints) that have at least one Active context governing them. Low coverage means large portions of the codebase are ungoverned.
+
+### Context Source **[was: Context Source]**
 
 The origin of a Context before normalization — a government PDF, a team Markdown file, a Slack thread, an AI-generated suggestion, a production incident postmortem, etc. Every Context preserves a reference to its original source for provenance.
 
