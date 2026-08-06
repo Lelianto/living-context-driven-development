@@ -306,8 +306,24 @@ tr:hover td { background: rgba(255,255,255,0.02); }
   .wrap { padding: 0 20px; }
   .nav-inner { padding: 0 20px; }
   .nav-links { display: none; }
+  .nav-links.open {
+    display: flex; flex-direction: column; position: absolute;
+    top: 100%; left: 0; right: 0; background: var(--s1);
+    border-bottom: 1px solid var(--s2); padding: 16px 20px; gap: 12px;
+  }
+  .nav-hamburger { display: flex; }
+  .modal-box { margin: 16px; padding: 24px 20px; }
+  .modal-title { font-size: 18px; }
+  .modal-desc { font-size: 14px; }
+  .modal-detail { font-size: 13px; }
+  .lifecycle-row { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; white-space: nowrap; }
+  pre { font-size: 12px; padding: 14px 16px; }
 }
+
 @media (max-width: 480px) {
   .quad { grid-template-columns: 1fr; }
   .pipeline-grid { grid-template-columns: 1fr; }
+  .hero { padding: 140px 0 64px; }
+  .hero .actions { flex-direction: column; align-items: center; }
 }

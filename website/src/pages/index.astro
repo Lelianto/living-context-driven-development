@@ -9,12 +9,15 @@ import Base from '../layouts/Base.astro';
         <img src="/favicon.png" alt="LCDD" width="24" height="24" style="border-radius:4px;" />
         LCDD
       </a>
-      <div class="nav-links">
+      <div class="nav-links" id="nav-links">
         <a href="#context">Context</a>
         <a href="#governance">Governance</a>
         <a href="#start">Start</a>
         <a href="https://github.com/Lelianto/living-context-driven-development" class="btn btn-stroke" style="font-size:12px;padding:4px 14px;">GitHub</a>
       </div>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu" style="display:none;background:none;border:none;color:var(--s5);font-size:22px;cursor:pointer;padding:4px;">
+        &#9776;
+      </button>
     </div>
   </nav>
 
@@ -373,6 +376,20 @@ enforcement:
   });
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeModal();
+  });
+
+  // Hamburger menu
+  const hamburger = document.getElementById('nav-hamburger');
+  const navLinks = document.getElementById('nav-links');
+  hamburger?.addEventListener('click', () => {
+    navLinks?.classList.toggle('open');
+    hamburger.textContent = navLinks?.classList.contains('open') ? '\u2715' : '\u2630';
+  });
+  navLinks?.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      navLinks.classList.remove('open');
+      if (hamburger) hamburger.textContent = '\u2630';
+    });
   });
 
   const observer = new IntersectionObserver((entries) => {
