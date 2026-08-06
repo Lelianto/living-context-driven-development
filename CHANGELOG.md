@@ -7,7 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.1.0] — 2026-08-06
+## [0.2.1] — 2026-08-06
+
+### Added
+- Unit tests for `@lcdd/core` — 89 tests across 5 modules (lifecycle, schema, registry, CQL, verifier)
+- `.npmignore` — exclude test files from published package
+
+### Fixed
+- AJV format warnings (`date-time`, `date`, `uri`) — added inline format validators
+- Glob matching: `**/*` now correctly matches root-level files
+- Inline regex flags (`(?i)`) support in pattern verifier
+- Context lookup by ID in subdirectories (hardened/local/experimental)
+- Lifecycle transition auto-sets `review_status` on candidate/approved
+
+### Changed
+- Updated `@lcdd/core` to v0.2.1, `@lcdd/cli` to v0.2.1
+
+## [0.2.0] — 2026-08-06
+
+### Added
+- `@lcdd/core` — TypeScript SDK: Context model, schema validation, Registry client, CQL parser, verifier
+- `@lcdd/cli` — CLI tool: `lcd init`, `lcd context add`, `lcd list`, `lcd show`, `lcd validate`, `lcd query`, `lcd transition`
+- File-based Context Registry (YAML storage in `.lcdd/`)
+- Built-in static verifiers (regex, file-exists, extensible plugin system)
+- GitHub Action for CI enforcement
+- npm publication of both packages
+- README files for both npm packages
 
 ### Added
 

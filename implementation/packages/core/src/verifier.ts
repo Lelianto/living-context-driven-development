@@ -169,16 +169,20 @@ export class ContextVerifier {
     }
 
     if (!artifactContent) {
-      try {
-        artifactContent = readFileSync(artifactPath, 'utf-8');
-      } catch {
-        return {
-          context_id: context.id,
-          artifact_path: artifactPath,
-          status: 'error',
-          violations: [{ description: `Cannot read artifact: ${artifactPath}` }],
-          confidence: 0,
-        };
+      if (spec.type === 'file-exists') {
+        artifactContent = '';
+      } else {
+        try {
+          artifactContent = readFileSync(artifactPath, 'utf-8');
+        } catch {
+          return {
+            context_id: context.id,
+            artifact_path: artifactPath,
+            status: 'error',
+            violations: [{ description: `Cannot read artifact: ${artifactPath}` }],
+            confidence: 0,
+          };
+        }
       }
     }
 

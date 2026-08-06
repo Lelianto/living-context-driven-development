@@ -4,6 +4,9 @@ import type { Context } from './types.js';
 import schema from './context-schema.json' with { type: 'json' };
 
 const ajv = new Ajv({ allErrors: true, strict: false });
+ajv.addFormat('date-time', /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.*/);
+ajv.addFormat('date', /^\d{4}-\d{2}-\d{2}$/);
+ajv.addFormat('uri', /^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//);
 
 let _validate: ValidateFunction | undefined;
 
