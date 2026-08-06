@@ -437,16 +437,17 @@ living-context-driven-development/
 
 ## ⇔ Comparison with Related Approaches
 
-| | TDD | DDD | AGENTS.md | CDD Tools | AI Harness | **LCDD** |
-|---|---|---|---|---|---|---|---|
+| Feature | TDD | DDD | AGENTS.md | CDD Tools | AI Harness | **LCDD** |
+|---|---|---|---|---|---|---|
 | **Governs** | Code behavior | Domain model | Agent prompts | AI workflow | Arch. integrity | **All sources** |
-| **Context as artifact** | ❌ | ❌ | ❌ (unstructured) | ❌ (informal) | ❌ | ✅ Structured schema |
+| **Context as artifact** | ❌ | ❌ | ❌ unstructured | ❌ informal | ❌ | ✅ Structured schema |
 | **Lifecycle** | ❌ | ❌ | ❌ | ❌ | Binary | ✅ Full (6-stage) |
 | **Context Debt** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ Measurable |
-| **AI-Aware** | ❌ | ❌ | ✅ (one-way) | ✅ (workflow) | ✅ | ✅ Built-in + enforced |
+| **AI-Aware** | ❌ | ❌ | ✅ one-way | ✅ workflow | ✅ | ✅ Built-in + enforced |
 | **Observability** | Test results | ❌ | ❌ | ❌ | ❌ | ✅ Full |
 | **Spec Drift Prevention** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
 | **Community Sharing** | Test suites | ❌ | ❌ | ❌ | ❌ | ✅ Context Packs |
+| **MCP / Agent Protocol** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ 7 native tools |
 
 **AGENTS.md vs LCDD:** AGENTS.md files give AI agents instructions — but they're unstructured, unversioned, ungoverned, and unenforced. Nothing prevents the agent from ignoring them. Nothing measures whether they're being followed. LCDD takes the same idea and makes it structured, versioned, governed, and enforced. Context is a first-class artifact, not a text file.
 
