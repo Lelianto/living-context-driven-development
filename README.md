@@ -328,6 +328,23 @@ lcd validate
 lcd doctor
 ```
 
+### Pipeline Commands
+
+```bash
+# Source monitoring
+lcd source add https://docs.example.com/standard --type website
+lcd source watch --interval 60
+lcd source schedule --github
+
+# Extract constraints (Ollama default — free, no API key)
+ollama pull llama3.2
+lcd extract src-abc123 --auto
+
+# Or with OpenAI/Anthropic
+export OPENAI_API_KEY=sk-...
+lcd extract src-abc123 --backend openai --auto
+```
+
 ### Add AI Agent Support (1 minute)
 
 ```bash

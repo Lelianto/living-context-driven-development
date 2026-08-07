@@ -187,6 +187,60 @@ lcd source check [id]                    # Check for changes (all or specific so
 lcd source remove <id>                   # Remove a registered source
 ```
 
+### `lcd source watch`
+
+Continuously monitor registered sources for changes at configurable intervals.
+
+```bash
+lcd source watch                       # Poll every 60 minutes
+lcd source watch --interval 30         # Poll every 30 minutes
+lcd source watch --once                # Single check and exit (for cron)
+```
+
+### `lcd source schedule`
+
+Generate cron or GitHub Actions configuration for automated source monitoring.
+
+```bash
+lcd source schedule --cron             # Output cron schedule line
+lcd source schedule --github           # Output GitHub Actions workflow YAML
+lcd source schedule --interval 30       # Custom interval
+```
+
+### `lcd extract`
+
+Extract constraint candidates from a registered source using LLM (Ollama, OpenAI, or Anthropic).
+
+```bash
+lcd extract <source-id>                # Extract with default provider (Ollama)
+lcd extract <source-id> --backend openai   # Use OpenAI (OPENAI_API_KEY required)
+lcd extract <source-id> --backend anthropic # Use Anthropic (ANTHROPIC_API_KEY)
+lcd extract <source-id> --dry-run      # Output candidates, don't write registry
+lcd extract <source-id> --auto         # Extract + normalize + write drafts
+lcd extract <source-id> --model gpt-4o # Override default model
+```
+
+Ollama is the default and requires no API key:
+```bash
+ollama pull llama3.2                   # One-time model download
+lcd extract <source-id>                # Free local extraction
+```
+
+### `lcd normalize`
+
+Normalize extracted candidates into validated, deduplicated draft contexts.
+
+```bash
+lcd normalize                         # Normalize all candidates in .lcdd/sources/candidates/
+lcd normalize --auto-merge            # Auto-skip exact duplicates
+lcd normalize --threshold 0.85        # Custom Jaccard similarity threshold
+```
+
+Pipeline in one command:
+```bash
+lcd extract <source-id> --auto        # Extract + normalize + write drafts to registry
+```
+
 ### `lcd dashboard`
 
 View enforcement metrics and lifecycle observability.
