@@ -27,8 +27,8 @@ import Base from '../layouts/Base.astro';
         <img src="/logo.png" alt="LCDD" style="width:clamp(64px,12vw,120px);height:auto;display:block;border-radius:clamp(8px,1vw,12px);" />
       </div>
       <div style="margin-bottom:12px;">
-        <span class="badge badge-fill">Spec v0.2.1</span>
-        <span class="badge badge-stroke" style="margin-left:6px;">Impl v0.2.1</span>
+        <span class="badge badge-fill">Spec v0.4.0</span>
+        <span class="badge badge-stroke" style="margin-left:6px;">Impl v0.4.0</span>
       </div>
       <h1>Living Context Driven Development</h1>
       <p class="tagline">Living Context is the continuously evolving representation of project knowledge.</p>
@@ -221,10 +221,10 @@ enforcement:
       <div class="reveal">
         <p class="label">Discovery Pipeline</p>
         <h2 class="h2">From unknown to enforced.</h2>
-      <p class="sub">
-        The core novelty of LCDD — a nine-stage pipeline that discovers constraints
-        from any source, not just known ones. <span style="font-size:12px;color:var(--s5);">(Stages 06–07 implemented, 08 partial, 01–05 &amp; 09 planned)</span>
-      </p>
+        <p class="sub">
+          The core novelty of LCDD — a nine-stage pipeline that discovers constraints
+          from any source, not just known ones. <span style="font-size:12px;color:var(--g);">(Stages 01 &amp; 04–09 done, 02–03 Phase A)</span>
+        </p>
       </div>
 
       <div class="pipeline-grid reveal" id="pipeline-grid"></div>
@@ -257,9 +257,9 @@ enforcement:
 
       <div class="split reveal" style="margin-top:40px;">
         <div>
-          <p style="font-size:15px;font-weight:500;color:var(--w);margin-bottom:12px;">Install the CLI</p>
-          <div class="yarn">npm install -g @lcdd/cli</div>
-          <div class="yarn">lcd init<br/>lcd context add</div>
+          <p style="font-size:15px;font-weight:500;color:var(--w);margin-bottom:12px;">Install the CLI & MCP</p>
+          <div class="yarn">npm install -g @lcdd/cli @lcdd/mcp</div>
+          <div class="yarn">lcd init<br/>lcd context add<br/>lcd validate<br/>lcd doctor</div>
           <p style="font-size:13px;color:var(--s5);margin-top:8px;">
             Also on <a href="https://github.com/Lelianto/living-context-driven-development/pkgs/npm/lcdd-cli">GitHub Packages</a>.
           </p>
@@ -285,19 +285,19 @@ enforcement:
       <div class="quad reveal" style="margin-top:32px;">
         <a href="https://www.npmjs.com/package/@lcdd/core" class="feature" style="text-decoration:none;color:inherit;">
           <h4>@lcdd/core</h4>
-          <p>SDK — Context model, schema, registry, CQL parser, verifier.</p>
+          <p>SDK — Context model, schema, registry, CQL, verifier, doctor, rule engine, extractor, normalizer.</p>
         </a>
         <a href="https://www.npmjs.com/package/@lcdd/cli" class="feature" style="text-decoration:none;color:inherit;">
           <h4>@lcdd/cli</h4>
-          <p>CLI — init, context, validate, query, transition.</p>
+          <p>CLI — init, context, validate, query, doctor, review, source, extract, normalize, dashboard.</p>
+        </a>
+        <a href="https://www.npmjs.com/package/@lcdd/mcp" class="feature" style="text-decoration:none;color:inherit;">
+          <h4>@lcdd/mcp</h4>
+          <p>MCP Server — 7 tools for Claude, Cursor, Cline. AI agents query and enforce contexts.</p>
         </a>
         <div class="feature">
-          <h4>Specification</h4>
-          <p>17 RFC-style docs covering lifecycle, authority, governance, schema.</p>
-        </div>
-        <div class="feature">
           <h4>Context Packs</h4>
-          <p>5 domains — Startup, Fintech, Healthcare, E-commerce, Hackathon.</p>
+          <p>5 domains — Startup, Fintech (OJK), Healthcare (HIPAA), E-commerce, Hackathon.</p>
         </div>
       </div>
     </div>
@@ -308,7 +308,7 @@ enforcement:
       <div class="footer-inner">
         <div>
           <div class="footer-name">Living Context Driven Development</div>
-          <div class="footer-meta">v0.2.1 &middot; Apache 2.0</div>
+          <div class="footer-meta">v0.4.0 &middot; Apache 2.0</div>
         </div>
         <div class="footer-links">
           <a href="https://github.com/Lelianto/living-context-driven-development">GitHub</a>
@@ -323,33 +323,33 @@ enforcement:
 
 <script>
   const steps = [
-    { num: '01', name: 'Discover', desc: 'Monitor regulatory websites, docs, Slack, GitHub, APIs.',
-      status: 'planned',
-      detail: '<strong>Status: Planned (v1.0+)</strong><br/><br/><strong>Purpose:</strong> Identify potential sources of Contexts not yet in the Registry.<br/><br/><strong>Inputs:</strong> URLs of regulatory websites (GDPR, PCI-DSS, SOC 2, HIPAA), documentation repositories (Notion, Confluence), communication tools (Slack, Discord, Teams), meeting transcripts, incident postmortems, customer feedback channels, and AI-generated suggestions.<br/><br/><strong>Process:</strong> Each source is registered with URI, type, polling frequency, and ownership. Change detection monitors sources for new or updated content. Relevance filtering discards irrelevant changes using heuristics, keyword matching, and optional LLM-based scoring.<br/><br/><strong>Output:</strong> Candidate Source Items — pointers to raw material that may contain new or changed contexts.' },
-    { num: '02', name: 'Extract', desc: 'LLM parses 200-page documents into candidates.',
-      status: 'planned',
-      detail: '<strong>Status: Planned (v1.0+)</strong><br/><br/><strong>Purpose:</strong> Transform raw source material into structured candidate Contexts.<br/><br/><strong>Methods:</strong> LLM-based extraction (recommended for unstructured sources), regex/rule-based extraction for structured documents, or manual human annotation.<br/><br/><strong>Quality:</strong> Each candidate receives a confidence score (0.0–1.0). Target recall > 80%, precision > 70%. Source location is preserved (page number, paragraph) for provenance.<br/><br/><strong>Output:</strong> Extracted Candidate Contexts with confidence scores and source backlinks.' },
-    { num: '03', name: 'Normalize', desc: 'Map to unified schema. De-duplicate. Validate.',
-      status: 'planned',
-      detail: '<strong>Status: Planned (v1.0+)</strong><br/><br/><strong>Purpose:</strong> Map extracted candidates to the LCDD Context Schema, resolving format differences while preserving provenance.<br/><br/><strong>Process:</strong> Schema mapping of each field, ID generation (UUID v4 or human-readable slug), default application for unpopulated optional fields, JSON Schema validation, and deduplication against existing Draft/Candidate/Active contexts.<br/><br/><strong>Output:</strong> Normalized Contexts — valid against the Context Schema, in Draft lifecycle stage.' },
-    { num: '04', name: 'Classify', desc: 'Assign authority, lifecycle, severity, scope.',
-      status: 'planned',
-      detail: '<strong>Status: Planned (v1.0+)</strong><br/><br/><strong>Purpose:</strong> Assign lifecycle stage, authority level, governance classification, domain tags, and enforcement mode.<br/><br/><strong>Automated rules:</strong> Standard-body source → level 4 (Mandate), internal organization policy → level 3 (Standard), AI-extracted with low confidence → level 0 (Suggestion). Domain tagging via content analysis. All automated classifications are provisional — human reviewers can override.<br/><br/><strong>Output:</strong> Classified Contexts with populated authority, governance, tags, and severity.' },
-    { num: '05', name: 'Review', desc: 'Human or automated review by classification.',
-      status: 'planned',
-      detail: '<strong>Status: Planned (v1.0+)</strong><br/><br/><strong>Purpose:</strong> Human and/or automated review of classified contexts before they become enforceable.<br/><br/><strong>Routing:</strong> Contexts routed by domain tags (→ domain experts), authority level (→ approval chain), and source (→ source owner).<br/><br/><strong>Checklist:</strong> Is the constraint correct? Is the authority appropriate? Is the scope correct? Does it conflict with existing Active contexts? Is it enforceable? Is the description clear for both humans and AI agents?<br/><br/><strong>Auto-review:</strong> Local-Guideline and Local-Experimental contexts with high extraction confidence (> 0.9) may be auto-approved.' },
+    { num: '01', name: 'Discover', desc: 'Monitor sources — Git, web, RSS. Scheduled or real-time.',
+      status: 'done',
+      detail: '<strong>Status: Implemented (v0.4.0)</strong><br/><br/><strong>Purpose:</strong> Detect new or changed constraints from registered sources.<br/><br/><strong>Implemented:</strong> <code>lcd source add</code> to register Git repos and websites. <code>lcd source watch</code> for continuous polling. <code>lcd source schedule</code> to generate cron or GitHub Actions configs. Git connector uses clone+fetch+diff. Website connector uses HTTP GET+SHA-256 checksum. Change events persisted to <code>.lcdd/sources/.changes.log</code>.<br/><br/><strong>CLI:</strong> <code>lcd source add &lt;url&gt;</code>, <code>lcd source watch --interval 60</code>, <code>lcd source schedule --github</code>.<br/><br/><strong>Future:</strong> RSS/Slack/PDF connectors, LLM relevance scoring (v1.0+).' },
+    { num: '02', name: 'Extract', desc: 'LLM parses documents into candidate constraints.',
+      status: 'partial',
+      detail: '<strong>Status: Phase A (v0.4.0)</strong><br/><br/><strong>Purpose:</strong> Transform raw source content into structured candidate Contexts.<br/><br/><strong>Implemented:</strong> <code>lcd extract &lt;source-id&gt;</code>. Three LLM backends: <strong>Ollama</strong> (free, local, no API key — default), <strong>OpenAI</strong> (GPT-4o-mini, requires OPENAI_API_KEY), <strong>Anthropic</strong> (Claude Haiku, requires ANTHROPIC_API_KEY). Structured prompt with JSON output schema. Confidence scoring per extraction (0.0–1.0). <code>--dry-run</code> and <code>--auto</code> modes.<br/><br/><strong>Future:</strong> Streaming extraction, batch processing, local embedding models (v1.0+).' },
+    { num: '03', name: 'Normalize', desc: 'Schema map. Jaccard dedup. Validate.',
+      status: 'partial',
+      detail: '<strong>Status: Phase A (v0.4.0)</strong><br/><br/><strong>Purpose:</strong> Map extracted candidates to the full LCDD Context Schema with deduplication.<br/><br/><strong>Implemented:</strong> <code>lcd normalize</code>. Schema mapping with ID generation (UUID). RuleEngine defaults (authority, governance, severity, tags). JSON Schema validation. SHA-256 exact-match dedup. Jaccard similarity for near-duplicate detection (threshold 0.8). Confidence filtering (skip < 0.5). Auto-writes valid candidates as draft contexts to registry.<br/><br/><strong>Future:</strong> Embedding-based dedup with cosine similarity, cross-lingual dedup (v1.0+).' },
+    { num: '04', name: 'Classify', desc: 'Auto-assign authority, severity, tags via rules.',
+      status: 'done',
+      detail: '<strong>Status: Implemented (v0.3.0)</strong><br/><br/><strong>Purpose:</strong> Assign lifecycle stage, authority level, governance classification, domain tags, and enforcement mode.<br/><br/><strong>Deterministic rules:</strong> Source type → authority level (standard-body=4, regulatory=4, organization=3, community=2, individual=1). Authority → governance classification. Keyword analysis → severity (must/shall/critical→critical, should/important→high). Domain keywords → tags. User can override all suggestions.<br/><br/><strong>CLI:</strong> Integrated into <code>lcd context add</code> — shows suggestions, asks for confirmation.' },
+    { num: '05', name: 'Review', desc: 'Approve, reject, revision. Auto-approve for Local.',
+      status: 'done',
+      detail: '<strong>Status: Implemented (v0.3.0)</strong><br/><br/><strong>Purpose:</strong> Human and automated review of contexts before they become enforceable.<br/><br/><strong>Implemented:</strong> <code>lcd review list</code> (pending reviews), <code>lcd review show &lt;id&gt;</code> (side-by-side source vs context), <code>lcd review approve/reject/revision &lt;id&gt;</code>. Auto-approval for Local contexts with high confidence. Review workflow integrated with lifecycle transitions.<br/><br/><strong>CLI:</strong> <code>lcd review list</code>, <code>lcd review approve &lt;id&gt; --reason "..."</code>, <code>lcd review auto-approve</code>.' },
     { num: '06', name: 'Version', desc: 'Commit immutable version. Audit trail.',
       status: 'done',
       detail: '<strong>Status: Implemented (v0.2.1)</strong><br/><br/><strong>Purpose:</strong> Commit the approved Context to the Registry with an immutable version number.<br/><br/><strong>Process:</strong> Final schema validation, conflict detection against existing Active contexts, version assignment (version 1 for new, current + 1 for updates), immutable commit to the Registry, event emission.<br/><br/><strong>Output:</strong> Versioned Context in the Registry — immutable, auditable, with complete event log (JSON Lines in .lcdd/contexts/.events.log).<br/><br/><strong>CLI:</strong> <code>lcd context add</code>, <code>lcd transition</code>.' },
     { num: '07', name: 'Enforce', desc: 'CI, IDE, gateway, AI agent — pluggable.',
       status: 'done',
       detail: '<strong>Status: Implemented (v0.2.1)</strong><br/><br/><strong>Purpose:</strong> Consume Active contexts through enforcement plugins and report violations.<br/><br/><strong>Plugins:</strong> CI/CD pipeline (block merges), IDE (real-time violation highlighting), pre-commit hooks (fast local checks), API gateway (runtime validation), Terraform plan (infrastructure compliance), AI agent prompts (context injection).<br/><br/><strong>Modes:</strong> Block (prevents progression), Warn (visible warning), Comment (informational), Silent (tracked only). Mode determined by governance classification and lifecycle stage.<br/><br/><strong>CLI:</strong> <code>lcd validate</code>, <code>lcd validate --strict</code>. Built-in verifiers: regex-pattern, file-exists. Extensible via <code>verifier.register()</code>.' },
-    { num: '08', name: 'Observe', desc: 'Violations, trends, AI vs human ratio.',
-      status: 'partial',
-      detail: '<strong>Status: Partial (v0.2.1)</strong><br/><br/><strong>Purpose:</strong> Collect and analyze enforcement outcomes to close the feedback loop.<br/><br/><strong>Implemented:</strong> Event log written to <code>.lcdd/contexts/.events.log</code> (JSON Lines). Enforcement events include context ID, artifact path, status, actor attribution (human vs AI agent), timestamps, and verifier info.<br/><br/><strong>Not yet:</strong> Dashboards (Grafana), aggregated metrics (violation rate, trends, false positive ratio), alerting, violation trend analysis. Planned for v0.5.0.' },
-    { num: '09', name: 'Improve', desc: 'Refine, deprecate. Close the feedback loop.',
-      status: 'planned',
-      detail: '<strong>Status: Planned (v1.0+)</strong><br/><br/><strong>Purpose:</strong> Use observation data to drive context evolution.<br/><br/><strong>Triggers:</strong> Zero violations for 90 days → "Still needed?", increasing violation rate → "Enforcement clear?", high false positive rate → "Scope too broad?", new regulation detected → "New context needed?"<br/><br/><strong>Actions:</strong> Refinement (update context), deprecation (retire context), new context creation (back to Discover), governance reclassification (promote/demote Hardened ↔ Local).' },
+    { num: '08', name: 'Observe', desc: 'Dashboard, metrics, violation trends.',
+      status: 'done',
+      detail: '<strong>Status: Implemented (v0.3.0)</strong><br/><br/><strong>Purpose:</strong> Collect and analyze enforcement outcomes to close the feedback loop.<br/><br/><strong>Implemented:</strong> <code>lcd dashboard</code> — terminal report with violation trends (7d/30d/90d), actor breakdown (human vs AI agent), top violated contexts, enforcement mode distribution, lifecycle velocity. <code>lcd dashboard --web</code> — interactive Chart.js dashboard at localhost:9321 with API endpoint <code>/api/metrics</code>. Enforcement events persisted to <code>.lcdd/contexts/.enforcements.log</code>.<br/><br/><strong>CLI:</strong> <code>lcd dashboard</code>, <code>lcd dashboard --web</code>, <code>lcd dashboard --web --port 3000</code>.' },
+    { num: '09', name: 'Improve', desc: 'Health score, triggers, recommendations.',
+      status: 'done',
+      detail: '<strong>Status: Implemented (v0.3.0)</strong><br/><br/><strong>Purpose:</strong> Use observation data to drive context evolution.<br/><br/><strong>Implemented:</strong> <code>lcd doctor</code> — Context Health Score (0–100) with letter grade (A–F). Eight health metrics: Stale Contexts, Missing Owners, Enforcement Conflicts, Deprecation Backlog, Draft Stagnation, Authority Gaps, Tag Hygiene, Review Backlog. <code>--triggers</code> flag for five deterministic triggers: STALE_NO_VIOLATION, HIGH_FALSE_POSITIVE, INCREASING_VIOLATIONS, AI_DRIFT, NEW_SOURCE_DETECTED. Each trigger outputs a specific recommendation and suggested CLI command.<br/><br/><strong>CLI:</strong> <code>lcd doctor</code>, <code>lcd doctor --triggers</code>, <code>lcd doctor --json</code>.' },
   ];
 
   const grid = document.getElementById('pipeline-grid');
