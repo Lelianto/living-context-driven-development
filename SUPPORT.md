@@ -17,7 +17,7 @@ LCDD is an open specification project. Here's how to get help:
 
 ### Feature Requests
 
-LCDD is in Specification Phase (v0.1.0). Feature requests for the methodology itself should follow the RFC process described in [CONTRIBUTING.md](CONTRIBUTING.md).
+LCDD is in Implementation Phase (v0.4.0). Feature requests for the methodology itself should follow the RFC process described in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Feature requests for reference implementations (CLI, MCP server, VS Code extension) are welcome but may not be addressed until the relevant milestone (see [ROADMAP.md](ROADMAP.md)).
 

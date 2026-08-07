@@ -4,15 +4,17 @@ This file provides instructions for AI coding agents (GitHub Copilot, Claude Cod
 
 ## Project Identity
 
-This is the **Living Context Driven Development (LCDD)** specification repository. It defines a methodology and open specification for constraint governance in AI-assisted software development. It is currently in **Specification Phase (v0.1.0)** — defining the methodology, not implementing tooling.
+This is the **Living Context Driven Development (LCDD)** specification repository. It defines a methodology and open specification for constraint governance in AI-assisted software development. It is currently in **Implementation Phase (v0.4.0)** — the specification is stable and the reference implementation is published.
 
 ## Repository Structure
 
-- `specification/` — 17 RFC-style specification documents (numbered 0000–0016). These are **normative**.
+- `specification/` — 18 RFC-style specification documents (numbered 0000–0017). These are **normative**.
 - `manifesto/` — Manifesto, First Principles, and Vision. These are **foundational**.
 - `docs/` — Companion documentation: research, glossary, introduction, philosophy, comparison, adoption, FAQ. These are **explanatory**.
 - `reference/` — JSON Schema, example Contexts, architecture diagrams.
 - `examples/` — Domain-specific Context Packs (Startup, Fintech, Healthcare, E-commerce, Hackathon).
+- `website/` — Landing page at livingcontext.dev (Astro + Vercel).
+- `implementation/` — Reference implementation: `@lcdd/core`, `@lcdd/cli`, `@lcdd/mcp`.
 - `lcdd-methodology.md` — Comprehensive methodology guide at the repository root.
 - `README.md` — The front page of the project.
 
@@ -56,13 +58,13 @@ This is the **Living Context Driven Development (LCDD)** specification repositor
 ## Voice and Tone
 
 - **Authoritative but not arrogant.** The specification is a proposal, not a decree.
-- **Honest about maturity.** v0.1.0 is a draft. Acknowledge limitations.
+- **Honest about maturity.** v0.4.0 is a working reference implementation. Acknowledge limitations.
 - **Precise.** Use MUST, SHOULD, MAY per RFC 2119 in normative documents.
 - **Accessible.** Companion documentation should be readable by someone new to the concept.
 
 ## Forbidden
 
 - ❌ Do not fabricate references, papers, or academic citations.
-- ❌ Do not claim the specification is more mature than it is (v0.1.0 = Draft).
+- ❌ Do not claim the specification is more mature than it is (v0.4.0 = Implementation Phase).
 - ❌ Do not remove or weaken the distinction between Hardened and Local governance.
 - ❌ Do not add tooling implementation details to the specification (those belong in future implementation directories).

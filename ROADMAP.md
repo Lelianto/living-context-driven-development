@@ -1,6 +1,6 @@
 # Roadmap
 
-**Version:** 0.3.0  
+**Version:** 0.4.0  
 **Last Updated:** 2026-08-07
 
 ---
@@ -18,7 +18,7 @@
 - [x] Methodology Guide (lcdd-methodology.md)
 - [x] Repository Scaffolding (README, LICENSE, GOVERNANCE, CONTRIBUTING, etc.)
 - [x] Logo and Visual Identity
-- [ ] Website (livingcontext.dev)
+- [x] Website (livingcontext.dev — Astro + Vercel)
 
 ---
 
@@ -36,9 +36,9 @@
 
 ---
 
-## 🟡 v0.3.0 — Pipeline Automation (In Progress)
+## ✅ v0.4.0 — Pipeline Automation (Complete)
 
-**Target:** Deterministic pipeline stages — no API key, no LLM, no new infrastructure.
+**Target:** Deterministic pipeline stages + MCP server. No API key required for default usage.
 
 ### Done
 - [x] `lcd doctor` — Context Health Score (8 metrics, letter grade A–F, JSON output)
@@ -46,14 +46,17 @@
 - [x] `lcd review` — Review workflow CLI (`list/show/approve/reject/revision/auto-approve`)
 - [x] Trigger Evaluator — 5 deterministic triggers with structured recommendations
 - [x] Source Connector — `lcd source add/list/check/remove` (Git + Website)
-- [x] Enforcement event persistence (`.enforcements.log`)
+- [x] `lcd source watch` — Scheduled daemon polling at configurable intervals
+- [x] `lcd source schedule` — Cron + GitHub Actions schedule generation
+- [x] `lcd extract` — LLM extraction: Ollama (free, default), OpenAI, Anthropic backends
+- [x] `lcd normalize` — Schema mapping, Jaccard dedup, validation, draft creation
 - [x] `lcd dashboard` — Terminal + Web dashboard (violation trends, actor breakdown, velocity)
-- [x] Stages 04–09 (Classify through Improve) fully implemented as deterministic
-
-### Planned
-- [ ] MCP Server (`@lcdd/mcp`)
-- [ ] Context injection into AI agent prompts
-- [ ] Specification drift detection
+- [x] `@lcdd/mcp` — MCP Server with 7 tools for AI agents (Claude, Cursor, Cline)
+- [x] Enforcement event persistence (`.enforcements.log`)
+- [x] Source change event persistence (`.changes.log`)
+- [x] Website updated to v0.4.0 (Astro + Vercel)
+- [x] 121 tests (7 test suites, all passing)
+- [x] Pipeline Stages 01 & 04–09 Done, 02–03 Phase A
 
 ---
 
@@ -65,7 +68,9 @@
 - [ ] Observability Dashboard (Grafana)
 - [ ] Community Context Pack Registry
 - [ ] Starter Packs (OWASP, GDPR, Startup)
-- [ ] LLM-based extraction (Stage 02) — requires API key
+- [ ] LLM refinement for ambiguous classifications
+- [ ] Embedding-based dedup (cosine similarity)
+- [ ] Multi-connector support (RSS, Slack, PDF)
 
 ---
 

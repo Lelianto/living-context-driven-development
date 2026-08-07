@@ -1,7 +1,7 @@
 # 0016 — Roadmap
 
 **Status:** Active  
-**Version:** 0.3.0  
+**Version:** 0.4.0  
 **Specification:** Living Context Driven Development  
 **Last Updated:** 2026-08-07
 
@@ -90,11 +90,11 @@ This document defines the development roadmap for the LCDD specification, refere
 
 ---
 
-## Milestone 2.5: Pipeline Automation (Deterministic) v0.3.0
+## Milestone 2.5: Pipeline Automation v0.4.0
 
-**Target:** Automate pipeline stages 01, 04, 05, and 09 with deterministic rules — no API key, no LLM, no new infrastructure.
+**Target:** Automate pipeline stages 01–03, 04–05, and 08–09 with deterministic rules. MCP server for AI agents. No API key required for default usage.
 
-**Status:** 🟡 In Progress
+**Status:** ✅ Complete
 
 ### Deliverables
 
@@ -104,8 +104,12 @@ This document defines the development roadmap for the LCDD specification, refere
 | 2.5.2 | Rule Engine | Deterministic auto-classification: source→authority, keyword→severity, domain→tags |
 | 2.5.3 | `lcd review` | Review workflow: `list`, `show`, `approve`, `reject`, `revision`, `auto-approve` |
 | 2.5.4 | Trigger Evaluator | 5 deterministic triggers: stale, false-positive, increasing-violations, AI-drift, new-source |
-| 2.5.5 | Source Connector | `lcd source add/list/check/remove` — Git (clone+fetch+diff) + Website (HTTP GET+checksum) |
+| 2.5.5 | Source Connector | `lcd source add/list/check/remove` + `watch` + `schedule` — Git + Website |
 | 2.5.6 | Enforcement Log | Enforcement events persisted to `.lcdd/contexts/.enforcements.log` |
+| 2.5.7 | `lcd dashboard` | Terminal + Web dashboard: trends, actor breakdown, top violated, mode distribution, velocity |
+| 2.5.8 | `@lcdd/mcp` | MCP Server: 7 tools, stdio transport, Claude/Cursor/Cline integration |
+| 2.5.9 | `lcd extract` | LLM extraction: Ollama (free), OpenAI, Anthropic backends. `--dry-run`, `--auto` modes |
+| 2.5.10 | `lcd normalize` | Schema mapping, Jaccard dedup, SHA-256 exact dedup, validation, draft creation |
 
 ### Success Criteria
 
@@ -113,7 +117,12 @@ This document defines the development roadmap for the LCDD specification, refere
 - [x] `lcd context add` auto-suggests classification based on deterministic rules; user can override.
 - [x] `lcd review approve` transitions context through review workflow and lifecycle.
 - [x] `lcd source check` detects changes in Git repos and websites.
-- [ ] MCP Server for AI agent integration (v0.3.0 remaining).
+- [x] `lcd source watch` polls sources autonomously at configured intervals.
+- [x] `lcd extract` with Ollama extracts constraints with zero API cost.
+- [x] `lcd normalize` deduplicates and validates candidates before registry write.
+- [x] `lcd dashboard --web` serves interactive enforcement metrics.
+- [x] MCP server exposes 7 LCDD tools to AI agents via stdio.
+- [x] 6 of 9 pipeline stages fully done, 2 in Phase A, 1 remaining (02 full LLM).
 
 ---
 
