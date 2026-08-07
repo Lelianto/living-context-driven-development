@@ -31,6 +31,15 @@ export async function extractCommand(sourceId: string, options: {
   console.log('');
 
   const extractor = new Extractor();
+  await extractor.init();
+
+  const warnings = extractor.getProviderWarnings();
+  if (warnings.length > 0) {
+    for (const w of warnings) {
+      console.log(chalk.yellow(`⚠ ${w}`));
+    }
+    console.log('');
+  }
 
   try {
     const candidates = await extractor.extract(source, options.backend);
@@ -104,15 +113,25 @@ export async function extractCommand(sourceId: string, options: {
 
     console.log('');
   } catch (e) {
-    console.log(chalk.red(`Extraction failed: ${(e as Error).message}`));
+    const msg = (e as Error).message;
+    console.log(chalk.red(`Extraction failed: ${msg}`));
 
-    if ((e as Error).message.includes('ECONNREFUSED') || (e as Error).message.includes('fetch')) {
-      console.log(chalk.dim('\nHint: Make sure Ollama is running: ollama serve'));
-      console.log(chalk.dim('Or install a model: ollama pull llama3.2'));
+    if (msg.includes('ECONNREFUSED') || msg.includes('fetch') || msg.includes('Ollama')) {
+      console.log(chalk.dim('\nHint: Make sure Ollama is running:'));
+      console.log(chalk.dim('  ollama serve'));
+      console.log(chalk.dim('  ollama pull llama3.2'));
     }
 
-    if ((e as Error).message.includes('OPENAI_API_KEY') || (e as Error).message.includes('ANTHROPIC_API_KEY')) {
-      console.log(chalk.dim('\nHint: Set the API key environment variable or install Ollama for free local extraction.'));
+    if (msg.includes('not available') || msg.includes('Provider')) {
+      console.log(chalk.dim(`\nAvailable providers: ${extractor.getAvailableProviders().join(', ')}`));
+      console.log(chalk.dim('For OpenAI:  export OPENAI_API_KEY=sk-... && npm install openai'));
+      console.log(chalk.dim('For Anthropic: export ANTHROPIC_API_KEY=sk-ant-... && npm install @anthropic-ai/sdk'));
+      console.log(chalk.dim('For free local: ollama serve (no API key needed)'));
+    }
+
+    if (msg.includes('OPENAI_API_KEY') || msg.includes('ANTHROPIC_API_KEY')) {
+      console.log(chalk.dim('\nHint: Set the API key environment variable, or use Ollama for free local extraction:'));
+      console.log(chalk.dim('  ollama pull llama3.2 && lcd extract ' + sourceId));
     }
 
     process.exit(1);

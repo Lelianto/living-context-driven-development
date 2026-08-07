@@ -87,6 +87,7 @@ export function parseLlmJsonResponse(text: string): CandidateContext[] {
 export class Extractor {
   private providers: Map<string, LlmProvider> = new Map();
   private initialized = false;
+  private providerWarnings: string[] = [];
 
   async init(): Promise<void> {
     if (this.initialized) return;
@@ -99,17 +100,25 @@ export class Extractor {
       try {
         const { OpenAIProvider } = await import('./extractor/openai.js');
         this.providers.set('openai', new OpenAIProvider());
-      } catch { /* openai package not installed */ }
+      } catch {
+        this.providerWarnings.push('OpenAI: API key set but "openai" package not installed. Run: npm install openai');
+      }
     }
 
     if (process.env.ANTHROPIC_API_KEY) {
       try {
         const { AnthropicProvider } = await import('./extractor/anthropic.js');
         this.providers.set('anthropic', new AnthropicProvider());
-      } catch { /* @anthropic-ai/sdk not installed */ }
+      } catch {
+        this.providerWarnings.push('Anthropic: API key set but "@anthropic-ai/sdk" package not installed. Run: npm install @anthropic-ai/sdk');
+      }
     }
 
     this.initialized = true;
+  }
+
+  getProviderWarnings(): string[] {
+    return this.providerWarnings;
   }
 
   getDefaultProviderName(): string {
