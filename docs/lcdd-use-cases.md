@@ -189,8 +189,8 @@ A regex this broad will match test fixtures. When it does, the correct response 
 to `warn`. Loosening enforcement to silence noise is how a security control quietly becomes
 decoration.
 
-Note that as of v0.4.0 the false-positive trigger cannot yet measure this automatically, because
-dismissal events are not recorded. See
+As of v0.5.0 the false-positive trigger has an event model and consumer, but no CLI or MCP producer
+records dismissals yet, so it cannot measure this automatically. See
 [lcdd-implementation-plan.md](lcdd-implementation-plan.md) section 4.1.
 
 ---

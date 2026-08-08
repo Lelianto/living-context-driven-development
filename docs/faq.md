@@ -1,7 +1,8 @@
 # Frequently Asked Questions
 
-**Status:** Draft  
-**Version:** 0.1.0
+**Status:** Active
+**Version:** 0.5.0
+**Last Updated:** 2026-08-08
 
 ---
 
@@ -27,15 +28,15 @@ No. LCDD is valuable even without AI agents. But AI-assisted development makes L
 
 ### Do I need to use Elixir or any specific tech stack?
 
-No. LCDD is technology-agnostic. The reference implementation will be in TypeScript for broad accessibility, but enforcement plugins can be written in any language.
+No. LCDD is technology-agnostic. The working reference implementation is written in TypeScript for broad accessibility, but enforcement plugins can be written in any language.
 
 ---
 
 ## Implementation
 
-### When will the reference CLI be available?
+### Is the reference CLI available?
 
-The CLI (`@lcdd/cli`) is planned for v0.2.0. There is no timeline commitment yet — LCDD is currently in the specification phase. See [ROADMAP.md](../ROADMAP.md).
+Yes. `@lcdd/cli` is available as part of the v0.5.0 reference implementation. It supports registry management, validation, CQL, health checks, review, source monitoring, extraction, normalization, dashboards, and guardrail-gated improvement. See [ROADMAP.md](../ROADMAP.md).
 
 ### Can I use LCDD today without any tooling?
 
@@ -43,15 +44,15 @@ Yes. Start with Level 1 adoption: write your key constraints as Context YAML fil
 
 ### How does LCDD integrate with my existing CI pipeline?
 
-You can map your existing CI checks (linters, security scanners, tests) to LCDD contexts manually. When reference tooling is available, `lcd validate` will provide a unified verification step.
+Use `lcd validate --strict` as the unified verification step in CI, alongside existing linters, security scanners, and tests. Change-scoped PR reporting is planned for v0.6.0; current validation evaluates the configured target against Active Contexts.
 
 ### How do I handle constraints from PDFs and websites?
 
-The Context Engineering Pipeline includes a Discovery stage that monitors registered sources. LLM-based extraction converts unstructured documents into candidate contexts. Until automated tooling is available, this is a manual process.
+The source connector can monitor Git repositories and websites, and `lcd extract` can convert registered source content into candidates through local Ollama or optional cloud providers. PDF ingestion and local-repository discovery are not implemented yet.
 
 ### Can LCDD work with GitHub Copilot / Cursor / Claude Code?
 
-Yes. Write your active contexts in LCDD prompt format and include them in your AI tool's system prompt or rules file. The MCP Server (v0.3.0) will automate this.
+Yes. `@lcdd/mcp` exposes eight read/validation tools for MCP-compatible agents, including Context queries, artifact validation, health, dashboards, reviews, and improvement recommendations. Automatic task-scoped Context Bundles remain planned for v0.6.0.
 
 ---
 

@@ -1,6 +1,6 @@
 # Research Update: LCDD Adoption, Expansion, and Scope
 
-**Status:** Research (tracking)  
+**Status:** Historical research (superseded for current status by `research-v3.md`)
 **Version:** 0.2.0  
 **Last Updated:** 2026-08-08
 
@@ -11,6 +11,11 @@
 This document summarizes an analysis of comparable repositories and approaches, along with adoption recommendations for Living Context Driven Development (LCDD). It focuses on: which features can be adopted without weakening LCDD's principles, how to expand LCDD's scope, whether LCDD remains effective without ingesting data from websites or external rules, how to handle changes originating from product or management teams, and whether LCDD can support repositories other than GitHub.
 
 > **Note on version 0.2.0:** This document now also serves as **status tracking** — each planned phase is mapped against the actual implementation (as of v0.4.0) in [Implementation Status vs Plan](#implementation-status-vs-plan-as-of-v040).
+
+> **Historical-status note:** The status tables below intentionally preserve the v0.4.0 baseline.
+> They are not the current roadmap. See [research-v3.md](research-v3.md),
+> [context-debt-remediation-plan.md](context-debt-remediation-plan.md), and
+> [../specification/0016-roadmap.md](../specification/0016-roadmap.md) for current planning.
 
 ---
 

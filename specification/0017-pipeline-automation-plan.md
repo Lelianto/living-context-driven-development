@@ -1,28 +1,28 @@
 # Pipeline Automation Plan — Stages 01–05 & 09
 
-**Status:** Planning  
-**Version:** 0.4.0  
+**Status:** Active — Phase A implemented
+**Version:** 0.5.0
 **Target Milestone:** v1.0.0  
-**Last Updated:** 2026-08-07
+**Last Updated:** 2026-08-08
 
 ---
 
 ## Abstract
 
-This document outlines the technical design for automating the LCDD Context Engineering Pipeline: Discover (01), Extract (02), Normalize (03), Classify (04), Review (05), and Improve (09). Stages 01, 04, 05, and 09 now have deterministic Phase A implementations in v0.3.0 — no LLM required. Stage 02 (Extract) remains the only stage requiring LLM integration and an API key.
+This document outlines the technical design for automating the LCDD Context Engineering Pipeline: Discover (01), Extract (02), Normalize (03), Classify (04), Review (05), and Improve (09). Phase A implementations exist for every listed stage as of v0.5.0. Extraction supports local Ollama by default, with optional OpenAI and Anthropic providers; an external API key is not required for the default path.
 
 ---
 
 ## Current State vs Target
 
-| Stage | Current (v0.3.0) | Target (v1.0.0) |
+| Stage | Current (v0.5.0) | Target (v1.0.0) |
 |---|---|---|
-| 01 Discover | 🟡 Deterministic Phase A: `lcd source add/check`, Git clone+fetch+diff, HTTP checksum | Automated cron job with LLM relevance scoring |
-| 02 Extract | Manual — user writes context YAML by hand | LLM parses source documents into candidate contexts |
-| 03 Normalize | Manual — user follows schema guide | Programmatic mapping + validation + deduplication |
+| 01 Discover | 🟡 Phase A: `lcd source add/check/watch/schedule`, Git clone+fetch+diff, HTTP checksum | Local repository scanner and additional connectors |
+| 02 Extract | 🟡 Phase A: `lcd extract`, local Ollama default, optional OpenAI/Anthropic, dry-run and auto modes | Broader formats, confidentiality policy, and evaluated extraction quality |
+| 03 Normalize | 🟡 Phase A: schema mapping, validation, SHA-256/Jaccard deduplication, draft creation | Embedding-assisted deduplication with deterministic fallback |
 | 04 Classify | 🟡 Deterministic Phase A: Rule engine auto-suggests authority, governance, severity, tags | LLM refinement for ambiguous cases |
 | 05 Review | 🟡 Deterministic Phase A: `lcd review list/show/approve/reject/revision`, auto-approval for Local | Full routing + checklist + automated notifications |
-| 09 Improve | 🟡 Deterministic Phase A: `lcd doctor`, Context Health Score, 5-trigger evaluator, recommendations | ML-based trend analysis, automated improvement proposals |
+| 09 Improve | ✅ Phase A: `lcd doctor`, six-trigger evaluator, `lcd improve check/apply/rollback`, snapshots and guardrails | Limited, evidence-backed evolution for Local Contexts |
 
 ---
 

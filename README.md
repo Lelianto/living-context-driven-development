@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-    <a href="https://github.com/Lelianto/living-context-driven-development/releases"><img src="https://img.shields.io/github/v/tag/Lelianto/living-context-driven-development?label=Spec%20v0.2.1&color=10b981" alt="Spec Version"/></a>
+    <a href="https://github.com/Lelianto/living-context-driven-development/releases"><img src="https://img.shields.io/github/v/tag/Lelianto/living-context-driven-development?label=Release&color=10b981" alt="Latest release"/></a>
     <a href="https://github.com/Lelianto/living-context-driven-development/stargazers"><img src="https://img.shields.io/github/stars/Lelianto/living-context-driven-development?style=social" alt="GitHub stars"/></a>
     <a href="https://www.npmjs.com/package/@lcdd/cli"><img src="https://img.shields.io/npm/v/@lcdd/cli?color=10b981" alt="npm"/></a>
     <a href="LICENSE"><img src="https://img.shields.io/github/license/Lelianto/living-context-driven-development?color=10b981" alt="Apache 2.0"/></a>
@@ -56,7 +56,7 @@ This is **Context Debt** — the accumulated cost of outdated knowledge. Just as
 |---|---|
 | **What happens when context decays?** | Context Debt. Stale rules. Wrong AI output. LCDD measures it with a **Context Health Score**. |
 | **How do you prevent it?** | The **Context Lifecycle** — six stages from Draft to Archived, each with defined enforcement, review cycles, and observability. |
-| **Can AI agents bypass it?** | No. Hardened contexts are immutable to AI. Specification Drift is detected and blocked. |
+| **Can AI agents bypass it?** | Hardened Contexts cannot be auto-modified. Static violations can be blocked today; code-to-Context drift detection is planned for v0.6.0. |
 
 ---
 
@@ -259,7 +259,7 @@ Recommendations
   Run lcd doctor --triggers for detailed trigger analysis.
 ```
 
-Add `--triggers` for five deterministic triggers (stale contexts, high false positives, increasing violations, AI drift, new source detected) with specific remediation commands.
+Add `--triggers` for six deterministic triggers (stale contexts, high violation rate, high false positives, increasing violations, AI drift, and new source detection) with specific remediation commands.
 
 | Metric | What It Measures |
 |---|---|
@@ -272,7 +272,7 @@ Add `--triggers` for five deterministic triggers (stale contexts, high false pos
 | **Tag Hygiene** | Contexts missing tags for discoverability |
 | **Review Backlog** | Contexts awaiting review (pending, in-review, needs-revision) |
 
-> Context Health is available now in v0.3.0 via `lcd doctor`. No API key required. See `lcd doctor --help` for options.
+> Context Health is available via `lcd doctor`, and v0.5.0 adds executable, guardrail-gated recommendations through `lcd improve`. No API key is required.
 
 ---
 
@@ -309,6 +309,7 @@ npm install -g @lcdd/mcp
 | "What's the governance health?" | `lcdd_get_health` | Context Health Score + recommendations |
 | "Show me violation trends" | `lcdd_get_dashboard` | Enforcement metrics: trends, actor breakdown |
 | "What needs review?" | `lcdd_list_reviews` | Pending reviews with auto-approval status |
+| "What should governance improve?" | `lcdd_get_recommendations` | Read-only, guardrail-gated recommendations |
 
 > Zero configuration beyond pointing to your project. No API key, no LLM, no cloud dependency. The MCP reads `.lcdd/` directly from your filesystem.
 
@@ -316,7 +317,7 @@ npm install -g @lcdd/mcp
 
 ## ☰ Quick Start
 
-LCDD is in **Specification Phase (v0.1.0)** with a working **Reference Implementation (v0.3.1)** published to npm.
+LCDD is in **Implementation Phase (v0.5.0)** with working Core, CLI, and MCP reference packages. The methodology remains a proposal and is not yet a stable v1.0 standard.
 
 ### Install the CLI (30 seconds)
 
@@ -416,7 +417,8 @@ living-context-driven-development/
 │   ├── 0013-context-protocol.md         # Context Protocol
 │   ├── 0014-security.md                 # Security Model
 │   ├── 0015-reference-architecture.md   # Reference Architecture
-│   └── 0016-roadmap.md                  # Detailed Roadmap
+│   ├── 0016-roadmap.md                  # Detailed Roadmap
+│   └── 0017-pipeline-automation-plan.md # Pipeline Automation Plan
 │
 ├── 📂 docs/                             # Companion Documentation
 │   ├── research.md                      # Literature Review (v0.2.0)
@@ -443,7 +445,7 @@ living-context-driven-development/
 ├── 📂 media/                            # Visual Identity
 │   └── logo.png                         # LCDD Logo
 │
-└── 📂 implementation/                   # Reference Implementation (v0.3.1)
+└── 📂 implementation/                   # Reference Implementation (v0.5.0)
     ├── packages/core/                   # @lcdd/core — TypeScript SDK
     ├── packages/cli/                    # @lcdd/cli — Command-line tool
     ├── packages/mcp/                    # @lcdd/mcp — MCP Server for AI agents
@@ -462,9 +464,9 @@ living-context-driven-development/
 | **Context Debt** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ Measurable |
 | **AI-Aware** | ❌ | ❌ | ✅ one-way | ✅ workflow | ✅ | ✅ Built-in + enforced |
 | **Observability** | Test results | ❌ | ❌ | ❌ | ❌ | ✅ Full |
-| **Spec Drift Prevention** | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ |
+| **Spec Drift Prevention** | ❌ | ❌ | ❌ | ❌ | ✅ | 🟡 Partial; code drift planned |
 | **Community Sharing** | Test suites | ❌ | ❌ | ❌ | ❌ | ✅ Context Packs |
-| **MCP / Agent Protocol** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ 7 native tools |
+| **MCP / Agent Protocol** | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ 8 native tools |
 
 **AGENTS.md vs LCDD:** AGENTS.md files give AI agents instructions — but they're unstructured, unversioned, ungoverned, and unenforced. Nothing prevents the agent from ignoring them. Nothing measures whether they're being followed. LCDD takes the same idea and makes it structured, versioned, governed, and enforced. Context is a first-class artifact, not a text file.
 
@@ -492,12 +494,13 @@ Living Context Driven Development is built on five axioms:
 
 | Milestone | Version | Status | Focus |
 |---|---|---|---|
-| **Foundation** | v0.1.0 | ✅ Complete | Specification — 17 docs, manifesto, examples, reference schema |
+| **Foundation** | v0.1.0 | ✅ Complete | Specification foundation, manifesto, examples, reference schema |
 | **Reference Implementation** | v0.2.1 | ✅ Complete | `@lcdd/core` SDK + `@lcdd/cli` CLI — published to npm |
 | **Pipeline Automation** | v0.4.0 | ✅ Complete | Deterministic pipeline: `lcd doctor`, rule engine, `lcd review`, source connector, trigger evaluator, `lcd extract` + `lcd normalize` |
-| **MCP Server** | v0.4.0 | ✅ Complete | AI agent integration — 7 tools via Model Context Protocol |
-| **Ecosystem** | v0.5.0 | 🔴 Planned | VS Code, GitHub App, Community Packs, Observability Dashboard, LLM extraction |
-| **Adoption** | v1.0.0 | 🔴 Planned | Stabilized spec, conference talks, case studies |
+| **MCP Server** | v0.3.0+ | ✅ Complete | AI agent integration — 8 tools via Model Context Protocol |
+| **Self-Healing Phase A** | v0.5.0 | ✅ Complete | Executable recommendations, snapshots, health verification, rollback, and guardrails |
+| **Drift & Retrieval** | v0.6.0 | 🔴 Planned | Change-scoped validation, Context Bundles, local discovery, code-to-Context drift |
+| **Stabilization** | v1.0.0 | 🔴 Planned | Stable contracts, migration policy, conformance, evidence, and external adoption |
 
 ### Pipeline Stage Status
 
@@ -511,7 +514,7 @@ Living Context Driven Development is built on five axioms:
 | 06 Enforce | ✅ Done | v0.2.1 — `lcd validate`, `ContextVerifier`, CI integration |
 | 07 Verify | ✅ Done | v0.2.1 — Schema validation, semantic rules, lifecycle checks |
 | 08 Learn | ✅ Done | v0.3.0 — `lcd dashboard` (terminal + web), enforcement metrics, violation trends |
-| 09 Improve | ✅ Done | v0.3.0 — `lcd doctor`, Context Health Score, 5-trigger evaluator, structured recommendations |
+| 09 Improve | ✅ Done | v0.5.0 — `lcd doctor`, six-trigger evaluator, `lcd improve check/apply/rollback`, snapshots and guardrails |
 
 ### Install
 

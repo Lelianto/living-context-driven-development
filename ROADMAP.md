@@ -1,7 +1,7 @@
 # Roadmap
 
-**Version:** 0.4.0  
-**Last Updated:** 2026-08-07
+**Version:** 0.5.0
+**Last Updated:** 2026-08-08
 
 ---
 
@@ -10,7 +10,7 @@
 - [x] Literature Review
 - [x] Problem Statement
 - [x] Manifesto & First Principles
-- [x] Core Specification (17 documents)
+- [x] Core Specification (18 RFC-style documents)
 - [x] Glossary
 - [x] Companion Documentation (7 docs)
 - [x] Example Context Packs (5 domains)
@@ -44,14 +44,14 @@
 - [x] `lcd doctor` — Context Health Score (8 metrics, letter grade A–F, JSON output)
 - [x] Rule Engine — Deterministic auto-classification for `lcd context add`
 - [x] `lcd review` — Review workflow CLI (`list/show/approve/reject/revision/auto-approve`)
-- [x] Trigger Evaluator — 5 deterministic triggers with structured recommendations
+- [x] Trigger Evaluator — deterministic trigger evaluation with structured recommendations
 - [x] Source Connector — `lcd source add/list/check/remove` (Git + Website)
 - [x] `lcd source watch` — Scheduled daemon polling at configurable intervals
 - [x] `lcd source schedule` — Cron + GitHub Actions schedule generation
 - [x] `lcd extract` — LLM extraction: Ollama (free, default), OpenAI, Anthropic backends
 - [x] `lcd normalize` — Schema mapping, Jaccard dedup, validation, draft creation
 - [x] `lcd dashboard` — Terminal + Web dashboard (violation trends, actor breakdown, velocity)
-- [x] `@lcdd/mcp` — MCP Server with 7 tools for AI agents (Claude, Cursor, Cline)
+- [x] `@lcdd/mcp` — MCP Server for AI agents (Claude, Cursor, Cline)
 - [x] Enforcement event persistence (`.enforcements.log`)
 - [x] Source change event persistence (`.changes.log`)
 - [x] Website updated to v0.4.0 (Astro + Vercel)
@@ -60,25 +60,43 @@
 
 ---
 
-## 🔴 v0.5.0 — Ecosystem
+## ✅ v0.5.0 — Self-Healing Phase A (Complete)
 
-- [ ] VS Code Extension
-- [ ] GitHub App
-- [ ] Database-backed Registry
-- [ ] Observability Dashboard (Grafana)
-- [ ] Community Context Pack Registry
-- [ ] Starter Packs (OWASP, GDPR, Startup)
-- [ ] LLM refinement for ambiguous classifications
-- [ ] Embedding-based dedup (cosine similarity)
-- [ ] Multi-connector support (RSS, Slack, PDF)
+- [x] `lcd improve check/apply/rollback`
+- [x] ImproveEngine with persisted snapshots and automatic health-regression rollback
+- [x] Six centralized deterministic triggers
+- [x] True dismissal event model and storage
+- [x] Review and heal audit events
+- [x] Nine tested self-healing guardrails
+- [x] Eighth MCP tool: read-only recommendations
+- [x] 192 passing core tests across 11 suites
+
+---
+
+## 🔴 v0.6.0 — Drift & Retrieval
+
+- [ ] Resolve the P0/P1 security baseline and add CLI/MCP integration tests
+- [ ] `lcd validate --changes` with a PR governance report
+- [ ] Task-scoped Context Bundles and `lcdd_get_context_for_task`
+- [ ] `lcd discover` for local repository sources
+- [ ] `lcd drift` and `lcdd_detect_drift` for code-to-Context drift
+
+---
+
+## 🔴 v0.7.0–v0.9.0 — Provenance, Protocol, and Evidence
+
+- [ ] v0.7.0: provenance, verification freshness, dismissal producer, governance reports
+- [ ] v0.8.0: Context Protocol implementation and versioned pack distribution
+- [ ] v0.9.0: benchmark repository and reproducible experiments
 
 ---
 
 ## 🔴 v1.0.0 — Methodology Adoption
 
 - [ ] Stabilized specification
-- [ ] Conference talks
-- [ ] Published case studies
-- [ ] Training materials
+- [ ] Migration and compatibility policy
+- [ ] At least one external-project case study
+- [ ] Security, conformance, documentation, and experiment release gates
+- [ ] Ecosystem integrations built on stable protocol and pack contracts
 
 See [specification/0016-roadmap.md](specification/0016-roadmap.md) for the detailed roadmap.

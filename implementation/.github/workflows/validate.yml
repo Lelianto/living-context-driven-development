@@ -32,6 +32,11 @@ jobs:
           cd implementation
           npm test --workspaces
 
+      - name: Check Documentation Consistency
+        run: |
+          cd implementation
+          npm run docs:check
+
       - name: List Active Contexts
         run: lcd list --lifecycle active
 

@@ -234,7 +234,7 @@ The following principles are **absolute** and must not be weakened by any automa
   evolution for Local Contexts.
 - [0017-pipeline-automation-plan.md](../specification/0017-pipeline-automation-plan.md) —
   Stage 09 Phase C: fitness-based optimization plus A/B testing.
-- [ROADMAP.md](../ROADMAP.md) — v0.5.0 (ecosystem) and the path to v1.0.0.
+- [ROADMAP.md](../ROADMAP.md) — v0.5.0 self-healing and the path to v1.0.0.
 
 ## Closing
 

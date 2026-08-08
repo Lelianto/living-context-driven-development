@@ -1,6 +1,6 @@
 # LCDD Implementation Plan — Self-Healing Phase A
 
-**Status:** Planning  
+**Status:** Implemented
 **Version:** 0.1.0  
 **Target Milestone:** v0.5.0  
 **Last Updated:** 2026-08-08
@@ -20,6 +20,10 @@ those belong to Phase B (v0.8.0).
 
 This document is normative for the implementation, not for the specification. Where it disagrees
 with `specification/`, the specification wins and this document must be corrected.
+
+> **Completion note:** Phase A shipped in v0.5.0. The tables below preserve the v0.4.0-to-v0.5.0
+> engineering baseline as a historical implementation record. Remaining work is explicitly called
+> out in the Dependencies section and the active roadmap.
 
 ---
 
@@ -329,10 +333,9 @@ Add a `test` script to `cli` and `mcp` so `npm run test --workspaces` is meaning
 | Phase B fitness optimization | Phase A audit trail and rollback proven in practice |
 
 Note that a dismissal **producer** does not exist yet — nothing in the CLI or MCP records that a
-developer dismissed a violation. Phase A adds the event type, the storage, and the consumer; the
-producer needs an interactive surface (IDE extension or GitHub App) and therefore lands with the
-rest of the v0.5.0 ecosystem work. Until then the false positive trigger stays dormant rather than
-reporting a fabricated rate.
+developer dismissed a violation. Phase A added the event type, storage, and consumer. The producer
+is follow-up work in the v0.7.0 provenance and feedback milestone. Until then the false-positive
+trigger stays dormant rather than reporting a fabricated rate.
 
 ---
 

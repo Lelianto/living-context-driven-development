@@ -125,7 +125,7 @@ enforcement:
     └── experimental/   # AI suggestions, lowest authority
 ```
 
-## CLI Command Summary (v0.4.0)
+## CLI Command Summary (v0.5.0)
 
 | Command | Purpose |
 |---|---|

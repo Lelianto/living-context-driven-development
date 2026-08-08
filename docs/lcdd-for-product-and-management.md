@@ -151,16 +151,16 @@ matter or it was written unclearly. Both are worth knowing, and neither cost you
 
 ## What to expect, honestly
 
-LCDD is at v0.4.0 with a working reference implementation. It is a proposal, not an industry
+LCDD is at v0.5.0 with a working reference implementation. It is a proposal, not an industry
 standard, and it is being developed in the open.
 
 What works today: recording decisions, reviewing them, enforcing the mechanically checkable ones,
 and measuring the health of the collection.
 
-What does not exist yet: a hosted service, a graphical interface, and a marketplace of ready-made
-decision sets. The current interface is a command-line tool, so you will be asking an engineer for
-reports rather than opening a dashboard yourself. A VS Code extension and a GitHub App are the next
-milestone.
+What does not exist yet: a hosted service, an editor extension, and a marketplace of ready-made
+decision sets. The current interfaces are the CLI, MCP server, and a local dashboard. Drift-aware
+retrieval and change-scoped governance are the next milestone; broader ecosystem integrations come
+after the core contracts are proven.
 
 If you want a polished product experience, this is early. If you want to stop losing decisions and
 are willing to work through an engineer, it works now.

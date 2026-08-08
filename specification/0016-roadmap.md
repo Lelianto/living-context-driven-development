@@ -1,9 +1,9 @@
 # 0016 — Roadmap
 
 **Status:** Active  
-**Version:** 0.4.0  
+**Version:** 0.5.0
 **Specification:** Living Context Driven Development  
-**Last Updated:** 2026-08-07
+**Last Updated:** 2026-08-08
 
 ---
 
@@ -90,7 +90,7 @@ This document defines the development roadmap for the LCDD specification, refere
 
 ---
 
-## Milestone 2.5: Pipeline Automation v0.4.0
+## Milestone 3: Pipeline Automation and MCP v0.3.0–v0.4.0
 
 **Target:** Automate pipeline stages 01–03, 04–05, and 08–09 with deterministic rules. MCP server for AI agents. No API key required for default usage.
 
@@ -100,16 +100,16 @@ This document defines the development roadmap for the LCDD specification, refere
 
 | # | Deliverable | Description |
 |---|---|---|
-| 2.5.1 | `lcd doctor` | Context Health Score: 8 metrics, letter grade A–F, `--json` and `--triggers` flags |
-| 2.5.2 | Rule Engine | Deterministic auto-classification: source→authority, keyword→severity, domain→tags |
-| 2.5.3 | `lcd review` | Review workflow: `list`, `show`, `approve`, `reject`, `revision`, `auto-approve` |
-| 2.5.4 | Trigger Evaluator | 5 deterministic triggers: stale, false-positive, increasing-violations, AI-drift, new-source |
-| 2.5.5 | Source Connector | `lcd source add/list/check/remove` + `watch` + `schedule` — Git + Website |
-| 2.5.6 | Enforcement Log | Enforcement events persisted to `.lcdd/contexts/.enforcements.log` |
-| 2.5.7 | `lcd dashboard` | Terminal + Web dashboard: trends, actor breakdown, top violated, mode distribution, velocity |
-| 2.5.8 | `@lcdd/mcp` | MCP Server: 7 tools, stdio transport, Claude/Cursor/Cline integration |
-| 2.5.9 | `lcd extract` | LLM extraction: Ollama (free), OpenAI, Anthropic backends. `--dry-run`, `--auto` modes |
-| 2.5.10 | `lcd normalize` | Schema mapping, Jaccard dedup, SHA-256 exact dedup, validation, draft creation |
+| 3.1 | `lcd doctor` | Context Health Score: 8 metrics, letter grade A–F, `--json` and `--triggers` flags |
+| 3.2 | Rule Engine | Deterministic auto-classification: source→authority, keyword→severity, domain→tags |
+| 3.3 | `lcd review` | Review workflow: `list`, `show`, `approve`, `reject`, `revision`, `auto-approve` |
+| 3.4 | Trigger Evaluator | Deterministic governance triggers with structured recommendations |
+| 3.5 | Source Connector | `lcd source add/list/check/remove` + `watch` + `schedule` — Git + Website |
+| 3.6 | Enforcement Log | Enforcement events persisted to `.lcdd/contexts/.enforcements.log` |
+| 3.7 | `lcd dashboard` | Terminal + Web dashboard: trends, actor breakdown, top violated, mode distribution, velocity |
+| 3.8 | `@lcdd/mcp` | MCP Server: stdio transport and AI-agent integration |
+| 3.9 | `lcd extract` | Ollama, OpenAI, and Anthropic extraction with `--dry-run` and `--auto` modes |
+| 3.10 | `lcd normalize` | Schema mapping, Jaccard and SHA-256 deduplication, validation, and draft creation |
 
 ### Success Criteria
 
@@ -121,14 +121,41 @@ This document defines the development roadmap for the LCDD specification, refere
 - [x] `lcd extract` with Ollama extracts constraints with zero API cost.
 - [x] `lcd normalize` deduplicates and validates candidates before registry write.
 - [x] `lcd dashboard --web` serves interactive enforcement metrics.
-- [x] MCP server exposes 7 LCDD tools to AI agents via stdio.
+- [x] MCP server exposes LCDD query, validation, health, dashboard, and review tools via stdio.
 - [x] 6 of 9 pipeline stages fully done, 2 in Phase A, 1 remaining (02 full LLM).
 
 ---
 
-## Milestone 3: MCP Server v0.3.0
+## Milestone 4: Self-Healing Phase A v0.5.0
 
-**Target:** AI coding assistants can query contexts and validate code through MCP.
+**Target:** Turn deterministic diagnoses into reversible, human-governed repair actions.
+
+**Status:** ✅ Complete (2026-08-08)
+
+### Deliverables
+
+| # | Deliverable | Description |
+|---|---|---|
+| 4.1 | Unified triggers | Six triggers with centralized thresholds and true dismissal-based false-positive measurement |
+| 4.2 | ImproveEngine | Plan, apply, verify, and automatically roll back supported recommendations |
+| 4.3 | Persisted snapshots | Reversible snapshots cover all Context lifecycle states |
+| 4.4 | Heal audit trail | Apply, rollback, and review decisions are recorded as lifecycle events |
+| 4.5 | `lcd improve` | `check`, `apply`, and `rollback` CLI workflow |
+| 4.6 | Human-control guardrails | Hardened protection, approval gates, reversibility, health veto, and psychological safety |
+| 4.7 | MCP recommendations | Eighth MCP tool exposes read-only recommendations; mutation remains a human action |
+
+### Success Criteria
+
+- [x] Local recommendations can be inspected, dry-run, applied with approval, and rolled back.
+- [x] Hardened Contexts are never automatically modified.
+- [x] Health regression automatically restores the pre-change snapshot.
+- [x] Core self-healing behavior is covered by named guardrail tests.
+
+---
+
+## Milestone 5: Drift and Retrieval v0.6.0
+
+**Target:** Close the code-to-Context feedback loop and deliver only relevant Context for a task or change.
 
 **Status:** 🔴 Not Started
 
@@ -136,22 +163,25 @@ This document defines the development roadmap for the LCDD specification, refere
 
 | # | Deliverable | Description |
 |---|---|---|
-| 3.1 | `@lcdd/mcp` | MCP Server exposing LCDD tools to AI agents |
-| 3.2 | Context Injection | Automatic context injection into agent prompts |
-| 3.3 | Agent Verification | AI agents can validate their own output against contexts |
-| 3.4 | Drift Detection | Detect when AI agents modify tests/specs to match broken code |
+| 5.1 | Security and test baseline | Resolve P0/P1 audit findings; add CLI and MCP integration/contract tests |
+| 5.2 | Change-scoped validation | `lcd validate --changes` with stable JSON and PR governance summary |
+| 5.3 | Context Bundle | Task-scoped retrieval with authority resolution, lifecycle filtering, and size budgets |
+| 5.4 | Local discovery | `lcd discover` scans repository documentation and configuration into review candidates |
+| 5.5 | Code-to-Context drift | `lcd drift` produces evidence-backed, proposal-only Drift Reports |
+| 5.6 | Agent retrieval | MCP tools expose Context Bundles and drift reports without automatic mutation |
 
 ### Success Criteria
 
-- [ ] Claude Desktop / Cursor can query LCDD contexts via MCP.
-- [ ] AI-generated code is automatically validated against Active contexts.
-- [ ] Specification drift detection flags suspect AI-generated PRs.
+- [ ] Change-scoped validation reports only affected Contexts and artifacts.
+- [ ] A task bundle is materially smaller than the full Registry without dropping higher-authority constraints.
+- [ ] This repository can discover candidate constraints from its own documentation.
+- [ ] A documented provider migration is detected as drift but never silently rewrites a Hardened Context.
 
 ---
 
-## Milestone 4: Ecosystem v0.5.0
+## Milestone 6: Provenance and Governance Reporting v0.7.0
 
-**Target:** Plugins, packs, and integrations that make LCDD useful out of the box.
+**Target:** Make every governed result explainable and auditable.
 
 **Status:** 🔴 Not Started
 
@@ -159,62 +189,66 @@ This document defines the development roadmap for the LCDD specification, refere
 
 | # | Deliverable | Description |
 |---|---|---|
-| 4.1 | VS Code Extension | In-editor context awareness: violation highlighting, context hover info |
-| 4.2 | GitHub App | PR comments with context violations, automated context review |
-| 4.3 | Database-backed Registry | PostgreSQL Registry for team/enterprise deployments |
-| 4.4 | Observability Dashboard | Grafana template for LCDD metrics |
-| 4.5 | Context Pack Registry | Public registry for community Context Packs |
-| 4.6 | Starter Packs | Packs for: startup best practices, OWASP Top 10, OJK fintech, GDPR basics |
-| 4.7 | Documentation Website | livingcontext.dev with full docs, guides, and tutorials |
+| 6.1 | Provenance model | Creator, approver, source revision, verification time, and AI involvement |
+| 6.2 | Verification workflow | `lcd context verify` records evidence and freshness |
+| 6.3 | Governance report | File-to-Context mapping, provenance, violations, and merge decision |
+| 6.4 | Feedback producer | Explicit dismissals activate false-positive measurement |
+| 6.5 | Bounded telemetry | Local-first, opt-in, aggregated usage and correction metrics |
 
 ### Success Criteria
 
-- [ ] Developer can install the VS Code extension and see real-time context violations.
-- [ ] GitHub App posts context violation comments on PRs.
-- [ ] At least 5 community-contributed Context Packs exist.
-- [ ] Documentation website is live with search and navigation.
+- [ ] Every governed result can identify the applicable Context, authority, approver, evidence, and verification time.
+- [ ] Existing v0.5.0 Contexts have a documented migration path.
+- [ ] Aggregate feedback contains no individual actor identity or source content.
 
 ---
 
-## Milestone 5: Methodology Adoption v1.0.0
+## Milestone 7: Protocol and Pack Distribution v0.8.0
 
-**Target:** LCDD is recognized as a named methodology alongside TDD, DDD, BDD, and SDD.
+**Target:** Provide a stable interoperability surface and reproducible Context Pack distribution.
 
 **Status:** 🔴 Not Started
 
 ### Deliverables
 
-| # | Deliverable | Description |
-|---|---|---|
-| 5.1 | v1.0 Specification | Stabilized specification with migration guide from v0.x |
-| 5.2 | Academic Paper | Peer-reviewed paper describing LCDD and its novelty |
-| 5.3 | Conference Talks | Presentations at software engineering conferences |
-| 5.4 | Training Materials | Workshop curriculum, certification program |
-| 5.5 | Case Studies | Published case studies from real-world adoption |
-| 5.6 | Book | "Living Context Driven Development" — comprehensive methodology guide |
-
-### Success Criteria
-
-- [ ] Specification is stable (no breaking changes without major version bump).
-- [ ] At least 3 published case studies from independent teams.
-- [ ] Conference talk accepted at a major software engineering conference.
-- [ ] LCDD is listed alongside other named methodologies in industry surveys.
+- `lcd serve` implements the minimum Context Protocol surface with conformance tests.
+- Versioned pack manifests support validation, checksums, provenance, install, update, and removal.
+- Example packs become validated installable artifacts before a hosted marketplace is attempted.
 
 ---
 
-## Milestone 6: Ubiquity v2.0.0+
+## Milestone 8: Experimental Validation v0.9.0
 
-**Target:** Context Registries are as common as `package.json`. AI agents query them by default.
+**Target:** Replace methodology claims with reproducible evidence.
 
-**Status:** 🔴 Not Started (Vision)
+**Status:** 🔴 Not Started
 
-### Vision Items
+### Deliverables
 
-- Context Registries are a standard part of repository scaffolding (`npx create-next-app` includes `.lcdd/`).
-- Major AI coding tools (Copilot, Cursor, Claude Code) have native LCDD integrations.
-- Regulatory bodies publish official Context Packs in machine-readable format.
-- Cross-organization Context sharing enables industry-wide governance standardization.
-- LCDD is taught in university software engineering curricula.
+- Benchmark repository with seeded Context Debt and authority conflicts.
+- Reproducible experiments for drift, conflicting instructions, scoped Context, and long-lived decay.
+- Raw anonymized results, analysis scripts, limitations, and retained negative results.
+
+---
+
+## Milestone 9: Stable Framework v1.0.0
+
+**Target:** Stabilize LCDD contracts after implementation, conformance, security, and external evidence.
+
+**Status:** 🔴 Not Started
+
+### Deliverables
+
+- Stable terminology, schema, lifecycle, authority, governance, protocol, Bundle, and report contracts.
+- Migration and compatibility policy for v0.x artifacts.
+- At least one external-project case study.
+- Ecosystem integrations built on stable protocol and pack contracts.
+
+### Success Criteria
+
+- [ ] No breaking change without a major version bump.
+- [ ] Security, conformance, documentation, and experiment release gates pass.
+- [ ] At least one real project outside this repository uses LCDD.
 
 ---
 

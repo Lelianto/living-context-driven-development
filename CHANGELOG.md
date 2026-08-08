@@ -7,6 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Planned for v0.6.0
+
+- Security and integration-test baseline
+- Change-scoped validation with `lcd validate --changes`
+- Task-scoped Context Bundles
+- Local repository discovery
+- Code-to-Context drift detection
+
+---
+
+## [0.5.0] — 2026-08-08
+
+### Self-Healing Phase A
+
+- `lcd improve check` — structured, guardrail-gated recommendations
+- `lcd improve apply <recommendation-id>` — dry-run and approved repair execution
+- `lcd improve rollback <heal-id>` — persisted snapshot restoration
+- `ImproveEngine` — plan, apply, health verification, and automatic rollback on regression
+- Six centralized triggers, including separate violation-rate and true false-positive signals
+- `DismissalEvent` storage in `.dismissals.log`
+- Persisted registry snapshots covering all lifecycle states
+- Heal and review decisions recorded in the lifecycle event log
+- Nine tested guardrails preserving human control and Hardened Context protection
+- `lcdd_get_recommendations` added as the eighth, read-only MCP tool
+
+### Tests
+
+- Expanded `@lcdd/core` to 192 passing tests across 11 suites
+- Added coverage for ImproveEngine, review auditing, persisted snapshots, trigger unification,
+  dismissal events, and rollback behavior
+
+---
+
 ## [0.4.0] — 2026-08-07
 
 ### Pipeline Stages 01–03
@@ -154,17 +189,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `CODE_OF_CONDUCT.md` — Contributor Covenant.
 - `SECURITY.md` — Security policy and vulnerability reporting.
 - `CHANGELOG.md` — This file.
-
----
-
-## [Unreleased]
-
-### Planned for v0.5.0
-- VS Code Extension
-- GitHub App
-- Database-backed Registry (PostgreSQL)
-- Observability Dashboard (Grafana)
-- Community Context Pack Registry
-- LLM refinement for ambiguous classifications
-- Embedding-based dedup (cosine similarity)
-- Multi-connector support (RSS, Slack, PDF)
