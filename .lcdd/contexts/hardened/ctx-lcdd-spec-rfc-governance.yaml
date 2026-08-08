@@ -1,0 +1,61 @@
+id: "ctx-lcdd-spec-rfc-governance"
+version: 1
+created_at: "2026-08-08T09:00:00Z"
+updated_at: "2026-08-08T09:00:00Z"
+title: "Normative specification changes MUST follow governed RFC review"
+description: >
+  Any change to specification/** that alters normative behavior, terminology, lifecycle,
+  authority, governance, schema, protocol, security, or compatibility must be proposed through
+  the structured RFC process in CONTRIBUTING.md. AI agents may draft or recommend changes but
+  cannot approve them. The repository owner or delegated maintainer must explicitly approve the
+  change, and unresolved objections must remain visible.
+source:
+  type: "documentation"
+  uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/specification/0001-core-principles.md"
+  document_id: "LCDD-0001-P10"
+  location: "Principle 10 — LCDD Governs Itself"
+  extraction_method: "manual"
+  confidence: 1
+authority:
+  source:
+    type: "organization"
+    id: "lcdd-maintainers"
+    name: "LCDD Maintainers"
+    uri: "https://github.com/Lelianto/living-context-driven-development"
+  level: 3
+  delegation: []
+  trust_model: "direct"
+  trust_score: 1
+  challenge_policy:
+    process: "Open a governed RFC or pull request with evidence and request maintainer review."
+    uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/CONTRIBUTING.md"
+    sla_hours: 168
+category: "governance"
+severity: "critical"
+applies_to:
+  - "specification/**/*.md"
+  - "CONTRIBUTING.md"
+lifecycle: "active"
+governance:
+  classification: "hardened-standard"
+  approval_required: true
+  approvers:
+    - "repository-owner"
+  min_review_period_hours: 168
+effective_date: "2026-08-08T09:00:00Z"
+deprecated_date: null
+owner: "lcdd-maintainers"
+review_status: "approved"
+enforcement:
+  mode: "block"
+evidence:
+  - type: "normative-principle"
+    uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/specification/0001-core-principles.md"
+    description: "Principle 10 requires LCDD specification changes to follow the Context Lifecycle."
+tags: ["self-governance", "specification", "rfc", "hardened"]
+supersedes: []
+superseded_by: []
+metadata:
+  observability: "Pull-request review record and tracked lifecycle events"
+  enforcement_point: "Repository review process; automated RFC-link enforcement is planned"
+  omitted_fields: []

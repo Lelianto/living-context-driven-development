@@ -29,6 +29,17 @@ npx @lcdd/cli init
 
 ## Commands
 
+| Area | Commands |
+| --- | --- |
+| Registry | `init`, `context add`, `list`, `show`, `query`, `transition` |
+| Enforcement | `validate`, `validate --changes`, `doctor` |
+| Governance | `review`, `improve`, `context bundle` |
+| Sources | `source`, `extract`, `normalize` |
+| Observability | `dashboard` |
+
+Commands introduced during v0.6 development are documented as preview surfaces until the v0.6.0
+release gate is complete. Run `lcd --help` for the exact commands in the installed package version.
+
 ### `lcd init`
 
 Initialize LCDD in your project. Creates `.lcdd/` directory with config and context folders.
@@ -155,6 +166,16 @@ lcd validate                    # Validate entire project
 lcd validate src/               # Validate specific directory
 lcd validate src/auth.ts        # Validate single file
 lcd validate --strict           # Treat warnings as errors
+lcd validate --changes --json   # Preview: validate only Git changes
+```
+
+### `lcd context bundle` (v0.6 preview)
+
+Build a deterministic, task-scoped bundle from Active Contexts:
+
+```bash
+lcd context bundle "implement password reset" --path src/auth.ts --tag security
+lcd context bundle "review API migration" --max-contexts 10 --json
 ```
 
 ### `lcd query`

@@ -1,0 +1,74 @@
+id: "ctx-lcdd-release-integrity"
+version: 1
+created_at: "2026-08-08T09:00:00Z"
+updated_at: "2026-08-08T09:00:00Z"
+title: "Release claims MUST match implementation and verification evidence"
+description: >
+  Changelog, roadmap, README, website, package versions, schema copies, MCP tool count, tests, and
+  security status must describe the same released state. A milestone cannot be marked complete
+  until npm run verify:release passes and any evidence claim is reproducible or explicitly labeled
+  as a hypothesis.
+source:
+  type: "documentation"
+  uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/docs/context-debt-remediation-plan.md"
+  document_id: "LCDD-CONTEXT-DEBT-DEFINITION-OF-DONE"
+  location: "Definition of Done and Governance"
+  extraction_method: "manual"
+  confidence: 1
+authority:
+  source:
+    type: "organization"
+    id: "lcdd-maintainers"
+    name: "LCDD Maintainers"
+    uri: "https://github.com/Lelianto/living-context-driven-development"
+  level: 2
+  delegation: []
+  trust_model: "direct"
+  trust_score: 1
+  challenge_policy:
+    process: "Submit evidence that a release check is obsolete or incorrectly scoped."
+    uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/CONTRIBUTING.md"
+    sla_hours: 72
+category: "release-governance"
+severity: "high"
+applies_to:
+  - "CHANGELOG.md"
+  - "ROADMAP.md"
+  - "README.md"
+  - "specification/0016-roadmap.md"
+  - "implementation/package.json"
+  - "implementation/packages/*/package.json"
+  - "website/src/pages/index.astro"
+lifecycle: "active"
+governance:
+  classification: "local-standard"
+  approval_required: true
+  approvers: ["lcdd-maintainers"]
+  min_review_period_hours: 24
+effective_date: "2026-08-08T09:00:00Z"
+deprecated_date: null
+owner: "lcdd-maintainers"
+review_status: "approved"
+enforcement:
+  mode: "warn"
+  specification:
+    type: "file-exists"
+    config:
+      files:
+        - "CHANGELOG.md"
+        - "ROADMAP.md"
+        - "README.md"
+        - "implementation/package.json"
+      at_least_one: false
+    violation_message_template: "Required release-governance artifacts are missing."
+evidence:
+  - type: "automated-check"
+    uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/implementation/scripts/check-doc-consistency.mjs"
+    description: "Automated consistency check verifies version, MCP count, and schema parity."
+tags: ["release", "documentation", "evidence", "local"]
+supersedes: []
+superseded_by: []
+metadata:
+  observability: "npm run verify:release result"
+  enforcement_point: "implementation/scripts/check-doc-consistency.mjs"
+  omitted_fields: []

@@ -1,0 +1,21 @@
+name: "lcdd-development"
+version: "1.0.0"
+description: "Self-governance Context Pack for developing the LCDD specification and reference implementation."
+author: "LCDD Maintainers"
+license: "Apache-2.0"
+repository: "https://github.com/Lelianto/living-context-driven-development"
+dependencies: []
+contexts:
+  - id: "ctx-lcdd-spec-rfc-governance"
+    version: 1
+  - id: "ctx-lcdd-schema-parity"
+    version: 1
+  - id: "ctx-lcdd-self-hosting-registry"
+    version: 1
+  - id: "ctx-lcdd-drift-proposal-only"
+    version: 1
+  - id: "ctx-lcdd-public-contract-tests"
+    version: 1
+  - id: "ctx-lcdd-release-integrity"
+    version: 1
+effective_date: "2026-08-08"

@@ -3,6 +3,7 @@ import { LifecycleManager } from './lifecycle.js';
 import { v4 as uuid } from 'uuid';
 import { existsSync, readFileSync } from 'fs';
 import { Worker } from 'worker_threads';
+import { matchesAnyPath } from './path-matcher.js';
 
 export interface VerifierConfig {
   type: string;
@@ -199,7 +200,7 @@ export class ContextVerifier {
     }
 
     const appliesTo = context.applies_to || ['**/*'];
-    const isApplicable = appliesTo.some(pattern => this.matchGlob(artifactPath, pattern));
+    const isApplicable = matchesAnyPath(artifactPath, appliesTo);
     if (!isApplicable) {
       return {
         context_id: context.id,
@@ -314,17 +315,6 @@ export class ContextVerifier {
     return { results, events, blocked };
   }
 
-  private matchGlob(str: string, pattern: string): boolean {
-    const regex = pattern
-      .replace(/[.+^${}()|[\]\\]/g, '\\$&')
-      .replace(/\?/g, '.')
-      .replace(/\*\*\//g, '\x00SLASH\x00')
-      .replace(/\*\*/g, '\x00STAR\x00')
-      .replace(/\*/g, '[^/]*')
-      .replace(/\x00SLASH\x00/g, '(.*\\/)?')
-      .replace(/\x00STAR\x00/g, '.*');
-    return new RegExp(`^${regex}$`).test(str);
-  }
 }
 
 type VerifierFn = (

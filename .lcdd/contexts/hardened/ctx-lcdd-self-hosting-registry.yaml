@@ -1,0 +1,68 @@
+id: "ctx-lcdd-self-hosting-registry"
+version: 1
+created_at: "2026-08-08T09:00:00Z"
+updated_at: "2026-08-08T09:00:00Z"
+title: "LCDD development MUST be governed by a version-controlled Context Registry"
+description: >
+  This repository must keep its self-governance configuration, Context Pack, Active governance
+  Contexts, and lifecycle events under version control. Operational source content, snapshots,
+  enforcement logs, dismissals, discovery caches, and heal logs must remain local and ignored.
+source:
+  type: "documentation"
+  uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/specification/0001-core-principles.md"
+  document_id: "LCDD-0001-P10"
+  location: "Normative Requirements, Principle 10"
+  extraction_method: "manual"
+  confidence: 1
+authority:
+  source:
+    type: "organization"
+    id: "lcdd-maintainers"
+    name: "LCDD Maintainers"
+    uri: "https://github.com/Lelianto/living-context-driven-development"
+  level: 3
+  delegation: []
+  trust_model: "direct"
+  trust_score: 1
+  challenge_policy:
+    process: "Propose an alternative self-governance storage design through an RFC."
+    uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/CONTRIBUTING.md"
+    sla_hours: 168
+category: "self-governance"
+severity: "critical"
+applies_to:
+  - ".lcdd/**"
+  - ".gitignore"
+  - "implementation/.github/workflows/validate.yml"
+lifecycle: "active"
+governance:
+  classification: "hardened-standard"
+  approval_required: true
+  approvers: ["repository-owner"]
+  min_review_period_hours: 168
+effective_date: "2026-08-08T09:00:00Z"
+deprecated_date: null
+owner: "lcdd-maintainers"
+review_status: "approved"
+enforcement:
+  mode: "block"
+  specification:
+    type: "file-exists"
+    config:
+      files:
+        - ".lcdd/config.yaml"
+        - ".lcdd/pack.yaml"
+        - ".lcdd/contexts/.events.log"
+      at_least_one: false
+    violation_message_template: "The tracked self-governance Registry is incomplete."
+evidence:
+  - type: "normative-principle"
+    uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/specification/0001-core-principles.md"
+    description: "The specification repository MUST contain a Context Registry or equivalent."
+tags: ["self-governance", "registry", "dogfooding", "hardened"]
+supersedes: []
+superseded_by: []
+metadata:
+  observability: "governance:check result and lifecycle event chain"
+  enforcement_point: "implementation/scripts/check-self-governance.mjs"
+  omitted_fields: []

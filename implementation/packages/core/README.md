@@ -26,7 +26,7 @@ npm install @lcdd/core
 `@lcdd/core` is the foundation of the LCDD ecosystem. It provides everything you need to work with Living Contexts programmatically — from parsing and validating contexts, to querying a Registry, to enforcing constraints against artifacts.
 
 | Module | Purpose |
-|---|---|---|
+| --- | --- |
 | **Context Model** | Full TypeScript types for Contexts, Lifecycle, Authority, Governance, Enforcement |
 | **Schema Validator** | JSON Schema + semantic rule validation for Context artifacts |
 | **Lifecycle Manager** | 12 transition rules, enforcement mode derivation, audit events |
@@ -39,6 +39,9 @@ npm install @lcdd/core
 | **Trigger Evaluator** | Single-source-of-truth threshold engine: stale, violation-rate, false-positive, increasing-violations, AI-drift, new-source |
 | **Improve Engine** | Self-healing loop: guardrail-gated plans, apply with snapshot+verify, rollback |
 | **Source Connector** | External source management: Git (clone+fetch+diff), Website (HTTP GET+checksum) |
+| **Path Matcher** | Shared repository-relative glob semantics for enforcement and scoped retrieval |
+| **Change Validation** | Git change detection and change-scoped governance reports (v0.6 preview) |
+| **Context Bundle** | Deterministic task-scoped Context selection and budgeting (v0.6 preview) |
 
 ---
 
@@ -218,7 +221,7 @@ class TriggerEvaluator {
 Six deterministic triggers, with every threshold exported from a single `TRIGGER_THRESHOLDS` const:
 
 | Trigger | Signal |
-|---|---|
+| --- | --- |
 | `STALE_NO_VIOLATION` | Active context with recent checks but zero violations in `STALE_DAYS` |
 | `HIGH_VIOLATION_RATE` | violations / evaluations > 20%. The pre-0.5.0 "false positive" trigger actually measured this, so it was renamed |
 | `HIGH_FALSE_POSITIVE` | dismissals / violations > 20%. Requires dismissal events; dormant without them |
@@ -262,7 +265,7 @@ Draft → Candidate → Approved → Active → Deprecated → Archived
 ```
 
 | Stage | Enforced? | Default Mode | Description |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `draft` | No | silent | Discovered but not reviewed |
 | `candidate` | Comment only | comment | Under formal review |
 | `approved` | Warn only | warn | Approved, migration window |
@@ -275,7 +278,7 @@ Draft → Candidate → Approved → Active → Deprecated → Archived
 ## Authority Levels
 
 | Level | Name | Default Enforcement | Example |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | 4 | Mandate | block | OJK regulation, PCI-DSS |
 | 3 | Standard | block | CISO security policy |
 | 2 | Guideline | warn | Team best practice |
@@ -287,7 +290,7 @@ Draft → Candidate → Approved → Active → Deprecated → Archived
 ## Governance Classifications
 
 | Classification | Change Speed | AI Can Modify? | Approval Required |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `hardened-mandate` | Very slow | Never | Legal + executive |
 | `hardened-standard` | Slow | Never | Authority owner + cross-team |
 | `hardened-local` | Moderate | Suggest only | Team lead + peer |

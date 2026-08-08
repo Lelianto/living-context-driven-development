@@ -1,0 +1,69 @@
+id: "ctx-lcdd-schema-parity"
+version: 1
+created_at: "2026-08-08T09:00:00Z"
+updated_at: "2026-08-08T09:00:00Z"
+title: "Reference and runtime Context schemas MUST remain identical"
+description: >
+  The canonical schema in reference/schema/context-schema.json and the runtime copy in
+  implementation/packages/core/src/context-schema.json must remain byte-identical. An additive or
+  breaking schema change must update the normative schema document, both JSON copies, examples,
+  migration guidance when applicable, and validation tests in the same governed change.
+source:
+  type: "documentation"
+  uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/specification/0012-context-schema.md"
+  document_id: "LCDD-0012"
+  location: "Context Schema"
+  extraction_method: "manual"
+  confidence: 1
+authority:
+  source:
+    type: "organization"
+    id: "lcdd-maintainers"
+    name: "LCDD Maintainers"
+    uri: "https://github.com/Lelianto/living-context-driven-development"
+  level: 3
+  delegation: []
+  trust_model: "direct"
+  trust_score: 1
+  challenge_policy:
+    process: "Submit an RFC explaining the schema change and compatibility impact."
+    uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/CONTRIBUTING.md"
+    sla_hours: 168
+category: "schema-governance"
+severity: "critical"
+applies_to:
+  - "reference/schema/context-schema.json"
+  - "implementation/packages/core/src/context-schema.json"
+  - "specification/0012-context-schema.md"
+lifecycle: "active"
+governance:
+  classification: "hardened-standard"
+  approval_required: true
+  approvers: ["repository-owner"]
+  min_review_period_hours: 168
+effective_date: "2026-08-08T09:00:00Z"
+deprecated_date: null
+owner: "lcdd-maintainers"
+review_status: "approved"
+enforcement:
+  mode: "block"
+  specification:
+    type: "file-exists"
+    config:
+      files:
+        - "reference/schema/context-schema.json"
+        - "implementation/packages/core/src/context-schema.json"
+      at_least_one: false
+    violation_message_template: "Both reference and runtime Context schema files must exist; npm run docs:check verifies byte parity."
+evidence:
+  - type: "automated-check"
+    uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/implementation/scripts/check-doc-consistency.mjs"
+    description: "The documentation consistency check compares both schema files byte-for-byte."
+tags: ["schema", "compatibility", "self-governance", "hardened"]
+supersedes: []
+superseded_by: []
+metadata:
+  observability: "CI documentation consistency result"
+  enforcement_point: "implementation/scripts/check-doc-consistency.mjs"
+  external_verifier: "cd implementation && npm run docs:check"
+  omitted_fields: []

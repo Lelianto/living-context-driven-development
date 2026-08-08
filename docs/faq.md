@@ -1,7 +1,7 @@
 # Frequently Asked Questions
 
 **Status:** Active
-**Version:** 0.5.0
+**Version:** 0.6.0
 **Last Updated:** 2026-08-08
 
 ---

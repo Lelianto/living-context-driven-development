@@ -114,6 +114,90 @@ export interface Context {
   metadata?: Record<string, unknown>;
 }
 
+export type ChangeStatus = 'added' | 'modified' | 'deleted' | 'renamed' | 'copied' | 'untracked';
+
+export interface ChangedFile {
+  path: string;
+  previous_path?: string;
+  status: ChangeStatus;
+  binary: boolean;
+}
+
+export interface ChangeSet {
+  mode: 'working-tree' | 'staged' | 'range';
+  base?: string;
+  head?: string;
+  merge_base?: string;
+  files: ChangedFile[];
+  warnings: string[];
+}
+
+export interface FileGovernanceResult {
+  file: ChangedFile;
+  relevant_context_ids: string[];
+  results: VerificationResult[];
+  decision: 'pass' | 'warn' | 'block' | 'not-applicable' | 'not-verifiable';
+}
+
+export interface ChangeValidationReport {
+  schema_version: '1';
+  generated_at: string;
+  change_set: ChangeSet;
+  files: FileGovernanceResult[];
+  totals: { changed: number; checked: number; skipped: number; violations: number; warnings: number };
+  merge_decision: 'pass' | 'warn' | 'block';
+}
+
+export interface ContextBundleRequest {
+  task: string;
+  paths?: string[];
+  tags?: string[];
+  categories?: string[];
+  max_contexts?: number;
+  max_characters?: number;
+}
+
+export interface ContextBundleEntry {
+  context: Context;
+  rank: number;
+  reasons: string[];
+  mandatory: boolean;
+  estimated_tokens: number;
+}
+
+export interface ContextBundle {
+  schema_version: '1'; task: string; generated_at: string; entries: ContextBundleEntry[];
+  excluded: Array<{ context_id: string; reason: string }>;
+  conflicts: Array<{ context_ids: string[]; reason: string }>;
+  budget: { max_contexts: number; max_characters: number; used_characters: number; estimated_tokens: number; exceeded_for_mandatory_contexts: boolean };
+}
+
+export interface ScannedDocument {
+  path: string;
+  kind: 'readme' | 'documentation' | 'adr' | 'agent-instruction' | 'ci' | 'manifest' | 'config';
+  sha256: string; size_bytes: number; confidential: boolean; changed: boolean;
+}
+
+export interface SourceInventory {
+  schema_version: '1'; root: string; generated_at: string; documents: ScannedDocument[];
+  skipped: Array<{ path: string; reason: string }>;
+  totals: { scanned: number; changed: number; skipped: number; bytes: number };
+}
+
+export interface DriftSignal {
+  probe_id: string; context_id: string; detector: string;
+  status: 'aligned' | 'drift' | 'uncertain' | 'error'; confidence: number;
+  evidence: Array<{ path: string; description: string; line?: number }>;
+}
+
+export interface DriftReport {
+  schema_version: '1'; generated_at: string;
+  scope: { paths?: string[]; change_set?: ChangeSet };
+  signals: DriftSignal[];
+  totals: { aligned: number; drift: number; uncertain: number; errors: number };
+  recommendation_ids: string[];
+}
+
 export interface ContextPackManifest {
   name: string;
   version: string;

@@ -1,0 +1,61 @@
+id: "ctx-lcdd-drift-proposal-only"
+version: 1
+created_at: "2026-08-08T09:00:00Z"
+updated_at: "2026-08-08T09:00:00Z"
+title: "Drift evidence MUST produce proposals, never automatic Context mutation"
+description: >
+  Code-to-Context drift detection may report evidence and propose review, but code is not authority
+  to rewrite governance. Drift must never directly modify or activate a Context. Hardened and Local
+  Context changes both pass through review; Hardened changes follow the full governed RFC process.
+source:
+  type: "documentation"
+  uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/specification/0004-governance.md"
+  document_id: "LCDD-0004"
+  location: "AI Agent Governance and Hardened Change Process"
+  extraction_method: "manual"
+  confidence: 1
+authority:
+  source:
+    type: "organization"
+    id: "lcdd-maintainers"
+    name: "LCDD Maintainers"
+    uri: "https://github.com/Lelianto/living-context-driven-development"
+  level: 3
+  delegation: []
+  trust_model: "direct"
+  trust_score: 1
+  challenge_policy:
+    process: "Challenge through a governance RFC with safety evidence."
+    uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/CONTRIBUTING.md"
+    sla_hours: 168
+category: "drift-governance"
+severity: "critical"
+applies_to:
+  - "implementation/packages/core/src/**/*drift*.ts"
+  - "implementation/packages/cli/src/**/*drift*.ts"
+  - "implementation/packages/mcp/src/**/*.ts"
+  - "specification/0012-context-schema.md"
+  - "docs/v0.6-implementation-plan.md"
+lifecycle: "active"
+governance:
+  classification: "hardened-standard"
+  approval_required: true
+  approvers: ["repository-owner"]
+  min_review_period_hours: 168
+effective_date: "2026-08-08T09:00:00Z"
+deprecated_date: null
+owner: "lcdd-maintainers"
+review_status: "approved"
+enforcement:
+  mode: "block"
+evidence:
+  - type: "implementation-plan"
+    uri: "https://github.com/Lelianto/living-context-driven-development/blob/main/docs/v0.6-implementation-plan.md"
+    description: "v0.6 defines drift recommendations as proposal-only and non-executable."
+tags: ["drift", "human-governed", "ai-safety", "hardened"]
+supersedes: []
+superseded_by: []
+metadata:
+  observability: "Named drift guardrail tests and ImproveEngine plan output"
+  enforcement_point: "Code review plus v0.6 drift tests"
+  omitted_fields: []

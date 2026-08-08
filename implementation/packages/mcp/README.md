@@ -38,8 +38,11 @@ If `LCDD_PROJECT_ROOT` is not set, the current working directory is used.
 
 ## Tools Exposed
 
+The table below reflects the tools in the published package. New v0.6 tools are added only after
+their Core contracts and stdio tests pass the release gate.
+
 | Tool | Description |
-|---|---|
+| --- | --- |
 | `lcdd_list_contexts` | List all contexts with optional filters (lifecycle, category, tags) |
 | `lcdd_get_context` | Get full details of a context by ID |
 | `lcdd_query_contexts` | Query contexts using CQL (Context Query Language) |

@@ -12,6 +12,7 @@ import Base from '../layouts/Base.astro';
       <div class="nav-links" id="nav-links">
         <a href="#context">Context</a>
         <a href="#governance">Governance</a>
+        <a href="#best-practice">Setup</a>
         <a href="#start">Start</a>
         <a href="https://github.com/Lelianto/living-context-driven-development" class="btn btn-stroke" style="font-size:12px;padding:4px 14px;">GitHub</a>
       </div>
@@ -28,7 +29,7 @@ import Base from '../layouts/Base.astro';
       </div>
       <div style="margin-bottom:12px;">
         <span class="badge badge-fill">Spec v0.4.0</span>
-        <span class="badge badge-stroke" style="margin-left:6px;">Impl v0.5.0</span>
+        <span class="badge badge-stroke" style="margin-left:6px;">Impl v0.6.0</span>
       </div>
       <h1>Living Context Driven Development</h1>
       <p class="tagline">Living Context is the continuously evolving representation of project knowledge.</p>
@@ -247,6 +248,82 @@ enforcement:
     </div>
   </div>
 
+  <!-- BEST PRACTICE ONBOARDING -->
+  <section id="best-practice" class="section setup-section">
+    <div class="wrap">
+      <div class="reveal">
+        <p class="label">Best Practice · Existing Projects</p>
+        <h2 class="h2">Adopt governance gradually. Earn the right to block.</h2>
+        <p class="sub">Start by making existing knowledge visible, not by turning every rule into a merge blocker. This five-step rollout keeps delivery moving while your team builds trustworthy Contexts.</p>
+      </div>
+
+      <div class="setup-lab reveal" id="setup-lab">
+        <ol class="setup-steps" aria-label="Recommended LCDD setup sequence">
+          {[
+            ['01', 'Install & initialize', 'Create the local Registry. Commit its structure with the project.'],
+            ['02', 'Inventory real rules', 'Start from ADRs, CI, security policy, and recurring review feedback.'],
+            ['03', 'Draft, don’t block', 'Capture a small first set. Keep uncertain knowledge Local and reviewable.'],
+            ['04', 'Validate in warn mode', 'Run locally and in CI. Observe false positives before raising enforcement.'],
+            ['05', 'Promote with evidence', 'Activate stable rules; use strict mode only for proven Hardened constraints.'],
+          ].map(([num, title, description], index) => (
+            <li><button class="setup-step" type="button" data-setup-step={index} aria-pressed={index === 0 ? 'true' : 'false'}>
+              <span class="setup-number">{num}</span><span><strong>{title}</strong><small>{description}</small></span>
+            </button></li>
+          ))}
+        </ol>
+
+        <div class="setup-terminal" aria-live="polite">
+          <div class="terminal-bar"><span></span><span></span><span></span><p>existing-project — LCDD onboarding</p></div>
+          <div class="terminal-body">
+            <div class="setup-panel active" data-setup-panel="0">
+              <p class="terminal-kicker">Step 01 · Foundation</p>
+              <pre><code>cd your-existing-project
+npm install --save-dev @lcdd/cli
+npx lcd init
+git add .lcdd/ package.json package-lock.json</code></pre>
+              <p class="terminal-note">✓ Registry structure becomes part of the project—not private agent memory.</p>
+            </div>
+            <div class="setup-panel" data-setup-panel="1">
+              <p class="terminal-kicker">Step 02 · Evidence first</p>
+              <div class="source-list"><span>ADR & architecture docs</span><span>CI & test policy</span><span>Security requirements</span><span>Repeated review corrections</span></div>
+              <p class="terminal-note">Choose 3–5 high-value constraints with a named owner and traceable source.</p>
+            </div>
+            <div class="setup-panel" data-setup-panel="2">
+              <p class="terminal-kicker">Step 03 · Govern the uncertainty</p>
+              <pre><code>npx lcd context add
+# lifecycle: draft → candidate
+# classification: local-guideline
+# enforcement: comment or warn</code></pre>
+              <p class="terminal-note">Never infer Hardened authority just because a rule sounds important.</p>
+            </div>
+            <div class="setup-panel" data-setup-panel="3">
+              <p class="terminal-kicker">Step 04 · Observe before enforcement</p>
+              <pre><code>npx lcd validate
+npx lcd doctor
+# CI: npx lcd validate</code></pre>
+              <p class="terminal-note">Review scope, ownership, and false positives with the people affected.</p>
+            </div>
+            <div class="setup-panel" data-setup-panel="4">
+              <p class="terminal-kicker">Step 05 · Evidence-backed enforcement</p>
+              <pre><code>npx lcd transition &lt;context-id&gt; approved
+npx lcd transition &lt;context-id&gt; active
+# CI after confidence is earned:
+npx lcd validate --strict</code></pre>
+              <p class="terminal-note">✓ Hardened promotion remains an explicit human decision with an audit trail.</p>
+            </div>
+          </div>
+          <div class="setup-progress" aria-hidden="true"><span id="setup-progress-bar"></span></div>
+        </div>
+      </div>
+
+      <div class="setup-principles reveal">
+        <p><strong>Small first pack</strong><span>Prefer 3–5 useful Contexts over importing every document.</span></p>
+        <p><strong>Source + owner required</strong><span>A constraint without provenance cannot earn stronger authority.</span></p>
+        <p><strong>Warn before block</strong><span>Promote enforcement only after real usage produces evidence.</span></p>
+      </div>
+    </div>
+  </section>
+
   <!-- GET STARTED -->
   <section id="start" class="section">
     <div class="wrap">
@@ -308,7 +385,7 @@ enforcement:
       <div class="footer-inner">
         <div>
           <div class="footer-name">Living Context Driven Development</div>
-          <div class="footer-meta">v0.5.0 &middot; Apache 2.0</div>
+          <div class="footer-meta">v0.6.0 &middot; Apache 2.0</div>
         </div>
         <div class="footer-links">
           <a href="https://github.com/Lelianto/living-context-driven-development">GitHub</a>
@@ -422,6 +499,50 @@ enforcement:
   }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  const setupLab = document.getElementById('setup-lab');
+  const setupButtons = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-setup-step]'));
+  const setupPanels = Array.from(document.querySelectorAll<HTMLElement>('[data-setup-panel]'));
+  const setupProgress = document.getElementById('setup-progress-bar');
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let setupIndex = 0;
+  let setupTimer: number | undefined;
+
+  function showSetupStep(index: number, userInitiated = false) {
+    setupIndex = index;
+    setupButtons.forEach((button, i) => {
+      button.classList.toggle('active', i === index);
+      button.setAttribute('aria-pressed', String(i === index));
+    });
+    setupPanels.forEach((panel, i) => panel.classList.toggle('active', i === index));
+    if (setupProgress) {
+      setupProgress.style.animation = 'none';
+      setupProgress.style.width = `${((index + 1) / setupButtons.length) * 100}%`;
+      if (!reducedMotion && !userInitiated) requestAnimationFrame(() => {
+        setupProgress.style.animation = 'setupTick 4.5s linear forwards';
+      });
+    }
+    if (userInitiated && setupTimer) {
+      window.clearInterval(setupTimer);
+      setupTimer = undefined;
+    }
+  }
+
+  setupButtons.forEach((button, index) => button.addEventListener('click', () => showSetupStep(index, true)));
+  if (setupLab && !reducedMotion) {
+    const setupObserver = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !setupTimer) {
+        showSetupStep(setupIndex);
+        setupTimer = window.setInterval(() => showSetupStep((setupIndex + 1) % setupButtons.length), 4500);
+      } else if (!entry.isIntersecting && setupTimer) {
+        window.clearInterval(setupTimer);
+        setupTimer = undefined;
+      }
+    }, { threshold: 0.35 });
+    setupObserver.observe(setupLab);
+  } else {
+    showSetupStep(0, true);
+  }
 </script>
 
 <style>

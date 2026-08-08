@@ -9,15 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned for v0.6.0
+## [0.6.0] — 2026-08-08
+
+### Preview scope
 
 - Change-scoped validation with `lcd validate --changes`
 - Task-scoped Context Bundles
-- Local repository discovery
-- Code-to-Context drift detection
+- Local repository discovery (planned follow-up)
+- Code-to-Context drift detection (planned follow-up)
 
 ### Added
 
+- Tracked `.lcdd/` self-governance Registry and `lcdd-development` Context Pack
+- Hardened and Local development constraints with audited lifecycle transitions
+- `npm run governance:check` and CI enforcement for schema, pack, classification, and lifecycle consistency
 - Gate 1 security baseline: argument-based Git/curl execution, URL and branch validation
 - Loopback-only dashboard with no wildcard CORS, HTML/JSON escaping, and Chart.js SRI
 - Confidential source classification and cloud-extraction data-flow notice/blocking
@@ -28,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 - Upgraded `uuid` to 11.1.1; `npm audit --omit=dev` reports zero vulnerabilities
+- Recorded that already-published v0.5.0 npm artifacts still resolve `uuid@10`; the next package release must carry the workspace dependency fix
 - Reconciled `SECURITY.md` guarantees with the local file-based v0.5 implementation
 
 ---

@@ -1,7 +1,7 @@
 # 0016 — Roadmap
 
 **Status:** Active  
-**Version:** 0.5.0
+**Version:** 0.6.0
 **Specification:** Living Context Driven Development  
 **Last Updated:** 2026-08-08
 
@@ -157,12 +157,13 @@ This document defines the development roadmap for the LCDD specification, refere
 
 **Target:** Close the code-to-Context feedback loop and deliver only relevant Context for a task or change.
 
-**Status:** 🔴 Not Started
+**Status:** 🟡 In Progress (security, test, and self-governance baseline complete)
 
 ### Deliverables
 
 | # | Deliverable | Description |
 |---|---|---|
+| 5.0 | Self-governance baseline | Dogfood a tracked Registry and Context Pack with lifecycle and CI evidence |
 | 5.1 | Security and test baseline | Resolve P0/P1 audit findings; add CLI and MCP integration/contract tests |
 | 5.2 | Change-scoped validation | `lcd validate --changes` with stable JSON and PR governance summary |
 | 5.3 | Context Bundle | Task-scoped retrieval with authority resolution, lifecycle filtering, and size budgets |
@@ -172,10 +173,13 @@ This document defines the development roadmap for the LCDD specification, refere
 
 ### Success Criteria
 
+- [x] Repository development is governed by a tracked Context Pack and validated lifecycle history.
 - [ ] Change-scoped validation reports only affected Contexts and artifacts.
 - [ ] A task bundle is materially smaller than the full Registry without dropping higher-authority constraints.
 - [ ] This repository can discover candidate constraints from its own documentation.
 - [ ] A documented provider migration is detected as drift but never silently rewrites a Hardened Context.
+
+Implementation planning: [../docs/v0.6-implementation-plan.md](../docs/v0.6-implementation-plan.md).
 
 ---
 

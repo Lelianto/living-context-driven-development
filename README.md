@@ -317,7 +317,7 @@ npm install -g @lcdd/mcp
 
 ## ☰ Quick Start
 
-LCDD is in **Implementation Phase (v0.5.0)** with working Core, CLI, and MCP reference packages. The methodology remains a proposal and is not yet a stable v1.0 standard.
+LCDD is in **Implementation Phase (v0.6.0)** with working Core, CLI, and MCP reference packages. The methodology remains a proposal and is not yet a stable v1.0 standard.
 
 ### Install the CLI (30 seconds)
 
@@ -442,10 +442,15 @@ living-context-driven-development/
 │   ├── ecommerce/                       # E-commerce Best Practices
 │   └── education/                       # Hackathon Competition Rubric
 │
+├── 📂 .lcdd/                            # Tracked self-governance Registry and Context Pack
+│   ├── contexts/hardened/               # Human-controlled development invariants
+│   ├── contexts/local/                  # Automatable repository constraints
+│   └── pack.yaml                        # lcdd-development pack manifest
+│
 ├── 📂 media/                            # Visual Identity
 │   └── logo.png                         # LCDD Logo
 │
-└── 📂 implementation/                   # Reference Implementation (v0.5.0)
+└── 📂 implementation/                   # Reference Implementation (v0.6.0)
     ├── packages/core/                   # @lcdd/core — TypeScript SDK
     ├── packages/cli/                    # @lcdd/cli — Command-line tool
     ├── packages/mcp/                    # @lcdd/mcp — MCP Server for AI agents
@@ -499,7 +504,7 @@ Living Context Driven Development is built on five axioms:
 | **Pipeline Automation** | v0.4.0 | ✅ Complete | Deterministic pipeline: `lcd doctor`, rule engine, `lcd review`, source connector, trigger evaluator, `lcd extract` + `lcd normalize` |
 | **MCP Server** | v0.3.0+ | ✅ Complete | AI agent integration — 8 tools via Model Context Protocol |
 | **Self-Healing Phase A** | v0.5.0 | ✅ Complete | Executable recommendations, snapshots, health verification, rollback, and guardrails |
-| **Drift & Retrieval** | v0.6.0 | 🔴 Planned | Change-scoped validation, Context Bundles, local discovery, code-to-Context drift |
+| **Drift & Retrieval** | v0.6.0 | 🟡 In Progress | Self-governance baseline complete; change-scoped validation, Context Bundles, local discovery, and drift remain |
 | **Stabilization** | v1.0.0 | 🔴 Planned | Stable contracts, migration policy, conformance, evidence, and external adoption |
 
 ### Pipeline Stage Status

@@ -1,6 +1,6 @@
 # LCDD Context Debt Assessment and Remediation Plan
 
-**Status:** Active — Gates 0–1 implemented
+**Status:** Active — Gates 0–1 and v0.6 PR 0 implemented
 **Version:** 0.1.0
 **Repository baseline:** v0.5.0
 **Assessment date:** 2026-08-08
@@ -13,7 +13,8 @@
 > automated documentation consistency check to CI. Gate 1 removed the shell-injection path,
 > hardened the dashboard and extraction boundary, added verifier resource limits, introduced CLI
 > and MCP tests, and added a release-verification command. Section 3.2 preserves the original audit
-> findings as the baseline that motivated the remediation.
+> findings as the baseline that motivated the remediation. The v0.6 PR 0 prerequisite now
+> dogfoods LCDD through a tracked `.lcdd/` Registry, Context Pack, lifecycle history, and CI check.
 
 ## 1. Purpose
 
@@ -90,6 +91,7 @@ These capabilities MUST NOT be placed back into the backlog as unimplemented.
 | CD-14 | Security audit contains unresolved P0/P1 findings | Source command injection, dashboard exposure/XSS/SRI, and vulnerable dependency/process gaps | Critical |
 | CD-15 | CLI and MCP lack automated tests | Both package test scripts pass with `--passWithNoTests` | High |
 | CD-16 | Specification-to-implementation conformance is not automated | Two schema copies match now, but CI does not prove they remain synchronized | Medium |
+| CD-17 | Published v0.5.0 packages retain a superseded production dependency | Clean-room install of all three npm packages resolves `uuid@10` and reports GHSA-w5hq-g745-h8pq; workspace source already uses 11.1.1 | High |
 
 ## 4. Prioritization Rules
 
@@ -138,6 +140,9 @@ Work is ordered by the following rules:
 **Exit gate:** no unresolved P0 security finding; CLI/MCP no longer pass CI with zero tests; the release verification command is green.
 
 ### v0.6.0 — Drift, Discovery, and Scoped Retrieval
+
+The executable engineering design, contracts, pull-request sequence, and test matrix are defined in
+[v0.6-implementation-plan.md](v0.6-implementation-plan.md).
 
 Implement these as four independently releasable vertical slices.
 

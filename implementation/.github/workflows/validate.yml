@@ -37,6 +37,11 @@ jobs:
           cd implementation
           npm run docs:check
 
+      - name: Validate Self-Governance Registry
+        run: |
+          cd implementation
+          npm run governance:check
+
       - name: Audit Production Dependencies
         run: |
           cd implementation

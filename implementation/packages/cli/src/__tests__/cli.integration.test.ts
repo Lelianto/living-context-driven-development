@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { existsSync, mkdtempSync, rmSync } from 'node:fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -7,6 +7,7 @@ import { spawnSync } from 'node:child_process';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../..');
 const cliPath = join(packageRoot, 'dist', 'index.js');
+const packageVersion = JSON.parse(readFileSync(join(packageRoot, 'package.json'), 'utf8')).version as string;
 const tempDirs: string[] = [];
 
 function run(args: string[], cwd = packageRoot) {
@@ -29,7 +30,7 @@ describe('lcd CLI integration', () => {
 
     const version = run(['--version']);
     expect(version.status).toBe(0);
-    expect(version.stdout.trim()).toBe('0.5.0');
+    expect(version.stdout.trim()).toBe(packageVersion);
   });
 
   it('returns a non-zero exit code for an unknown command', () => {

@@ -1,13 +1,29 @@
-import { FileRegistry, ContextVerifier, type Context } from '@lcdd/core';
+import { FileRegistry, ContextVerifier, GitChangeDetector, ChangeValidator, type Context, type ChangeValidationReport } from '@lcdd/core';
 import { readFileSync, existsSync, statSync, readdirSync } from 'fs';
 import { join, relative } from 'path';
 import chalk from 'chalk';
 
-export async function validateCommand(targetPath: string, options: { strict?: boolean }): Promise<void> {
-  const registry = new FileRegistry(process.cwd());
-  const verifier = new ContextVerifier();
+interface ValidateOptions { strict?: boolean; changes?: boolean; staged?: boolean; base?: string; head?: string; json?: boolean; ci?: boolean }
 
+export async function validateCommand(targetPath: string, options: ValidateOptions): Promise<void> {
+  const registry = new FileRegistry(process.cwd());
   const activeContexts = registry.list({ lifecycle: 'active' as const });
+
+  if (options.changes) {
+    if (targetPath !== '.') throw new Error('A positional path cannot be combined with --changes');
+    const changeSet = new GitChangeDetector(process.cwd()).detect(options);
+    const report = await new ChangeValidator(process.cwd()).validate(changeSet, activeContexts);
+    if (options.json) console.log(JSON.stringify(report, null, 2));
+    else printChangeReport(report, Boolean(options.ci));
+    if (report.merge_decision === 'block' || (options.strict && report.merge_decision === 'warn')) process.exitCode = 1;
+    return;
+  }
+
+  if (options.staged || options.base || options.head || options.json || options.ci) {
+    throw new Error('--staged, --base, --head, --json, and --ci require --changes');
+  }
+
+  const verifier = new ContextVerifier();
 
   if (activeContexts.length === 0) {
     console.log(chalk.yellow('No active contexts found. Nothing to validate.'));
@@ -71,6 +87,18 @@ export async function validateCommand(targetPath: string, options: { strict?: bo
   } else {
     console.log(chalk.green(`✓ All ${files.length} files passed validation`));
   }
+}
+
+function printChangeReport(report: ChangeValidationReport, ci: boolean): void {
+  console.log(chalk.bold(`\nLCDD change validation: ${report.merge_decision.toUpperCase()}\n`));
+  if (ci) {
+    console.log('| File | Status | Contexts | Decision |');
+    console.log('| --- | --- | ---: | --- |');
+    for (const item of report.files) console.log(`| ${item.file.path.replace(/\|/g, '\\|')} | ${item.file.status} | ${item.relevant_context_ids.length} | ${item.decision} |`);
+  } else {
+    for (const item of report.files) console.log(`  ${item.decision.padEnd(14)} ${item.file.path} (${item.relevant_context_ids.length} contexts)`);
+  }
+  console.log(`\nChanged ${report.totals.changed}; checked ${report.totals.checked}; skipped ${report.totals.skipped}; blocking ${report.totals.violations}; warnings ${report.totals.warnings}`);
 }
 
 function collectFiles(root: string): string[] {

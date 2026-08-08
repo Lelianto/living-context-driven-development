@@ -21,14 +21,30 @@ program
     await initCommand();
   });
 
-program
+const contextCmd = program
   .command('context')
   .description('Manage contexts')
-  .command('add')
+;
+
+contextCmd.command('add')
   .description('Create a new context interactively')
   .action(async () => {
     const { contextAddCommand } = await import('./commands/context.js');
     await contextAddCommand();
+  });
+
+contextCmd.command('bundle')
+  .description('Build a task-scoped bundle of active Contexts')
+  .argument('<task>', 'Task description')
+  .option('--path <path...>', 'Repository paths in task scope')
+  .option('--tag <tag...>', 'Requested tags')
+  .option('--category <category...>', 'Requested categories')
+  .option('--max-contexts <number>', 'Maximum non-mandatory Context count')
+  .option('--max-characters <number>', 'Maximum serialized character budget')
+  .option('--json', 'Output stable JSON')
+  .action(async (task: string, options) => {
+    const { bundleCommand } = await import('./commands/bundle.js');
+    bundleCommand(task, options);
   });
 
 program
@@ -56,6 +72,12 @@ program
   .description('Validate artifacts against active contexts')
   .argument('[path]', 'File or directory to validate', '.')
   .option('--strict', 'Treat warnings as errors')
+  .option('--changes', 'Validate staged, unstaged, and untracked changes')
+  .option('--staged', 'With --changes, validate only staged changes')
+  .option('--base <ref>', 'With --changes, validate changes from merge-base with this ref')
+  .option('--head <ref>', 'With --changes and --base, use this head ref')
+  .option('--json', 'Output a stable JSON report')
+  .option('--ci', 'Output a CI-friendly governance summary')
   .action(async (path: string, options) => {
     const { validateCommand } = await import('./commands/validate.js');
     await validateCommand(path, options);

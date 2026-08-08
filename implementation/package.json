@@ -1,7 +1,7 @@
 {
   "name": "lcdd-monorepo",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Living Context Driven Development — Reference Implementation",
   "workspaces": [
     "packages/*"
@@ -10,7 +10,10 @@
     "build": "npm run build --workspace=@lcdd/core && npm run build --workspace=@lcdd/cli && npm run build --workspace=@lcdd/mcp",
     "test": "npm run test --workspaces",
     "docs:check": "node scripts/check-doc-consistency.mjs",
-    "verify:release": "npm run docs:check && npm test && npm run build && npm audit --omit=dev",
+    "readmes:check": "node scripts/check-package-readmes.mjs",
+    "governance:check": "node scripts/check-self-governance.mjs",
+    "release:local": "node scripts/prepare-local-release.mjs",
+    "verify:release": "npm run docs:check && npm run readmes:check && npm run build && npm run governance:check && npm test && npm audit --omit=dev",
     "lint": "npm run lint --workspaces",
     "clean": "npm run clean --workspaces"
   },
