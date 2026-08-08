@@ -1,7 +1,7 @@
 # 0016 — Roadmap
 
 **Status:** Active  
-**Version:** 0.6.0
+**Version:** 0.7.0-alpha.1
 **Specification:** Living Context Driven Development  
 **Last Updated:** 2026-08-08
 
@@ -187,7 +187,7 @@ Implementation planning: [../docs/v0.6-implementation-plan.md](../docs/v0.6-impl
 
 **Target:** Make every governed result explainable and auditable.
 
-**Status:** 🔴 Not Started
+**Status:** 🟡 Phase A
 
 ### Deliverables
 
@@ -201,6 +201,11 @@ Implementation planning: [../docs/v0.6-implementation-plan.md](../docs/v0.6-impl
 | 6.6 | Verifiable Principal model | Provider-neutral identities, issuer/subject bindings, assurance, and signed evidence |
 | 6.7 | Ownership and impact model | Repository boundaries, affected Teams, required reviewers, and trusted-base evaluation |
 | 6.8 | Provider adapter contract | Portable identity, approval, review-request, report, and branch-protection capabilities |
+
+Phase A (`0.7.0-alpha.1`) implements the provider-neutral Principal, Team, trust, ownership,
+attestation, and trusted-base foundations plus a GitHub CI workflow generator. Provider-side
+identity verification, reviewer requests, PR reporting, and branch-protection mutation remain
+future work.
 
 ### Success Criteria
 

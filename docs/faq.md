@@ -1,7 +1,7 @@
 # Frequently Asked Questions
 
 **Status:** Active
-**Version:** 0.6.0
+**Version:** 0.7.0-alpha.1
 **Last Updated:** 2026-08-08
 
 ---
@@ -36,7 +36,7 @@ No. LCDD is technology-agnostic. The working reference implementation is written
 
 ### Is the reference CLI available?
 
-Yes. `@lcdd/cli` is available as part of the v0.5.0 reference implementation. It supports registry management, validation, CQL, health checks, review, source monitoring, extraction, normalization, dashboards, and guardrail-gated improvement. See [ROADMAP.md](../ROADMAP.md).
+Yes. `@lcdd/cli` is available as a stable v0.6.0 package, with v0.7.0-alpha.1 published under the npm `next` tag. The alpha adds bootstrap, ownership and impact foundations, and GitHub CI setup. See [ROADMAP.md](../ROADMAP.md).
 
 ### Can I use LCDD today without any tooling?
 
@@ -44,7 +44,7 @@ Yes. Start with Level 1 adoption: write your key constraints as Context YAML fil
 
 ### How does LCDD integrate with my existing CI pipeline?
 
-Use `lcd validate --strict` as the unified verification step in CI, alongside existing linters, security scanners, and tests. Change-scoped PR reporting is planned for v0.6.0; current validation evaluates the configured target against Active Contexts.
+Use `lcd setup ci --provider github --yes` to generate the Phase A GitHub workflow, or run `lcd check --stage ci --base <ref> --head <ref> --strict` in another CI system. The check evaluates only the Git change range against applicable Active Contexts.
 
 ### How do I handle constraints from PDFs and websites?
 
@@ -52,7 +52,7 @@ The source connector can monitor Git repositories and websites, and `lcd extract
 
 ### Can LCDD work with GitHub Copilot / Cursor / Claude Code?
 
-Yes. `@lcdd/mcp` exposes eight read/validation tools for MCP-compatible agents, including Context queries, artifact validation, health, dashboards, reviews, and improvement recommendations. Automatic task-scoped Context Bundles remain planned for v0.6.0.
+Yes. `@lcdd/mcp` exposes eight read/validation tools for MCP-compatible agents, including Context queries, task-scoped bundles, artifact validation, health, dashboards, reviews, and improvement recommendations.
 
 ---
 

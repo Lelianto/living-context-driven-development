@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0-alpha.1] — 2026-08-08
+
+### Added
+
+- Tailwind-like, idempotent `lcd init` bootstrap with detected project configuration and empty Registry templates
+- Provider-neutral Principal, Team, trust, ownership-boundary, impact, and attestation foundations
+- Trusted-base evaluation for governance policy affected by a proposed change
+- `lcd check`, `lcd migrate config`, `lcd ownership init/doctor`, and `lcd impact`
+- `lcd setup ci --provider github` with preview-by-default, managed-file protection, read-only permissions,
+  pinned dependencies, pull-request validation, and merge-queue support
+- GitHub Phase A dogfood workflow and positive, negative, idempotency, and provider-detection tests
+
+### Release status
+
+- Published as an alpha under the npm `next` tag; it does not replace the stable `latest` release.
+- GitHub is the first provider-specific CI generator. Core Git usage remains provider-neutral; other
+  hosted-repository workflow generators remain planned.
+
 ## [0.6.0] — 2026-08-08
 
 ### Preview scope

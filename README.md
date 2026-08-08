@@ -317,7 +317,7 @@ npm install -g @lcdd/mcp
 
 ## ☰ Quick Start
 
-LCDD is in **Implementation Phase (v0.6.0)** with working Core, CLI, and MCP reference packages. The methodology remains a proposal and is not yet a stable v1.0 standard.
+LCDD is in **Implementation Phase (v0.7.0-alpha.1)** with working Core, CLI, and MCP reference packages. This is an npm prerelease under the `next` tag; the methodology remains a proposal and is not yet a stable v1.0 standard.
 
 ### Install the CLI (30 seconds)
 
@@ -466,7 +466,7 @@ living-context-driven-development/
 ├── 📂 media/                            # Visual Identity
 │   └── logo.png                         # LCDD Logo
 │
-└── 📂 implementation/                   # Reference Implementation (v0.6.0)
+└── 📂 implementation/                   # Reference Implementation (v0.7.0-alpha.1)
     ├── packages/core/                   # @lcdd/core — TypeScript SDK
     ├── packages/cli/                    # @lcdd/cli — Command-line tool
     ├── packages/mcp/                    # @lcdd/mcp — MCP Server for AI agents

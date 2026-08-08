@@ -1,6 +1,6 @@
 # Roadmap
 
-**Version:** 0.6.0
+**Version:** 0.7.0-alpha.1
 **Last Updated:** 2026-08-08
 
 ---
@@ -73,19 +73,20 @@
 
 ---
 
-## 🔴 v0.6.0 — Drift & Retrieval
+## 🟡 v0.6.0 — Drift & Retrieval
 
 - [x] Resolve the P0/P1 security baseline and add CLI/MCP integration tests
-- [ ] `lcd validate --changes` with a PR governance report
-- [ ] Task-scoped Context Bundles and `lcdd_get_context_for_task`
+- [x] `lcd validate --changes` with a PR governance report
+- [x] Task-scoped Context Bundles and `lcdd_get_context_for_task`
 - [ ] `lcd discover` for local repository sources
 - [ ] `lcd drift` and `lcdd_detect_drift` for code-to-Context drift
 
 ---
 
-## 🔴 v0.7.0–v0.9.0 — Provenance, Protocol, and Evidence
+## 🟡 v0.7.0–v0.9.0 — Provenance, Protocol, and Evidence
 
-- [ ] v0.7.0: provenance, verification freshness, dismissal producer, governance reports
+- [ ] v0.7.0: provenance, verification freshness, dismissal producer, and governance reports
+- [x] v0.7.0-alpha.1: bootstrap, identity/ownership foundation, trusted-base impact, and GitHub CI generator
 - [ ] v0.8.0: Context Protocol implementation and versioned pack distribution
 - [ ] v0.9.0: benchmark repository and reproducible experiments
 

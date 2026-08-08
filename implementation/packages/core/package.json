@@ -1,6 +1,6 @@
 {
   "name": "@lcdd/core",
-  "version": "0.6.0",
+  "version": "0.7.0-alpha.1",
   "description": "LCDD Core SDK — Context model, schema, Registry, CQL, verifier, doctor, rule engine, review, triggers, source connector",
   "type": "module",
   "main": "dist/index.js",
