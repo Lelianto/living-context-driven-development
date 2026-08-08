@@ -1,7 +1,7 @@
 <div align="center">
     <img src="media/logo.png" alt="LCDD Logo" width="180" height="180"/>
     <h1>Living Context Driven Development</h1>
-    <h3><em>Code evolves. Knowledge decays. AI never notices. Until now.</em></h3>
+    <h3><em>Code evolves. Knowledge decays. AI codes on, oblivious.</em></h3>
 </div>
 
 <p align="center">
