@@ -1,0 +1,123 @@
+version: "1"
+
+root:
+  threshold: 2
+  principals:
+    - principal:lelianto
+    - principal:bambang
+    - principal:ratna
+
+principals:
+  - id: principal:lelianto
+    type: human
+    display_name: "Lelianto"
+    status: active
+    identities:
+      - issuer: "https://gitlab.company.example"
+        subject: "user-id:1829"
+        handle: "lelianto"
+        verified_at: "2026-08-08T08:00:00Z"
+    signing_keys: []
+
+  - id: principal:bambang
+    type: human
+    display_name: "Bambang"
+    status: active
+    identities:
+      - issuer: "https://gitlab.company.example"
+        subject: "user-id:2841"
+        handle: "bambang"
+        verified_at: "2026-08-08T08:05:00Z"
+    signing_keys: []
+
+  - id: principal:ratna
+    type: human
+    display_name: "Ratna"
+    status: active
+    identities:
+      - issuer: "https://gitlab.company.example"
+        subject: "user-id:3902"
+        handle: "ratna"
+        verified_at: "2026-08-08T08:10:00Z"
+    signing_keys: []
+
+  - id: principal:codex-agent
+    type: ai-agent
+    display_name: "Codex Agent"
+    status: active
+    identities:
+      - issuer: "https://agents.company.example"
+        subject: "agent-id:codex-engineering"
+    signing_keys: []
+
+teams:
+  - id: team:platform
+    name: "Platform"
+    members:
+      - principal:lelianto
+    provider_bindings:
+      - issuer: "https://gitlab.company.example"
+        type: group
+        subject: "group-id:810"
+        mention: "@company/platform"
+
+  - id: team:payments
+    name: "Payments"
+    members:
+      - principal:bambang
+    provider_bindings:
+      - issuer: "https://gitlab.company.example"
+        type: group
+        subject: "group-id:921"
+        mention: "@company/payments"
+
+  - id: team:security
+    name: "Security"
+    members:
+      - principal:ratna
+    provider_bindings:
+      - issuer: "https://gitlab.company.example"
+        type: group
+        subject: "group-id:994"
+        mention: "@company/security"
+
+roles:
+  - id: role:security-approver
+    name: "Security Approver"
+    members:
+      - team:security
+
+  - id: role:ai-contributor
+    name: "AI Contributor"
+    members:
+      - principal:codex-agent
+
+permissions:
+  - role: role:security-approver
+    effect: allow
+    actions:
+      - context.hardened.propose
+      - context.hardened.approve
+      - governance.approve
+    scope:
+      categories:
+        - security
+    minimum_assurance: provider-verified
+
+  - role: role:ai-contributor
+    effect: allow
+    actions:
+      - code.change
+      - context.candidate.create
+    scope:
+      paths:
+        - "services/**"
+
+  - role: role:ai-contributor
+    effect: deny
+    actions:
+      - context.hardened.approve
+      - ownership.change
+      - trust.change
+      - governance.approve
+    scope: {}

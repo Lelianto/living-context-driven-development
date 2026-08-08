@@ -1,0 +1,147 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://livingcontext.dev/schema/project-config/v1",
+  "title": "LCDD Project Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "project", "registry", "validation", "governance"],
+  "properties": {
+    "version": { "const": "1" },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "root", "languages"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "root": { "type": "string", "minLength": 1 },
+        "languages": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^[a-z0-9][a-z0-9+.#-]*$" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "registry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_mode", "include", "exclude", "verifier_failure"],
+      "properties": {
+        "default_mode": { "enum": ["block", "warn", "comment", "silent"] },
+        "include": { "$ref": "#/$defs/globs" },
+        "exclude": { "$ref": "#/$defs/globs" },
+        "verifier_failure": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["local", "ci"],
+          "properties": {
+            "local": { "enum": ["warn", "block"] },
+            "ci": { "enum": ["warn", "block"] }
+          }
+        }
+      }
+    },
+    "change_detection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["enabled", "default_base"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "default_base": { "type": "string", "minLength": 1 }
+      }
+    },
+    "integrations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "package_manager": { "type": "string", "minLength": 1 },
+        "linters": { "$ref": "#/$defs/names" },
+        "test_runners": { "$ref": "#/$defs/names" },
+        "scm_provider": { "enum": ["auto", "github", "gitlab", "bitbucket", "azure-devops", "generic"] }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": { "enum": ["individual", "team", "organization"] },
+        "default_owner": { "$ref": "#/$defs/entityId" },
+        "minimum_assurance": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "local_change": { "$ref": "#/$defs/assurance" },
+            "hardened_proposal": { "$ref": "#/$defs/assurance" },
+            "hardened_approval": { "$ref": "#/$defs/assurance" },
+            "trust_change": { "$ref": "#/$defs/assurance" }
+          }
+        }
+      }
+    },
+    "notifications": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "primary_owner": { "$ref": "#/$defs/notificationAction" },
+        "required_reviewer": { "$ref": "#/$defs/notificationAction" },
+        "affected_reviewer": { "$ref": "#/$defs/notificationAction" },
+        "subscriber": { "$ref": "#/$defs/notificationAction" },
+        "prefer_team_mentions": { "type": "boolean" },
+        "deduplicate": { "type": "boolean" },
+        "max_direct_mentions": { "type": "integer", "minimum": 0, "maximum": 50 }
+      }
+    },
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "protect_hardened": { "type": "boolean" },
+        "trusted_base_required_in_ci": { "type": "boolean" },
+        "external_identity_sync_requires_confirmation": { "type": "boolean" }
+      }
+    },
+    "ai": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "code_changes": { "enum": ["allow", "deny"] },
+        "context_candidates": { "enum": ["allow", "deny"] },
+        "local_context_direct_changes": { "enum": ["allow", "deny"] },
+        "hardened_context_direct_changes": { "const": "deny" },
+        "governance_approval": { "const": "deny" },
+        "trust_changes": { "const": "deny" },
+        "ownership_changes": { "const": "deny" }
+      }
+    }
+  },
+  "$defs": {
+    "globs": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "names": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 1 },
+      "uniqueItems": true
+    },
+    "entityId": {
+      "type": "string",
+      "pattern": "^(principal|team):[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
+    },
+    "assurance": {
+      "enum": ["unverified", "signed", "provider-verified", "idp-verified"]
+    },
+    "notificationAction": {
+      "enum": ["none", "summary", "mention", "request-review", "require-approval"]
+    }
+  }
+}

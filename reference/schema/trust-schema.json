@@ -1,0 +1,200 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://livingcontext.dev/schema/trust/v1",
+  "title": "LCDD Trust Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "root", "principals", "teams", "roles", "permissions"],
+  "properties": {
+    "version": { "const": "1" },
+    "root": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["threshold", "principals"],
+      "properties": {
+        "threshold": { "type": "integer", "minimum": 1 },
+        "principals": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/principalId" },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      }
+    },
+    "principals": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/principal" }
+    },
+    "teams": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/team" }
+    },
+    "roles": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/role" }
+    },
+    "permissions": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/permission" }
+    }
+  },
+  "$defs": {
+    "principalId": {
+      "type": "string",
+      "pattern": "^principal:[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
+    },
+    "teamId": {
+      "type": "string",
+      "pattern": "^team:[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
+    },
+    "roleId": {
+      "type": "string",
+      "pattern": "^role:[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
+    },
+    "entityId": {
+      "type": "string",
+      "pattern": "^(principal|team):[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
+    },
+    "identityBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issuer", "subject"],
+      "properties": {
+        "issuer": { "type": "string", "format": "uri" },
+        "subject": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "handle": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "verified_at": { "type": "string", "format": "date-time" },
+        "expires_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "signingKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "public_key", "fingerprint", "status"],
+      "properties": {
+        "id": { "type": "string", "pattern": "^key:[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$" },
+        "type": { "enum": ["ed25519", "ssh-ed25519", "ecdsa-p256"] },
+        "public_key": { "type": "string", "minLength": 1 },
+        "fingerprint": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["active", "revoked", "expired"] },
+        "created_at": { "type": "string", "format": "date-time" },
+        "revoked_at": { "type": ["string", "null"], "format": "date-time" },
+        "revocation_reason": { "type": "string" }
+      }
+    },
+    "principal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "display_name", "status", "identities", "signing_keys"],
+      "properties": {
+        "id": { "$ref": "#/$defs/principalId" },
+        "type": { "enum": ["human", "workload", "ai-agent"] },
+        "display_name": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "status": { "enum": ["invited", "active", "suspended", "revoked"] },
+        "identities": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/identityBinding" }
+        },
+        "signing_keys": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/signingKey" }
+        }
+      }
+    },
+    "providerBinding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issuer", "type", "subject"],
+      "properties": {
+        "issuer": { "type": "string", "format": "uri" },
+        "type": { "enum": ["team", "group"] },
+        "subject": { "type": "string", "minLength": 1, "maxLength": 512 },
+        "mention": { "type": "string", "maxLength": 256 }
+      }
+    },
+    "team": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "members", "provider_bindings"],
+      "properties": {
+        "id": { "$ref": "#/$defs/teamId" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "members": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/principalId" },
+          "uniqueItems": true
+        },
+        "provider_bindings": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/providerBinding" }
+        }
+      }
+    },
+    "role": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "members"],
+      "properties": {
+        "id": { "$ref": "#/$defs/roleId" },
+        "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "members": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/entityId" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "permission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["role", "effect", "actions", "scope"],
+      "properties": {
+        "role": { "$ref": "#/$defs/roleId" },
+        "effect": { "enum": ["allow", "deny"] },
+        "actions": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "code.change",
+              "context.candidate.create",
+              "context.local.manage",
+              "context.hardened.propose",
+              "context.hardened.approve",
+              "context.lifecycle.transition",
+              "ownership.change",
+              "trust.change",
+              "verification.report",
+              "governance.approve"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "scope": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "categories": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true
+            },
+            "paths": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true
+            },
+            "context_ids": {
+              "type": "array",
+              "items": { "type": "string", "minLength": 1 },
+              "uniqueItems": true
+            }
+          }
+        },
+        "minimum_assurance": {
+          "enum": ["unverified", "signed", "provider-verified", "idp-verified"]
+        }
+      }
+    }
+  }
+}

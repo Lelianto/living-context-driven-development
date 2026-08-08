@@ -27,3 +27,13 @@ export { ContextNormalizer } from './normalizer.js';
 export type { CandidateContext, NormalizationResult } from './normalizer.js';
 export { Extractor, buildExtractionPrompt, parseLlmJsonResponse } from './extractor.js';
 export type { LlmProvider } from './extractor.js';
+export { OwnershipResolver, validateOwnershipRegistry, validateTrustRegistry } from './governance.js';
+export type {
+  Assurance, IdentityBinding, SigningKey, Principal, Team, GovernanceRole, GovernancePermission,
+  TrustRegistry, OwnershipBoundary, OwnershipRegistry, GovernanceValidation, BoundaryMatch,
+} from './governance.js';
+export { authorize, canonicalize, contentDigest, signAttestation, verifyAttestation } from './attestation.js';
+export type {
+  NormalizedIdentityEvidence, SignatureEvidence, GovernanceAttestation,
+  AuthorizationRequest, AuthorizationDecision,
+} from './attestation.js';
