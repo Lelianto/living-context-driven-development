@@ -173,6 +173,16 @@ describe('lcd CLI integration', () => {
     expect(readFileSync(workflowPath, 'utf8')).toBe('name: Existing workflow\n');
   });
 
+  it('does not assume GitHub when automatic provider detection has no evidence', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'lcdd-cli-'));
+    tempDirs.push(dir);
+
+    const result = run(['setup', 'ci', '--yes'], dir);
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toContain('Could not detect a supported CI provider');
+    expect(existsSync(join(dir, '.github', 'workflows', 'lcdd.yml'))).toBe(false);
+  });
+
   it('creates and diagnoses an empty ownership Registry', () => {
     const dir = mkdtempSync(join(tmpdir(), 'lcdd-cli-'));
     tempDirs.push(dir);

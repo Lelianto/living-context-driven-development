@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
+import { spawnSync } from 'node:child_process';
 import chalk from 'chalk';
 
 const MANAGED_MARKER = '# Managed by @lcdd/cli. Re-run `lcd setup ci --provider github` to update.';
@@ -46,12 +47,23 @@ jobs:
 `;
 }
 
+function detectCiProvider(root: string): 'github' | null {
+  if (existsSync(join(root, '.github'))) return 'github';
+  const remote = spawnSync('git', ['remote', 'get-url', 'origin'], { cwd: root, encoding: 'utf8' });
+  if (remote.status === 0 && /(^|[/:])github\.com[/:]/i.test(remote.stdout.trim())) return 'github';
+  return null;
+}
+
 function reportJson(status: string, path: string, changed: boolean, dryRun: boolean): void {
   console.log(JSON.stringify({ status, provider: 'github', path, changed, dry_run: dryRun }, null, 2));
 }
 
 export async function setupCiCommand(options: SetupCiOptions, cliVersion: string): Promise<void> {
-  const provider = options.provider ?? 'auto';
+  const requestedProvider = options.provider ?? 'auto';
+  const provider = requestedProvider === 'auto' ? detectCiProvider(process.cwd()) : requestedProvider;
+  if (provider === null) {
+    throw new Error('Could not detect a supported CI provider. Use `--provider github` explicitly.');
+  }
   if (!['auto', 'github'].includes(provider)) {
     throw new Error(`Provider '${provider}' is not implemented yet. Phase A currently supports GitHub.`);
   }
