@@ -462,6 +462,11 @@ lcd setup ci
 Generates a pinned, least-privilege workflow that runs `lcd check --stage ci`. It does not activate
 remote required checks by itself.
 
+**Phase A implementation status:** GitHub is implemented through
+`lcd setup ci --provider github`. The generator previews by default, writes with `--yes`, owns only
+`.github/workflows/lcdd.yml` carrying its managed marker, and refuses to replace an unmanaged file.
+GitLab, Bitbucket, Azure DevOps, and generic workflow generators remain planned.
+
 ### 3.14 `lcd governance scaffold`
 
 ```text

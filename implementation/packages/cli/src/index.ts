@@ -56,6 +56,22 @@ program
     await checkCommand(options);
   });
 
+const setupCmd = program
+  .command('setup')
+  .description('Set up LCDD integrations without replacing existing configuration');
+
+setupCmd
+  .command('ci')
+  .description('Generate a least-privilege CI workflow')
+  .option('--provider <name>', 'CI provider: auto or github', 'auto')
+  .option('--dry-run', 'Preview the generated workflow without writing')
+  .option('--yes', 'Write the workflow non-interactively')
+  .option('--json', 'Output stable JSON')
+  .action(async (options) => {
+    const { setupCiCommand } = await import('./commands/setup.js');
+    await setupCiCommand(options, pkg.version);
+  });
+
 const ownershipCmd = program
   .command('ownership')
   .description('Manage repository ownership boundaries');

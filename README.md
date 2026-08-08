@@ -327,7 +327,13 @@ lcd init
 lcd context add
 lcd validate
 lcd doctor
+lcd setup ci --provider github --yes
 ```
+
+The last command creates an idempotent, least-privilege GitHub Actions workflow. Commit and push
+`.github/workflows/lcdd.yml`; after its first successful run, require the `LCDD / validate` check
+in the default-branch ruleset. Other Git hosts can already use LCDD through generic Git and CI
+commands, but provider-specific workflow generators are not implemented yet.
 
 ### Pipeline Commands
 
@@ -538,6 +544,7 @@ npm install -g @lcdd/cli
 lcd init
 lcd context add
 lcd validate
+lcd setup ci --provider github --yes
 ```
 
 See the full [Roadmap](specification/0016-roadmap.md) and [Vision](manifesto/vision.md).
