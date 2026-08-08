@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "vitest run --passWithNoTests",
+    "test": "npm run build && vitest run",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build"
   },

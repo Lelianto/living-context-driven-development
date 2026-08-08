@@ -75,7 +75,7 @@
 
 ## 🔴 v0.6.0 — Drift & Retrieval
 
-- [ ] Resolve the P0/P1 security baseline and add CLI/MCP integration tests
+- [x] Resolve the P0/P1 security baseline and add CLI/MCP integration tests
 - [ ] `lcd validate --changes` with a PR governance report
 - [ ] Task-scoped Context Bundles and `lcdd_get_context_for_task`
 - [ ] `lcd discover` for local repository sources

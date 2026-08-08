@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { ContextVerifier } from '../verifier.js';
+import { ContextVerifier, VERIFIER_LIMITS } from '../verifier.js';
 import type { Context } from '../types.js';
 import { writeFileSync, unlinkSync, mkdtempSync, rmSync } from 'fs';
 import { join } from 'path';
@@ -131,6 +131,36 @@ describe('ContextVerifier', () => {
       });
       const result = await verifier.verify(ctx, 'test.ts', 'content');
       expect(result.status).toBe('error');
+    });
+
+    it('rejects nested quantified patterns', async () => {
+      const ctx = makeContext({
+        enforcement: {
+          mode: 'block',
+          specification: {
+            type: 'regex-pattern',
+            config: { patterns: ['(a+)+$'], should_not_match: true },
+          },
+        },
+      });
+      const result = await verifier.verify(ctx, 'test.txt', 'a'.repeat(100));
+      expect(result.status).toBe('error');
+      expect(result.violations?.[0].description).toContain('safety limits');
+    });
+
+    it('rejects oversized artifacts before regex evaluation', async () => {
+      const ctx = makeContext({
+        enforcement: {
+          mode: 'block',
+          specification: {
+            type: 'regex-pattern',
+            config: { patterns: ['secret'], should_not_match: true },
+          },
+        },
+      });
+      const result = await verifier.verify(ctx, 'large.txt', 'a'.repeat(VERIFIER_LIMITS.MAX_ARTIFACT_BYTES + 1));
+      expect(result.status).toBe('error');
+      expect(result.violations?.[0].description).toContain('exceeds regex verification limit');
     });
   });
 

@@ -198,6 +198,7 @@ Manage external sources for change detection (no API key required).
 ```bash
 lcd source add <url> --type git --label "Express.js"
 lcd source add <url> --type website --label "OWASP Top 10"
+lcd source add <url> --type website --confidential # Local extraction only
 lcd source list                          # List registered sources
 lcd source check [id]                    # Check for changes (all or specific source)
 lcd source remove <id>                   # Remove a registered source
@@ -242,6 +243,10 @@ ollama pull llama3.2                   # One-time model download
 lcd extract <source-id>                # Free local extraction
 ```
 
+OpenAI and Anthropic send source content to their cloud services. The CLI prints a data-flow
+notice whenever either backend is selected. Sources registered with `--confidential` cannot use
+cloud extraction and must use local Ollama.
+
 ### `lcd normalize`
 
 Normalize extracted candidates into validated, deduplicated draft contexts.
@@ -263,11 +268,11 @@ View enforcement metrics and lifecycle observability.
 
 ```bash
 lcd dashboard                        # Terminal report
-lcd dashboard --web                  # Web dashboard with charts at localhost:9321
+lcd dashboard --web                  # Loopback-only web dashboard at 127.0.0.1:9321
 lcd dashboard --web --port 3000      # Custom port
 ```
 
-Terminal view shows: violation trends (7d/30d/90d), actor breakdown (human vs AI), top violated contexts, enforcement mode distribution, and lifecycle velocity. Web mode adds interactive Chart.js visualizations.
+Terminal view shows: violation trends (7d/30d/90d), actor breakdown (human vs AI), top violated contexts, enforcement mode distribution, and lifecycle velocity. Web mode adds interactive Chart.js visualizations and is a local development aid, not a production service.
 
 ---
 

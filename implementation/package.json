@@ -10,6 +10,7 @@
     "build": "npm run build --workspace=@lcdd/core && npm run build --workspace=@lcdd/cli && npm run build --workspace=@lcdd/mcp",
     "test": "npm run test --workspaces",
     "docs:check": "node scripts/check-doc-consistency.mjs",
+    "verify:release": "npm run docs:check && npm test && npm run build && npm audit --omit=dev",
     "lint": "npm run lint --workspaces",
     "clean": "npm run clean --workspaces"
   },

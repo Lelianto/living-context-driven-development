@@ -1,7 +1,7 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import yaml from 'js-yaml';
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { createHash } from 'crypto';
 
 export interface SourceChangeEvent {
@@ -19,6 +19,7 @@ export interface RegisteredSource {
   url: string;
   type: 'git' | 'website';
   label?: string;
+  confidential?: boolean;
   last_checked?: string;
   last_checksum?: string;
   status: 'active' | 'error' | 'paused';
@@ -71,15 +72,18 @@ export class SourceConnector {
     url: string;
     type?: 'git' | 'website';
     label?: string;
+    confidential?: boolean;
   }): RegisteredSource {
     const id = `src-${params.type || 'unknown'}-${Date.now().toString(36)}`;
 
     const detectedType = params.type || this.detectType(params.url);
+    this.validateSourceUrl(params.url, detectedType);
     const source: RegisteredSource = {
       id,
       url: params.url,
       type: detectedType,
       label: params.label,
+      confidential: params.confidential,
       status: 'active',
     };
 
@@ -152,7 +156,7 @@ export class SourceConnector {
     try {
       if (!existsSync(repoDir)) {
         mkdirSync(repoDir, { recursive: true });
-        execSync(`git clone --depth 1 "${source.url}" "${repoDir}"`, {
+        execFileSync('git', ['clone', '--depth', '1', '--', source.url, repoDir], {
           cwd: this.sourcesDir,
           timeout: 30000,
           stdio: 'pipe',
@@ -160,7 +164,7 @@ export class SourceConnector {
         summary = 'Initial clone completed.';
       } else {
         const beforeHash = this.getGitHeadHash(repoDir);
-        execSync('git fetch --depth 1 origin', {
+        execFileSync('git', ['fetch', '--depth', '1', 'origin'], {
           cwd: repoDir,
           timeout: 30000,
           stdio: 'pipe',
@@ -168,20 +172,21 @@ export class SourceConnector {
 
         const headBranch = this.getDefaultBranch(repoDir);
         if (headBranch) {
+          this.validateBranchName(headBranch);
           try {
-            execSync(`git merge-base --is-ancestor HEAD origin/${headBranch}`, {
+            execFileSync('git', ['merge-base', '--is-ancestor', 'HEAD', `origin/${headBranch}`], {
               cwd: repoDir,
               timeout: 10000,
               stdio: 'pipe',
             });
           } catch {
-            execSync(`git merge --ff-only origin/${headBranch}`, {
+            execFileSync('git', ['merge', '--ff-only', `origin/${headBranch}`], {
               cwd: repoDir,
               timeout: 30000,
               stdio: 'pipe',
             });
             hasChanges = true;
-            const diffOutput = execSync('git diff --stat HEAD~1 HEAD', {
+            const diffOutput = execFileSync('git', ['diff', '--stat', 'HEAD~1', 'HEAD'], {
               cwd: repoDir,
               timeout: 10000,
               stdio: 'pipe',
@@ -221,10 +226,7 @@ export class SourceConnector {
     let summary = '';
 
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 15000);
-
-      const response = execSync(`curl -sL --max-time 15 "${source.url}"`, {
+      const response = execFileSync('curl', ['-sL', '--max-time', '15', '--proto', '=https', '--proto-redir', '=https', '--', source.url], {
         timeout: 20000,
         stdio: 'pipe',
       });
@@ -258,7 +260,7 @@ export class SourceConnector {
 
   private getGitHeadHash(repoDir: string): string {
     try {
-      return execSync('git rev-parse HEAD', {
+      return execFileSync('git', ['rev-parse', 'HEAD'], {
         cwd: repoDir,
         timeout: 5000,
         stdio: 'pipe',
@@ -270,7 +272,7 @@ export class SourceConnector {
 
   private getDefaultBranch(repoDir: string): string | null {
     try {
-      const ref = execSync('git rev-parse --abbrev-ref HEAD', {
+      const ref = execFileSync('git', ['rev-parse', '--abbrev-ref', 'HEAD'], {
         cwd: repoDir,
         timeout: 5000,
         stdio: 'pipe',
@@ -286,6 +288,36 @@ export class SourceConnector {
       return 'git';
     }
     return 'website';
+  }
+
+  private validateSourceUrl(url: string, type: 'git' | 'website'): void {
+    if (url.length > 2048 || /[\0\r\n]/.test(url)) {
+      throw new Error('Source URL is invalid.');
+    }
+
+    if (type === 'website') {
+      let parsed: URL;
+      try {
+        parsed = new URL(url);
+      } catch {
+        throw new Error('Website sources must use a valid HTTPS URL.');
+      }
+      if (parsed.protocol !== 'https:') {
+        throw new Error('Website sources must use HTTPS.');
+      }
+      return;
+    }
+
+    const validGitUrl = url.startsWith('git@') || url.startsWith('ssh://') || url.startsWith('https://');
+    if (!validGitUrl) {
+      throw new Error('Git sources must use HTTPS, SSH, or git@ syntax.');
+    }
+  }
+
+  private validateBranchName(branch: string): void {
+    if (!/^[A-Za-z0-9._/-]+$/.test(branch) || branch.includes('..') || branch.startsWith('-')) {
+      throw new Error('Remote branch name contains unsafe characters.');
+    }
   }
 
   async *watch(intervalMinutes: number): AsyncGenerator<SourceCheckResult, void, void> {

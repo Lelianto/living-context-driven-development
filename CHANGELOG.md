@@ -11,11 +11,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned for v0.6.0
 
-- Security and integration-test baseline
 - Change-scoped validation with `lcd validate --changes`
 - Task-scoped Context Bundles
 - Local repository discovery
 - Code-to-Context drift detection
+
+### Added
+
+- Gate 1 security baseline: argument-based Git/curl execution, URL and branch validation
+- Loopback-only dashboard with no wildcard CORS, HTML/JSON escaping, and Chart.js SRI
+- Confidential source classification and cloud-extraction data-flow notice/blocking
+- Regex pattern, artifact-size, and 250 ms execution limits
+- CLI integration tests and MCP stdio contract/error tests
+- `npm run verify:release` and production dependency auditing in CI
+
+### Security
+
+- Upgraded `uuid` to 11.1.1; `npm audit --omit=dev` reports zero vulnerabilities
+- Reconciled `SECURITY.md` guarantees with the local file-based v0.5 implementation
 
 ---
 

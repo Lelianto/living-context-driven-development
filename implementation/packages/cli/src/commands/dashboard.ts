@@ -2,6 +2,24 @@ import { FileRegistry, DashboardService, type DashboardMetrics } from '@lcdd/cor
 import chalk from 'chalk';
 import { createServer, IncomingMessage, ServerResponse } from 'http';
 
+export function escapeHtml(value: unknown): string {
+  return String(value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function safeJson(value: unknown): string {
+  return JSON.stringify(value)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+}
+
 function bar(pct: number, width: number = 20): string {
   const filled = Math.round(pct * width);
   return chalk.green('█'.repeat(filled)) + chalk.dim('░'.repeat(width - filled));
@@ -81,14 +99,14 @@ function printTerminal(metrics: DashboardMetrics): void {
   }
 }
 
-function getWebHtml(metrics: DashboardMetrics): string {
+export function getWebHtml(metrics: DashboardMetrics): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>LCDD Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" integrity="sha384-OLBgp1GsljhM2TJ+sbHjaiH9txEUvgdDTAzHv2P24donTt6/529l+9Ua0vFImLlb" crossorigin="anonymous"></script>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0d1117; color: #c9d1d9; padding: 24px; }
@@ -140,7 +158,7 @@ function getWebHtml(metrics: DashboardMetrics): string {
   </div>
   ${metrics.lifecycle_velocity.length > 0 ? `<div class="card full">
     <h2>Lifecycle Velocity</h2>
-    ${metrics.lifecycle_velocity.slice(0, 5).map(v => `<div class="stat"><span class="stat-name">${v.context_id}</span><span>${v.from_stage} → ${v.to_stage}</span><span>${v.days} days</span><span style="color: #8b949e;">${v.title.slice(0, 40)}</span></div>`).join('')}
+    ${metrics.lifecycle_velocity.slice(0, 5).map(v => `<div class="stat"><span class="stat-name">${escapeHtml(v.context_id)}</span><span>${escapeHtml(v.from_stage)} → ${escapeHtml(v.to_stage)}</span><span>${escapeHtml(v.days)} days</span><span style="color: #8b949e;">${escapeHtml(v.title.slice(0, 40))}</span></div>`).join('')}
   </div>` : ''}
 </div>
 
@@ -153,14 +171,14 @@ Chart.defaults.borderColor = '#30363d';
 new Chart(document.getElementById('trendChart'), {
   type: 'line',
   data: {
-    labels: ${JSON.stringify(metrics.violation_trend.map(t => t.period))},
+    labels: ${safeJson(metrics.violation_trend.map(t => t.period))},
     datasets: [{
       label: 'Violation Rate %',
-      data: ${JSON.stringify(metrics.violation_trend.map(t => +(t.violation_rate * 100).toFixed(1)))},
+      data: ${safeJson(metrics.violation_trend.map(t => +(t.violation_rate * 100).toFixed(1)))},
       borderColor: '#f85149', backgroundColor: 'rgba(248,81,73,0.12)', fill: true, tension: 0.3
     },{
       label: 'Checks',
-      data: ${JSON.stringify(metrics.violation_trend.map(t => t.total_checks))},
+      data: ${safeJson(metrics.violation_trend.map(t => t.total_checks))},
       borderColor: '#58a6ff', backgroundColor: 'rgba(88,166,255,0.08)', fill: true, tension: 0.3, yAxisID: 'y1'
     }]
   },
@@ -174,8 +192,8 @@ new Chart(document.getElementById('trendChart'), {
 new Chart(document.getElementById('actorChart'), {
   type: 'doughnut',
   data: {
-    labels: ${JSON.stringify(metrics.actor_breakdown.map(a => a.type))},
-    datasets: [{ data: ${JSON.stringify(metrics.actor_breakdown.map(a => a.violations))}, backgroundColor: ['#3fb950','#bc8cff'], borderWidth: 0 }]
+    labels: ${safeJson(metrics.actor_breakdown.map(a => a.type))},
+    datasets: [{ data: ${safeJson(metrics.actor_breakdown.map(a => a.violations))}, backgroundColor: ['#3fb950','#bc8cff'], borderWidth: 0 }]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
@@ -186,10 +204,10 @@ new Chart(document.getElementById('actorChart'), {
 new Chart(document.getElementById('violatedChart'), {
   type: 'bar',
   data: {
-    labels: ${JSON.stringify(metrics.top_violated.slice(0, 8).map(c => c.context_id))},
+    labels: ${safeJson(metrics.top_violated.slice(0, 8).map(c => c.context_id))},
     datasets: [{
       label: 'Violations',
-      data: ${JSON.stringify(metrics.top_violated.slice(0, 8).map(c => c.total_violations))},
+      data: ${safeJson(metrics.top_violated.slice(0, 8).map(c => c.total_violations))},
       backgroundColor: colors.slice(0, 8), borderRadius: 4
     }]
   },
@@ -202,8 +220,8 @@ new Chart(document.getElementById('violatedChart'), {
 new Chart(document.getElementById('modeChart'), {
   type: 'polarArea',
   data: {
-    labels: ${JSON.stringify(metrics.mode_distribution.map(m => m.mode))},
-    datasets: [{ data: ${JSON.stringify(metrics.mode_distribution.map(m => m.count))}, backgroundColor: ['#f85149','#d29922','#58a6ff','#8b949e'] }]
+    labels: ${safeJson(metrics.mode_distribution.map(m => m.mode))},
+    datasets: [{ data: ${safeJson(metrics.mode_distribution.map(m => m.count))}, backgroundColor: ['#f85149','#d29922','#58a6ff','#8b949e'] }]
   },
   options: {
     responsive: true, maintainAspectRatio: false,
@@ -226,7 +244,7 @@ export async function dashboardCommand(options: { web?: boolean; port?: string }
     const server = createServer((_req: IncomingMessage, res: ServerResponse) => {
       const url = _req.url || '/';
       if (url === '/api/metrics') {
-        res.writeHead(200, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+        res.writeHead(200, { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' });
         res.end(JSON.stringify(metrics));
         return;
       }
@@ -234,7 +252,7 @@ export async function dashboardCommand(options: { web?: boolean; port?: string }
       res.end(getWebHtml(metrics));
     });
 
-    server.listen(port, () => {
+    server.listen(port, '127.0.0.1', () => {
       console.log('');
       console.log(chalk.green(`LCDD Dashboard running at ${chalk.bold.cyan(`http://localhost:${port}`)}`));
       console.log(chalk.dim(`  API: http://localhost:${port}/api/metrics`));

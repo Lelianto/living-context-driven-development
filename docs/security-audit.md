@@ -3,7 +3,7 @@
 | Field | Value |
 | --- | --- |
 | Document title | Security Audit — LCDD Reference Implementation |
-| Version | 1.0.0 |
+| Version | 1.1.0 |
 | Date | 2026-08-08 |
 | Classification | Internal — Self-Assessment |
 | Audit scope | `@lcdd/core` 0.5.0, `@lcdd/cli` 0.5.0, `@lcdd/mcp` 0.5.0 |
@@ -26,22 +26,23 @@ the environment (never persisted to disk), context identifiers are constrained b
 path traversal, YAML is parsed with the safe default schema of `js-yaml` v4, and the local registry directory
 `.lcdd/` is excluded from version control.
 
-The audit identified **2 High, 3 Medium, 3 Low, and 2 Informational findings**, plus 1 dependency advisory
-(moderate). The most actionable issues are the **command-injection surface in the source connector**
-([F-01](#f-01-command-injection-in-source-connector-high)) and the **unauthenticated, unbound dashboard server**
-([F-02](#f-02-dashboard-web-server-exposed-without-authentication-medium)).
+The original v0.5.0 audit identified **2 High, 3 Medium, 3 Low, and 2 Informational findings**, plus
+1 moderate dependency advisory. Gate 1 resolved F-01 through F-04 and F-08, added bounded regex
+execution for F-06, and added cloud-provider disclosure/confidential-source enforcement for F-09.
+F-05 and the full F-06 path-hardening work remain scheduled; F-07 remains a documented v0.7.0
+integrity gap; F-10 remains an accepted local-operator risk.
 
 | ID | Finding | Severity | CVSS 3.1 | CWE | Status |
 | --- | --- | --- | --- | --- | --- |
-| F-01 | Command injection in source connector (`git`/`curl` via `execSync`) | High | 7.8 | CWE-78 | Open |
-| F-02 | Dashboard web server binds all interfaces, no authentication, open CORS | Medium | 6.5 | CWE-668 | Open |
-| F-03 | Stored XSS in web dashboard (untrusted context data in HTML) | Medium | 5.4 | CWE-79 | Open |
-| F-04 | Third-party CDN script without Subresource Integrity | Low | 4.3 | CWE-829 | Open |
+| F-01 | Command injection in source connector (`git`/`curl` via `execSync`) | High | 7.8 | CWE-78 | Resolved in Gate 1 |
+| F-02 | Dashboard web server binds all interfaces, no authentication, open CORS | Medium | 6.5 | CWE-668 | Resolved in Gate 1 |
+| F-03 | Stored XSS in web dashboard (untrusted context data in HTML) | Medium | 5.4 | CWE-79 | Resolved in Gate 1 |
+| F-04 | Third-party CDN script without Subresource Integrity | Low | 4.3 | CWE-829 | Resolved in Gate 1 |
 | F-05 | Unsanitized identifiers in snapshot/registry file paths (defense-in-depth) | Low | 3.1 | CWE-22 | Open |
-| F-06 | Regular-expression denial of service via enforcement patterns | Low | 3.7 | CWE-1333 | Open |
+| F-06 | Regular-expression denial of service via enforcement patterns | Low | 3.7 | CWE-1333 | Mitigated in Gate 1 |
 | F-07 | Audit log integrity gaps vs `0014-security.md` (no hash chain, no access control, actor spoofing) | Medium | 5.9 | CWE-353 | Open |
-| F-08 | Dependency advisory `uuid < 11.1.1` (moderate); pinning policy mismatch | Low | — (moderate) | CWE-1104 | Open |
-| F-09 | LLM extraction may send source content to cloud providers | Low | 3.1 | CWE-200 | Open (documented) |
+| F-08 | Dependency advisory `uuid < 11.1.1` (moderate); pinning policy mismatch | Low | — (moderate) | CWE-1104 | Resolved in Gate 1 |
+| F-09 | LLM extraction may send source content to cloud providers | Low | 3.1 | CWE-200 | Mitigated in Gate 1 |
 | F-10 | Website source connector performs outbound requests (SSRF by design) | Info | — | CWE-918 | Accepted risk |
 
 ---

@@ -195,6 +195,7 @@ sourceCmd
   .argument('<url>', 'Source URL (git repo or website)')
   .option('--type <type>', 'Source type (git | website)')
   .option('--label <label>', 'Human-readable label')
+  .option('--confidential', 'Prevent this source from being sent to cloud LLM providers')
   .action(async (url: string, options) => {
     const { sourceAddCommand } = await import('./commands/source.js');
     await sourceAddCommand(url, options);

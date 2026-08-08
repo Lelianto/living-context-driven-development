@@ -1,7 +1,7 @@
 import { SourceConnector } from '@lcdd/core';
 import chalk from 'chalk';
 
-export async function sourceAddCommand(url: string, options: { type?: string; label?: string }): Promise<void> {
+export async function sourceAddCommand(url: string, options: { type?: string; label?: string; confidential?: boolean }): Promise<void> {
   const connector = new SourceConnector(process.cwd());
 
   const validTypes = ['git', 'website'];
@@ -9,13 +9,14 @@ export async function sourceAddCommand(url: string, options: { type?: string; la
     ? (options.type as 'git' | 'website')
     : undefined;
 
-  const source = connector.addSource({ url, type, label: options.label });
+  const source = connector.addSource({ url, type, label: options.label, confidential: options.confidential });
 
   console.log('');
   console.log(chalk.green(`✓ Source registered: ${source.id}`));
   console.log(chalk.dim(`  URL:   ${source.url}`));
   console.log(chalk.dim(`  Type:  ${source.type}`));
   if (source.label) console.log(chalk.dim(`  Label: ${source.label}`));
+  if (source.confidential) console.log(chalk.yellow('  Confidential: cloud extraction disabled'));
   console.log('');
 }
 
@@ -42,6 +43,7 @@ export async function sourceListCommand(): Promise<void> {
 
     console.log(`  ${statusIcon} ${chalk.bold(src.id)}  ${type}  ${src.url}`);
     if (src.label) console.log(chalk.dim(`      label: ${src.label}`));
+    if (src.confidential) console.log(chalk.yellow('      confidential: cloud extraction disabled'));
     console.log(`      ${lastChecked}`);
     console.log('');
   }

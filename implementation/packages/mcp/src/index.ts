@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { resolve } from "path";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -28,7 +30,7 @@ const PKG_VERSION = JSON.parse(
   readFileSync(new URL("../package.json", import.meta.url), "utf-8")
 ).version as string;
 
-const TOOLS = [
+export const TOOLS = [
   {
     name: "lcdd_list_contexts",
     description: "List all LCDD contexts with optional filters by lifecycle, category, or tags.",
@@ -116,6 +118,14 @@ const TOOLS = [
     },
   },
 ];
+
+export function sanitizeErrorMessage(error: unknown, roots: string[] = [projectRoot, process.cwd()]): string {
+  let message = error instanceof Error ? error.message : String(error);
+  for (const root of new Set(roots.filter(Boolean))) {
+    message = message.split(root).join('<project-root>');
+  }
+  return message.replace(/(?:\/[^\s:'"]+){2,}/g, '<redacted-path>');
+}
 
 const server = new Server(
   {
@@ -338,7 +348,7 @@ server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest)
     // Deliberately omit the stack trace: it leaks absolute filesystem paths to
     // the connected client.
     return {
-      content: [{ type: "text", text: JSON.stringify({ error: (e as Error).message }) }],
+      content: [{ type: "text", text: JSON.stringify({ error: sanitizeErrorMessage(e) }) }],
       isError: true,
     };
   }
@@ -350,7 +360,10 @@ async function main(): Promise<void> {
   console.error("LCDD MCP Server started");
 }
 
-main().catch((e) => {
-  console.error("LCDD MCP Server failed:", e);
-  process.exit(1);
-});
+const invokedPath = process.argv[1] ? resolve(process.argv[1]) : '';
+if (invokedPath === fileURLToPath(import.meta.url)) {
+  main().catch((e) => {
+    console.error("LCDD MCP Server failed:", sanitizeErrorMessage(e));
+    process.exit(1);
+  });
+}

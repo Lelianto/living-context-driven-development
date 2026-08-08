@@ -27,11 +27,11 @@ This security policy covers:
 
 LCDD reference implementations follow these secure development practices:
 
-- All dependencies are pinned and regularly audited.
-- Context Protocol communication uses TLS 1.3.
-- Authentication is required for all Registry write operations.
-- Audit logs are immutable (append-only).
-- Hardened context modification requires multi-factor approval.
+- Dependency ranges are locked by `package-lock.json` and production dependencies are audited in CI.
+- The current MCP implementation is local stdio-only; future network protocol deployments must use authenticated TLS.
+- The file Registry relies on local filesystem permissions; remote Registry authentication is not implemented yet.
+- Audit logs are append-only through the application but are not yet tamper-evident against a local filesystem writer.
+- Hardened Contexts cannot be modified automatically; multi-factor approval is a future remote-governance requirement.
 
 See [specification/0014-security.md](specification/0014-security.md) for the full security model.
 
@@ -39,6 +39,6 @@ See [specification/0014-security.md](specification/0014-security.md) for the ful
 
 | Version | Supported |
 |---|---|
-| 0.1.0 (Draft) | ✅ Yes |
+| 0.5.x (Implementation Phase) | ✅ Yes |
 
 As a pre-1.0 specification, security issues will be addressed in the next release. Critical vulnerabilities may trigger an immediate patch release.

@@ -25,6 +25,20 @@ export async function extractCommand(sourceId: string, options: {
     process.env.LLM_MODEL = options.model;
   }
 
+  const requestedBackend = options.backend?.toLowerCase();
+  const cloudBackend = requestedBackend === 'openai' || requestedBackend === 'anthropic';
+  if (source.confidential && cloudBackend) {
+    console.log(chalk.red(`Source ${source.id} is confidential and cannot be sent to ${requestedBackend}.`));
+    console.log(chalk.dim('Use the local Ollama backend or register a non-confidential source.'));
+    process.exitCode = 1;
+    return;
+  }
+
+  if (cloudBackend) {
+    console.log(chalk.yellow(`⚠ Data-flow notice: source content will be sent to the ${requestedBackend} cloud service.`));
+    console.log(chalk.dim('  API keys remain in the environment, but source text leaves this machine.'));
+  }
+
   console.log('');
   console.log(chalk.bold(`Extracting constraints from: ${source.url}`));
   console.log(chalk.dim(`Provider: ${options.backend || 'auto'} | Source type: ${source.type}`));

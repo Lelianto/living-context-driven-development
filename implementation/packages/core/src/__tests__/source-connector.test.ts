@@ -82,6 +82,21 @@ describe('SourceConnector', () => {
       expect(connector.removeSource(src.id)).toBe(true);
       expect(connector.listSources()).toHaveLength(0);
     });
+
+    it('rejects non-HTTPS website sources', () => {
+      expect(() => connector.addSource({ url: 'http://example.com', type: 'website' }))
+        .toThrow('Website sources must use HTTPS');
+    });
+
+    it('rejects shell-like and local-path Git sources', () => {
+      expect(() => connector.addSource({ url: 'repo;touch-pwned', type: 'git' }))
+        .toThrow('Git sources must use HTTPS, SSH, or git@ syntax');
+    });
+
+    it('persists confidential source classification', () => {
+      connector.addSource({ url: 'https://example.com', type: 'website', confidential: true });
+      expect(connector.listSources()[0].confidential).toBe(true);
+    });
   });
 
   describe('getScheduleCron', () => {

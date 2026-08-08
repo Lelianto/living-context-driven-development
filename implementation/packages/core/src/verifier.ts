@@ -2,11 +2,54 @@ import type { Context, VerificationResult, EnforcementEvent } from './types.js';
 import { LifecycleManager } from './lifecycle.js';
 import { v4 as uuid } from 'uuid';
 import { existsSync, readFileSync } from 'fs';
+import { Worker } from 'worker_threads';
 
 export interface VerifierConfig {
   type: string;
   config?: Record<string, unknown>;
   violation_message_template?: string;
+}
+
+export const VERIFIER_LIMITS = {
+  MAX_ARTIFACT_BYTES: 1_000_000,
+  MAX_REGEX_LENGTH: 1_000,
+  REGEX_TIMEOUT_MS: 250,
+} as const;
+
+function hasUnsafeRegexStructure(pattern: string): boolean {
+  if (pattern.length > VERIFIER_LIMITS.MAX_REGEX_LENGTH) return true;
+  // Reject nested quantified groups such as (a+)+ and ambiguous repeated wildcards.
+  return /\([^)]*[+*][^)]*\)[+*{]/.test(pattern) || /(\.\*){2,}/.test(pattern);
+}
+
+function testRegexWithTimeout(pattern: string, flags: string, content: string): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    const worker = new Worker(
+      `const { parentPort, workerData } = require('node:worker_threads');
+       try {
+         parentPort.postMessage({ match: new RegExp(workerData.pattern, workerData.flags).test(workerData.content) });
+       } catch (error) {
+         parentPort.postMessage({ error: error instanceof Error ? error.message : String(error) });
+       }`,
+      { eval: true, workerData: { pattern, flags, content } },
+    );
+
+    const timeout = setTimeout(() => {
+      void worker.terminate();
+      reject(new Error(`Regex verification exceeded ${VERIFIER_LIMITS.REGEX_TIMEOUT_MS}ms timeout.`));
+    }, VERIFIER_LIMITS.REGEX_TIMEOUT_MS);
+
+    worker.once('message', (result: { match?: boolean; error?: string }) => {
+      clearTimeout(timeout);
+      void worker.terminate();
+      if (result.error) reject(new Error(result.error));
+      else resolve(Boolean(result.match));
+    });
+    worker.once('error', error => {
+      clearTimeout(timeout);
+      reject(error);
+    });
+  });
 }
 
 export class ContextVerifier {
@@ -58,15 +101,25 @@ export class ContextVerifier {
     };
   };
 
-  private regexVerifier = (
+  private regexVerifier = async (
     spec: VerifierConfig,
     artifactPath: string,
     artifactContent: string
-  ): VerificationResult => {
+  ): Promise<VerificationResult> => {
     const config = spec.config || {};
     const patterns = config.patterns as string[] || [];
     const shouldMatch = config.should_match as boolean | undefined;
     const shouldNotMatch = config.should_not_match as boolean | undefined;
+
+    if (Buffer.byteLength(artifactContent, 'utf8') > VERIFIER_LIMITS.MAX_ARTIFACT_BYTES) {
+      return {
+        context_id: '',
+        artifact_path: artifactPath,
+        status: 'error',
+        violations: [{ description: `Artifact exceeds regex verification limit of ${VERIFIER_LIMITS.MAX_ARTIFACT_BYTES} bytes.` }],
+        confidence: 0,
+      };
+    }
 
     for (const rawPattern of patterns) {
       try {
@@ -79,8 +132,17 @@ export class ContextVerifier {
           pattern = rawPattern.slice(inlineFlags[0].length);
         }
 
-        const regex = new RegExp(pattern, flags);
-        const match = regex.test(artifactContent);
+        if (hasUnsafeRegexStructure(pattern)) {
+          return {
+            context_id: '',
+            artifact_path: artifactPath,
+            status: 'error',
+            violations: [{ description: `Regex pattern rejected by safety limits: ${rawPattern}` }],
+            confidence: 0,
+          };
+        }
+
+        const match = await testRegexWithTimeout(pattern, flags, artifactContent);
 
         if (shouldNotMatch && match) {
           const msg = spec.violation_message_template || `Forbidden pattern matched: ${rawPattern}`;
@@ -108,7 +170,7 @@ export class ContextVerifier {
           context_id: '',
           artifact_path: artifactPath,
           status: 'error',
-          violations: [{ description: `Invalid regex pattern: ${rawPattern}` }],
+          violations: [{ description: `Regex verification failed for ${rawPattern}: ${(e as Error).message}` }],
           confidence: 0,
         };
       }

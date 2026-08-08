@@ -37,6 +37,11 @@ jobs:
           cd implementation
           npm run docs:check
 
+      - name: Audit Production Dependencies
+        run: |
+          cd implementation
+          npm audit --omit=dev
+
       - name: List Active Contexts
         run: lcd list --lifecycle active
 

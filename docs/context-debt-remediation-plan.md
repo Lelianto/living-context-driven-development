@@ -1,6 +1,6 @@
 # LCDD Context Debt Assessment and Remediation Plan
 
-**Status:** Active — Gate 0 implemented
+**Status:** Active — Gates 0–1 implemented
 **Version:** 0.1.0
 **Repository baseline:** v0.5.0
 **Assessment date:** 2026-08-08
@@ -8,9 +8,11 @@
 
 ---
 
-> **Execution note:** Gate 0 was implemented on 2026-08-08. The changelog, roadmaps, README,
-> FAQ, website MCP count, Phase A status, and pipeline status were reconciled, and an automated
-> documentation consistency check was added to CI. Section 3.2 preserves the original audit
+> **Execution note:** Gates 0 and 1 were implemented on 2026-08-08. Gate 0 reconciled the changelog,
+> roadmaps, README, FAQ, website MCP count, Phase A status, and pipeline status, and added an
+> automated documentation consistency check to CI. Gate 1 removed the shell-injection path,
+> hardened the dashboard and extraction boundary, added verifier resource limits, introduced CLI
+> and MCP tests, and added a release-verification command. Section 3.2 preserves the original audit
 > findings as the baseline that motivated the remediation.
 
 ## 1. Purpose
@@ -118,7 +120,7 @@ Work is ordered by the following rules:
 
 **Exit gate:** a reader can determine the current release, delivered capability, active roadmap, and open work without encountering a contradiction.
 
-### Gate 1 — Security and Test Baseline
+### Gate 1 — Security and Test Baseline ✅ Implemented
 
 **Target:** v0.6.0-alpha.1. This gate blocks new discovery, protocol, and remote-integration surfaces.
 
