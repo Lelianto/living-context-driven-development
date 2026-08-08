@@ -1,0 +1,46 @@
+version: "1"
+
+boundaries:
+  - id: boundary:platform
+    name: "Platform Infrastructure"
+    paths:
+      include:
+        - "packages/database/**"
+        - "infrastructure/**"
+        - ".github/workflows/**"
+        - ".gitlab-ci.yml"
+    code_owners:
+      - team:platform
+    context_owners:
+      - team:platform
+    priority: 100
+
+  - id: boundary:payments
+    name: "Payments Service"
+    paths:
+      include:
+        - "services/payments/**"
+        - "packages/payment-contracts/**"
+    code_owners:
+      - team:payments
+    affected_reviewers:
+      - team:platform
+    priority: 100
+
+  - id: boundary:security
+    name: "Authentication and Security"
+    paths:
+      include:
+        - "packages/auth/**"
+        - "services/**/authentication/**"
+      exclude:
+        - "**/*.test.ts"
+    code_owners:
+      - team:security
+    context_owners:
+      - team:security
+    authority_owners:
+      - team:security
+    required_reviewers:
+      - team:security
+    priority: 200

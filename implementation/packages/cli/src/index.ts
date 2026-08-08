@@ -16,9 +16,82 @@ program
 program
   .command('init')
   .description('Initialize LCDD in the current project')
-  .action(async () => {
+  .option('--language <name...>', 'Override detected project languages')
+  .option('--minimal', 'Create configuration and Registry directories without templates')
+  .option('--force-detect', 'Re-run detection; refuses to overwrite an existing configuration')
+  .action(async (options) => {
     const { initCommand } = await import('./commands/init.js');
-    await initCommand();
+    await initCommand(options);
+  });
+
+const migrateCmd = program
+  .command('migrate')
+  .description('Migrate LCDD project artifacts');
+
+migrateCmd
+  .command('config')
+  .description('Migrate .lcdd/config.yaml to a supported schema')
+  .requiredOption('--to <version>', 'Target configuration schema version')
+  .option('--dry-run', 'Show the proposed configuration without writing')
+  .option('--yes', 'Apply the migration non-interactively')
+  .option('--json', 'Output stable JSON')
+  .action(async (options) => {
+    const { migrateConfigCommand } = await import('./commands/migrate.js');
+    await migrateConfigCommand(options);
+  });
+
+program
+  .command('check')
+  .description('Run the appropriate LCDD checks for a local or CI change')
+  .option('--staged', 'Check only staged changes')
+  .option('--changes', 'Check staged, unstaged, and untracked changes')
+  .option('--base <ref>', 'Check changes from merge-base with this ref')
+  .option('--head <ref>', 'With --base, use this head ref')
+  .option('--stage <stage>', 'Execution stage: editor, pre-commit, pre-push, or ci')
+  .option('--strict', 'Treat warnings as errors')
+  .option('--json', 'Output a stable JSON report')
+  .option('--ci', 'Output a CI-friendly governance summary')
+  .action(async (options) => {
+    const { checkCommand } = await import('./commands/check.js');
+    await checkCommand(options);
+  });
+
+const ownershipCmd = program
+  .command('ownership')
+  .description('Manage repository ownership boundaries');
+
+ownershipCmd
+  .command('init')
+  .description('Create an empty ownership Registry')
+  .option('--dry-run', 'Show the proposed ownership Registry without writing')
+  .option('--yes', 'Confirm creation non-interactively')
+  .option('--json', 'Output stable JSON')
+  .action(async (options) => {
+    const { ownershipInitCommand } = await import('./commands/ownership.js');
+    await ownershipInitCommand(options);
+  });
+
+ownershipCmd
+  .command('doctor')
+  .description('Validate ownership coverage, references, and overlaps')
+  .option('--strict', 'Fail on warnings and unresolved ownership')
+  .option('--json', 'Output stable JSON')
+  .action(async (options) => {
+    const { ownershipDoctorCommand } = await import('./commands/ownership.js');
+    await ownershipDoctorCommand(options);
+  });
+
+program
+  .command('impact')
+  .description('Calculate ownership and Context impact for Git changes')
+  .option('--staged', 'Inspect staged changes')
+  .option('--changes', 'Inspect staged, unstaged, and untracked changes')
+  .option('--base <ref>', 'Inspect changes from merge-base with this ref')
+  .option('--head <ref>', 'With --base, use this head ref')
+  .option('--json', 'Output stable JSON')
+  .action(async (options) => {
+    const { impactCommand } = await import('./commands/ownership.js');
+    await impactCommand(options);
   });
 
 const contextCmd = program

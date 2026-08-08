@@ -93,9 +93,9 @@ milestone as "Not Started". Details in
 
 ### Phase 0 — Foundation ✅ Done
 
-Philosophy, Context Debt definition, 6-stage lifecycle, authority model, and Context Schema are all already normative
-documents (`specification/0000–0017`, `manifesto/`, `reference/schema/context-schema.json`, `docs/glossary.md`). No
-remaining work.
+At this assessment baseline, philosophy, Context Debt definition, the 6-stage lifecycle, Authority model, and Context
+Schema were represented by `specification/0000–0017`, `manifesto/`, `reference/schema/context-schema.json`, and
+`docs/glossary.md`. The later draft RFC 0018 extends that baseline with identity and ownership governance.
 
 ### Phase 1 — Minimal Reference Implementation ✅ Done
 

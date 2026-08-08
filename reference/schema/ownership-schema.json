@@ -1,0 +1,70 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://livingcontext.dev/schema/ownership/v1",
+  "title": "LCDD Ownership Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "boundaries"],
+  "properties": {
+    "version": { "const": "1" },
+    "boundaries": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/boundary" }
+    }
+  },
+  "$defs": {
+    "teamId": {
+      "type": "string",
+      "pattern": "^team:[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
+    },
+    "principalOrTeamId": {
+      "type": "string",
+      "pattern": "^(principal|team):[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
+    },
+    "entityList": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/principalOrTeamId" },
+      "uniqueItems": true
+    },
+    "paths": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["include"],
+      "properties": {
+        "include": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "exclude": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "uniqueItems": true
+        }
+      }
+    },
+    "boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "paths", "code_owners"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^boundary:[a-zA-Z0-9][a-zA-Z0-9._-]{0,127}$"
+        },
+        "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+        "description": { "type": "string", "maxLength": 2048 },
+        "paths": { "$ref": "#/$defs/paths" },
+        "code_owners": { "$ref": "#/$defs/entityList" },
+        "context_owners": { "$ref": "#/$defs/entityList" },
+        "authority_owners": { "$ref": "#/$defs/entityList" },
+        "required_reviewers": { "$ref": "#/$defs/entityList" },
+        "affected_reviewers": { "$ref": "#/$defs/entityList" },
+        "subscribers": { "$ref": "#/$defs/entityList" },
+        "priority": { "type": "integer", "minimum": 0, "maximum": 1000 },
+        "metadata": { "type": "object" }
+      }
+    }
+  }
+}

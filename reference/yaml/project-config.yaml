@@ -1,0 +1,67 @@
+version: "1"
+
+project:
+  name: "payment-api"
+  root: ".."
+  languages:
+    - typescript
+
+registry:
+  path: "./contexts"
+
+validation:
+  default_mode: warn
+  include:
+    - "../src/**/*.ts"
+  exclude:
+    - "../node_modules/**"
+    - "../dist/**"
+    - "../coverage/**"
+    - "../.git/**"
+  verifier_failure:
+    local: warn
+    ci: block
+
+change_detection:
+  enabled: true
+  default_base: auto
+
+integrations:
+  package_manager: pnpm
+  linters:
+    - eslint
+  test_runners:
+    - vitest
+  scm_provider: auto
+
+governance:
+  mode: team
+  default_owner: team:platform
+  minimum_assurance:
+    local_change: unverified
+    hardened_proposal: signed
+    hardened_approval: provider-verified
+    trust_change: provider-verified
+
+notifications:
+  primary_owner: request-review
+  required_reviewer: require-approval
+  affected_reviewer: mention
+  subscriber: summary
+  prefer_team_mentions: true
+  deduplicate: true
+  max_direct_mentions: 3
+
+security:
+  protect_hardened: true
+  trusted_base_required_in_ci: true
+  external_identity_sync_requires_confirmation: true
+
+ai:
+  code_changes: allow
+  context_candidates: allow
+  local_context_direct_changes: deny
+  hardened_context_direct_changes: deny
+  governance_approval: deny
+  trust_changes: deny
+  ownership_changes: deny

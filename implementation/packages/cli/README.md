@@ -31,9 +31,9 @@ npx @lcdd/cli init
 
 | Area | Commands |
 | --- | --- |
-| Registry | `init`, `context add`, `list`, `show`, `query`, `transition` |
-| Enforcement | `validate`, `validate --changes`, `doctor` |
-| Governance | `review`, `improve`, `context bundle` |
+| Registry | `init`, `migrate config`, `context add`, `list`, `show`, `query`, `transition` |
+| Enforcement | `check`, `validate`, `validate --changes`, `doctor` |
+| Governance | `ownership init`, `ownership doctor`, `impact`, `review`, `improve`, `context bundle` |
 | Sources | `source`, `extract`, `normalize` |
 | Observability | `dashboard` |
 
@@ -42,7 +42,8 @@ release gate is complete. Run `lcd --help` for the exact commands in the install
 
 ### `lcd init`
 
-Initialize LCDD in your project. Creates `.lcdd/` directory with config and context folders.
+Initialize LCDD with a detected project config, an empty Registry, and schema-complete templates.
+The command is idempotent and never creates an Active Context.
 
 ```bash
 lcd init
@@ -52,11 +53,58 @@ lcd init
 .lcdd/
 ├── config.yaml
 ├── README.md
-└── contexts/
-    ├── hardened/       # Protected — requires explicit approval to change
-    ├── local/          # Team-managed — evolves freely
-    └── experimental/   # AI-suggested — lowest authority
+├── contexts/
+│   ├── hardened/       # Protected — requires explicit approval to change
+│   ├── local/          # Team-managed — evolves freely
+│   └── experimental/   # AI-suggested — lowest authority
+└── templates/
+    ├── hardened.context.yaml
+    ├── local.context.yaml
+    └── experimental.context.yaml
 ```
+
+Use `--minimal` to omit templates or `--language <name...>` to override language detection.
+
+### `lcd migrate config`
+
+Preview and migrate a legacy project configuration to schema version 1:
+
+```bash
+lcd migrate config --to 1 --dry-run
+lcd migrate config --to 1 --yes
+```
+
+The applied migration preserves the original beside the config as a versioned `.bak` file.
+
+### `lcd check`
+
+Run the beginner-facing check command without introducing a second verification engine:
+
+```bash
+lcd check                 # full project
+lcd check --staged        # staged Git changes
+lcd check --stage ci      # CI-friendly change report
+```
+
+### Ownership and impact (experimental)
+
+Create and validate provider-neutral ownership boundaries:
+
+```bash
+lcd ownership init --dry-run
+lcd ownership init --yes
+lcd ownership doctor
+```
+
+After the bootstrap ownership policy is committed to the trusted base, inspect an actual diff:
+
+```bash
+lcd impact --staged
+lcd impact --base origin/main --head HEAD --json
+```
+
+Impact evaluation reads trust, ownership, and Active Context policy from `HEAD` or the merge base,
+not from policy proposed by the change being evaluated.
 
 ### `lcd context add`
 

@@ -198,12 +198,23 @@ Implementation planning: [../docs/v0.6-implementation-plan.md](../docs/v0.6-impl
 | 6.3 | Governance report | File-to-Context mapping, provenance, violations, and merge decision |
 | 6.4 | Feedback producer | Explicit dismissals activate false-positive measurement |
 | 6.5 | Bounded telemetry | Local-first, opt-in, aggregated usage and correction metrics |
+| 6.6 | Verifiable Principal model | Provider-neutral identities, issuer/subject bindings, assurance, and signed evidence |
+| 6.7 | Ownership and impact model | Repository boundaries, affected Teams, required reviewers, and trusted-base evaluation |
+| 6.8 | Provider adapter contract | Portable identity, approval, review-request, report, and branch-protection capabilities |
 
 ### Success Criteria
 
 - [ ] Every governed result can identify the applicable Context, authority, approver, evidence, and verification time.
 - [ ] Existing v0.5.0 Contexts have a documented migration path.
 - [ ] Aggregate feedback contains no individual actor identity or source content.
+- [ ] Protected actions reject self-asserted actor names and stale revision approvals.
+- [ ] Pull requests identify affected Teams without coupling Core identity to one repository provider.
+- [ ] Trust and ownership policy changes are evaluated against the trusted base revision.
+
+Identity and ownership design:
+[0018-identity-ownership-and-change-governance.md](0018-identity-ownership-and-change-governance.md).
+Implementation contracts:
+[../docs/lcdd-workflow-contracts.md](../docs/lcdd-workflow-contracts.md).
 
 ---
 

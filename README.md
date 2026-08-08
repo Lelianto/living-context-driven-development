@@ -418,7 +418,8 @@ living-context-driven-development/
 │   ├── 0014-security.md                 # Security Model
 │   ├── 0015-reference-architecture.md   # Reference Architecture
 │   ├── 0016-roadmap.md                  # Detailed Roadmap
-│   └── 0017-pipeline-automation-plan.md # Pipeline Automation Plan
+│   ├── 0017-pipeline-automation-plan.md # Pipeline Automation Plan
+│   └── 0018-identity-ownership-and-change-governance.md # Identity and ownership governance
 │
 ├── 📂 docs/                             # Companion Documentation
 │   ├── research.md                      # Literature Review (v0.2.0)
@@ -427,11 +428,20 @@ living-context-driven-development/
 │   ├── philosophy.md                    # Philosophical Foundations
 │   ├── comparison.md                    # Comparison with Other Approaches
 │   ├── adoption.md                      # Adoption Guide (6 levels)
-│   └── faq.md                           # Frequently Asked Questions
+│   ├── faq.md                           # Frequently Asked Questions
+│   ├── adoption-bootstrap-enhancement.md # Adoption bootstrap proposal
+│   ├── lcdd-developer-workflow-implementation-plan.md # Primary developer workflow plan
+│   └── lcdd-workflow-contracts.md       # Implementation contracts
 │
 ├── 📂 reference/                        # Reference Artifacts
 │   ├── schema/context-schema.json       # JSON Schema for Context
+│   ├── schema/project-config-schema.json # JSON Schema for project configuration
+│   ├── schema/trust-schema.json         # JSON Schema for trust and identity
+│   ├── schema/ownership-schema.json     # JSON Schema for ownership boundaries
 │   ├── yaml/example-context.yaml        # Example Context (YAML)
+│   ├── yaml/project-config.yaml         # Example project configuration
+│   ├── yaml/trust.yaml                  # Example trust and identity registry
+│   ├── yaml/ownership.yaml              # Example ownership boundaries
 │   ├── json/example-context.json        # Example Context (JSON)
 │   └── architecture/diagrams.md         # Architecture Diagrams
 │
