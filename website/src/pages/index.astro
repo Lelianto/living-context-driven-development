@@ -28,7 +28,7 @@ import Base from '../layouts/Base.astro';
       </div>
       <div style="margin-bottom:12px;">
         <span class="badge badge-fill">Spec v0.4.0</span>
-        <span class="badge badge-stroke" style="margin-left:6px;">Impl v0.4.0</span>
+        <span class="badge badge-stroke" style="margin-left:6px;">Impl v0.5.0</span>
       </div>
       <h1>Living Context Driven Development</h1>
       <p class="tagline">Living Context is the continuously evolving representation of project knowledge.</p>
@@ -297,7 +297,7 @@ enforcement:
         </a>
         <div class="feature">
           <h4>Context Packs</h4>
-          <p>5 domains — Startup, Fintech (OJK), Healthcare (HIPAA), E-commerce, Hackathon.</p>
+          <p>5 domains — Startup, Fintech (OJK), Healthcare (HIPAA), E-commerce, Education.</p>
         </div>
       </div>
     </div>
@@ -308,7 +308,7 @@ enforcement:
       <div class="footer-inner">
         <div>
           <div class="footer-name">Living Context Driven Development</div>
-          <div class="footer-meta">v0.4.0 &middot; Apache 2.0</div>
+          <div class="footer-meta">v0.5.0 &middot; Apache 2.0</div>
         </div>
         <div class="footer-links">
           <a href="https://github.com/Lelianto/living-context-driven-development">GitHub</a>
@@ -347,9 +347,9 @@ enforcement:
     { num: '08', name: 'Observe', desc: 'Dashboard, metrics, violation trends.',
       status: 'done',
       detail: '<strong>Status: Implemented (v0.3.0)</strong><br/><br/><strong>Purpose:</strong> Collect and analyze enforcement outcomes to close the feedback loop.<br/><br/><strong>Implemented:</strong> <code>lcd dashboard</code> — terminal report with violation trends (7d/30d/90d), actor breakdown (human vs AI agent), top violated contexts, enforcement mode distribution, lifecycle velocity. <code>lcd dashboard --web</code> — interactive Chart.js dashboard at localhost:9321 with API endpoint <code>/api/metrics</code>. Enforcement events persisted to <code>.lcdd/contexts/.enforcements.log</code>.<br/><br/><strong>CLI:</strong> <code>lcd dashboard</code>, <code>lcd dashboard --web</code>, <code>lcd dashboard --web --port 3000</code>.' },
-    { num: '09', name: 'Improve', desc: 'Health score, triggers, recommendations.',
+    { num: '09', name: 'Improve', desc: 'Health score, triggers, self-healing loop.',
       status: 'done',
-      detail: '<strong>Status: Implemented (v0.3.0)</strong><br/><br/><strong>Purpose:</strong> Use observation data to drive context evolution.<br/><br/><strong>Implemented:</strong> <code>lcd doctor</code> — Context Health Score (0–100) with letter grade (A–F). Eight health metrics: Stale Contexts, Missing Owners, Enforcement Conflicts, Deprecation Backlog, Draft Stagnation, Authority Gaps, Tag Hygiene, Review Backlog. <code>--triggers</code> flag for five deterministic triggers: STALE_NO_VIOLATION, HIGH_FALSE_POSITIVE, INCREASING_VIOLATIONS, AI_DRIFT, NEW_SOURCE_DETECTED. Each trigger outputs a specific recommendation and suggested CLI command.<br/><br/><strong>CLI:</strong> <code>lcd doctor</code>, <code>lcd doctor --triggers</code>, <code>lcd doctor --json</code>.' },
+      detail: '<strong>Status: Implemented (v0.5.0)</strong><br/><br/><strong>Purpose:</strong> Use observation data to drive context evolution.<br/><br/><strong>Implemented:</strong> <code>lcd doctor</code> — Context Health Score (0–100) with letter grade (A–F). Eight health metrics: Stale Contexts, Missing Owners, Enforcement Conflicts, Deprecation Backlog, Draft Stagnation, Authority Gaps, Tag Hygiene, Review Backlog. Six deterministic triggers: STALE_NO_VIOLATION, HIGH_VIOLATION_RATE, HIGH_FALSE_POSITIVE, INCREASING_VIOLATIONS, AI_DRIFT, NEW_SOURCE_DETECTED.<br/><br/><strong>Self-healing loop (v0.5.0):</strong> <code>lcd improve check</code> lists guardrail-gated recommendations, <code>lcd improve apply &lt;id&gt;</code> applies safe ones (deprecate, refine-scope, register-source) with snapshot + health verification + automatic rollback on regression, <code>lcd improve rollback &lt;heal-id&gt;</code> restores the pre-heal state. Nine guardrails: hardened contexts never auto-modified, low-confidence routes to humans, every action audited, never reduce health.<br/><br/><strong>CLI:</strong> <code>lcd doctor</code>, <code>lcd doctor --triggers</code>, <code>lcd improve check</code>, <code>lcd improve apply &lt;id&gt; --dry-run</code>, <code>lcd improve rollback &lt;heal-id&gt;</code>.' },
   ];
 
   const grid = document.getElementById('pipeline-grid');
