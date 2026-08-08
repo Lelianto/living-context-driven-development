@@ -1,7 +1,7 @@
 {
   "name": "@lcdd/cli",
   "version": "0.6.0",
-  "description": "LCDD CLI — lcd init, context, validate, query, doctor, review, source, extract, normalize, dashboard, transition",
+  "description": "LCDD CLI — bootstrap, CI setup, context governance, validation, review, and observability",
   "type": "module",
   "main": "dist/index.js",
   "bin": {

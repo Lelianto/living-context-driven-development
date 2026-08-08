@@ -130,6 +130,49 @@ describe('lcd CLI integration', () => {
     expect(check.stdout).toContain('No active contexts found');
   });
 
+  it('previews and creates an idempotent least-privilege GitHub workflow', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'lcdd-cli-'));
+    tempDirs.push(dir);
+    expect(run(['init'], dir).status).toBe(0);
+
+    const preview = run(['setup', 'ci', '--provider', 'github', '--dry-run'], dir);
+    expect(preview.status).toBe(0);
+    expect(preview.stdout).toContain('pull_request:');
+    expect(preview.stdout).toContain('merge_group:');
+    expect(preview.stdout).toContain(`@lcdd/cli@${packageVersion}`);
+    expect(existsSync(join(dir, '.github', 'workflows', 'lcdd.yml'))).toBe(false);
+
+    const create = run(['setup', 'ci', '--provider', 'github', '--yes'], dir);
+    expect(create.status).toBe(0);
+    const workflowPath = join(dir, '.github', 'workflows', 'lcdd.yml');
+    const workflow = readFileSync(workflowPath, 'utf8');
+    expect(workflow).toContain('permissions:\n  contents: read');
+    expect(workflow).toContain('fetch-depth: 0');
+    expect(workflow).toContain('name: LCDD');
+    expect(workflow).toContain('name: validate');
+    expect(workflow).toMatch(/actions\/checkout@[0-9a-f]{40}/);
+    expect(workflow).toMatch(/actions\/setup-node@[0-9a-f]{40}/);
+    expect(workflow).not.toContain('pull-requests: write');
+
+    const second = run(['setup', 'ci', '--provider', 'github', '--yes'], dir);
+    expect(second.status).toBe(0);
+    expect(second.stdout).toContain('already up to date');
+    expect(readFileSync(workflowPath, 'utf8')).toBe(workflow);
+  });
+
+  it('refuses to overwrite an unmanaged GitHub workflow', () => {
+    const dir = mkdtempSync(join(tmpdir(), 'lcdd-cli-'));
+    tempDirs.push(dir);
+    mkdirSync(join(dir, '.github', 'workflows'), { recursive: true });
+    const workflowPath = join(dir, '.github', 'workflows', 'lcdd.yml');
+    writeFileSync(workflowPath, 'name: Existing workflow\n');
+
+    const result = run(['setup', 'ci', '--provider', 'github', '--yes'], dir);
+    expect(result.status).not.toBe(0);
+    expect(result.stderr).toContain('Refusing to overwrite unmanaged');
+    expect(readFileSync(workflowPath, 'utf8')).toBe('name: Existing workflow\n');
+  });
+
   it('creates and diagnoses an empty ownership Registry', () => {
     const dir = mkdtempSync(join(tmpdir(), 'lcdd-cli-'));
     tempDirs.push(dir);

@@ -33,6 +33,7 @@ npx @lcdd/cli init
 | --- | --- |
 | Registry | `init`, `migrate config`, `context add`, `list`, `show`, `query`, `transition` |
 | Enforcement | `check`, `validate`, `validate --changes`, `doctor` |
+| Integration | `setup ci --provider github` |
 | Governance | `ownership init`, `ownership doctor`, `impact`, `review`, `improve`, `context bundle` |
 | Sources | `source`, `extract`, `normalize` |
 | Observability | `dashboard` |
@@ -85,6 +86,27 @@ lcd check                 # full project
 lcd check --staged        # staged Git changes
 lcd check --stage ci      # CI-friendly change report
 ```
+
+### `lcd setup ci`
+
+Preview and generate a dedicated GitHub Actions workflow:
+
+```bash
+lcd setup ci --provider github --dry-run
+lcd setup ci --provider github --yes
+git add .github/workflows/lcdd.yml
+git commit -m "ci: enable LCDD validation"
+git push
+```
+
+The generated workflow runs on pull requests and merge queues, uses read-only repository
+permissions, pins third-party actions and the installed LCDD CLI version, and reports the stable
+check `LCDD / validate`. Re-running the command is idempotent. It refuses to overwrite a file at
+the same path unless that file carries the LCDD managed marker.
+
+After the first successful run, add `LCDD / validate` as a required status check in the GitHub
+ruleset for the default branch. Phase A does not change remote repository settings and does not
+request reviewers or write PR comments.
 
 ### Ownership and impact (experimental)
 
@@ -347,14 +369,11 @@ Terminal view shows: violation trends (7d/30d/90d), actor breakdown (human vs AI
 
 ## CI/CD Integration
 
-Add to your GitHub Actions workflow:
+Generate the GitHub Actions workflow:
 
-```yaml
-- name: LCDD Validate
-  run: npx @lcdd/cli validate --strict
+```bash
+lcd setup ci --provider github --yes
 ```
-
-Or use the dedicated action (see [repository](https://github.com/Lelianto/living-context-driven-development/tree/main/implementation/.github/workflows)).
 
 ---
 
@@ -388,7 +407,7 @@ lcd transition ctx-... active
 lcd validate
 
 # 5. Add to CI
-echo "lcd validate --strict" >> .github/workflows/ci.yml
+lcd setup ci --provider github --yes
 ```
 
 ---

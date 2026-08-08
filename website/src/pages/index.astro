@@ -280,7 +280,8 @@ enforcement:
               <pre><code>cd your-existing-project
 npm install --save-dev @lcdd/cli
 npx lcd init
-git add .lcdd/ package.json package-lock.json</code></pre>
+npx lcd setup ci --provider github --yes
+git add .lcdd/ .github/workflows/lcdd.yml package.json package-lock.json</code></pre>
               <p class="terminal-note">✓ Registry structure becomes part of the project—not private agent memory.</p>
             </div>
             <div class="setup-panel" data-setup-panel="1">
@@ -300,7 +301,7 @@ git add .lcdd/ package.json package-lock.json</code></pre>
               <p class="terminal-kicker">Step 04 · Observe before enforcement</p>
               <pre><code>npx lcd validate
 npx lcd doctor
-# CI: npx lcd validate</code></pre>
+npx lcd setup ci --provider github --yes</code></pre>
               <p class="terminal-note">Review scope, ownership, and false positives with the people affected.</p>
             </div>
             <div class="setup-panel" data-setup-panel="4">
@@ -336,20 +337,20 @@ npx lcd validate --strict</code></pre>
         <div>
           <p style="font-size:15px;font-weight:500;color:var(--w);margin-bottom:12px;">Install the CLI & MCP</p>
           <div class="yarn">npm install -g @lcdd/cli @lcdd/mcp</div>
-          <div class="yarn">lcd init<br/>lcd context add<br/>lcd validate<br/>lcd doctor</div>
+          <div class="yarn">lcd init<br/>lcd context add<br/>lcd validate<br/>lcd doctor<br/>lcd setup ci --provider github --yes</div>
           <p style="font-size:13px;color:var(--s5);margin-top:8px;">
             Also on <a href="https://github.com/Lelianto/living-context-driven-development/pkgs/npm/lcdd-cli">GitHub Packages</a>.
           </p>
         </div>
         <div>
           <p style="font-size:15px;font-weight:500;color:var(--w);margin-bottom:12px;">Validate in CI</p>
-          <div class="yarn">lcd validate --strict</div>
+          <div class="yarn">lcd setup ci --provider github --dry-run<br/>lcd setup ci --provider github --yes</div>
           <p style="font-size:13px;color:var(--s5);margin-top:8px;margin-bottom:12px;">
-            Add to GitHub Actions. Block merges on Hardened violations.
+            Commit the generated workflow. After its first successful run, require LCDD / validate in the default-branch ruleset.
           </p>
-          <div class="yarn"># .github/workflows/ci.yml
-- name: LCDD Validate
-  run: npx @lcdd/cli validate --strict</div>
+          <div class="yarn"># generated safely and idempotently
+git add .github/workflows/lcdd.yml
+git commit -m "ci: enable LCDD"</div>
         </div>
       </div>
     </div>
