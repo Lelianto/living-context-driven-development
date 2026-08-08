@@ -1,51 +1,60 @@
 # LCDD Quick Start
 
-**Status:** Documentation
-**Version:** 0.1.0
+**Status:** Documentation  
+**Version:** 0.2.0  
 **Last Updated:** 2026-08-08
 
-## Siapa yang ini untuk?
+---
 
-Dokumen ini dibuat untuk:
-- solo founder yang ingin menjalankan governance kontekstual tanpa birokrasi berat,
-- tim kecil yang butuh cara cepat untuk membuat aturan hidup,
-- startup baru yang belum punya proses formal tapi ingin menjaga keputusan tetap konsisten.
+## Who is this for?
 
-## Kenapa LCDD penting?
+This document is written for:
 
-LCDD membuat aturan, keputusan, dan kebijakan menjadi "living artifacts" — bukan hanya dokumentasi biasa.
-Jika Anda ingin:
-- mencegah keputusan produk menempel di kepala satu orang,
-- menjaga aturan teknis tidak usang selama iterasi cepat,
-- memberi AI coding agent konteks yang dapat dipercaya,
-maka LCDD adalah pendekatan yang bisa membantu.
+- solo founders who want contextual governance without heavy bureaucracy,
+- small teams that need a fast way to make rules living artifacts,
+- new startups without a formal process that still want decisions to stay consistent.
 
-## Apa yang Anda butuhkan dulu
+## Why does LCDD matter?
 
-1. repositori Git dengan file konfigurasi dan dokumentasi.
-2. satu aturan atau keputusan yang ingin Anda jadikan jelas.
-3. kemampuan untuk menyimpan file YAML/Markdown di repositori.
+LCDD turns rules, decisions, and policies into living artifacts rather than ordinary documentation.
+It helps if you want to:
 
-LCDD bisa dimulai tanpa tooling kompleks. Mulai dari satu file `CONTEXT.yaml` sekali pun.
+- stop product decisions from living only in one person's head,
+- keep technical rules from going stale during fast iteration,
+- give AI coding agents context they can actually trust.
 
-## 5 Menit Untuk Mulai
+## What you need first
 
-### 1. Definisikan satu Context
+1. A Git repository with configuration and documentation files.
+2. One rule or decision you want to make explicit.
+3. The ability to store YAML/Markdown files in the repository.
 
-Buat file sederhana seperti ini:
+LCDD can be adopted without complex tooling. Starting with a single `CONTEXT.yaml` is enough.
+If you later want full automation (validation, review, pipeline), install the CLI:
+
+```bash
+npm install -g @lcdd/cli
+```
+
+## Five Minutes to Get Started
+
+### 1. Define one Context
+
+Create a simple file like this:
 
 ```yaml
 id: "ctx-api-validation"
 version: 1
-title: "Semua endpoint API harus memvalidasi input"
-description: "Setiap endpoint wajib memeriksa payload terhadap schema sebelum memproses data."
+title: "All API endpoints must validate input"
+description: "Every endpoint must check its payload against a schema before processing data."
 source:
-  type: "product"
-  uri: "internal-roadmap"
+  type: "organization"
+  uri: "https://wiki.example.com/internal-roadmap"
 authority:
   level: 2
   source:
-    type: "team"
+    type: "organization"
+    id: "engineering"
     name: "Engineering"
 lifecycle: "draft"
 governance:
@@ -55,57 +64,76 @@ enforcement:
   mode: "warn"
 ```
 
-### 2. Simpan di repositori
+### 2. Store it in the repository
 
-Letakkan file ini di folder yang jelas, misalnya:
+Put the file in a clearly named folder, for example:
+
 - `/contexts/ctx-api-validation.yaml`
-- atau `/lcd-contexts/ctx-api-validation.yaml`
+- or `/lcd-contexts/ctx-api-validation.yaml`
 
-### 3. Jalankan review sederhana
+### 3. Run a simple review
 
-Jika Anda tim kecil, minta satu rekan membaca dan menyetujui isi konteks.
-Kalau Anda solo founder, baca sendiri sekali lagi dan simpan perubahan.
+If you are a small team, ask one colleague to read and approve the Context.
+If you are a solo founder, read it once more yourself and commit the change.
 
-### 4. Tandai sebagai active saat siap
+### 4. Mark it active when ready
 
-Ubah `lifecycle` dari `draft` ke `active` ketika aturan ini sudah sah dan bisa dipakai.
+Change `lifecycle` from `draft` to `active` once the rule is legitimate and ready to be followed.
 
-### 5. Gunakan sebagai referensi
+### 5. Use it as a reference
 
-- untuk diskusi product: tunjukkan konteks ini pada tim.
-- untuk developer: jadikan konteks ini bahan kerja.
-- untuk AI: gunakan sebagai input structured constraint.
+- For product discussions: show this Context to the team.
+- For developers: treat this Context as working material.
+- For AI: use it as a structured constraint input.
+
+### Alternative: Five Minutes with the CLI (v0.4.0)
+
+Exactly the same flow, but automated and schema-compliant:
+
+```bash
+npm install -g @lcdd/cli        # once
+lcd init                         # create .lcdd/contexts/{hardened,local,experimental}
+lcd context add                  # enter title and description — classification is suggested automatically
+lcd transition <id> active       # activate once the rule is ready
+lcd validate                     # run enforcement
+lcd doctor                       # see the health score for your rules
+```
+
+`lcd context add` produces YAML that already satisfies the schema (including the required
+`authority.source.id`), so it is safe to use directly.
 
 ## Minimal Adoption Path
 
-Untuk startup yang belum punya proses formal, gunakan jalur ini:
+For startups without a formal process, use this path:
 
-1. `Define` — pilih satu keputusan atau aturan yang sering dilupakan.
-2. `Document` — tulis sebagai structured Context.
-3. `Review` — baca bersama tim atau stakeholder.
-4. `Activate` — tetapkan status `active` saat siap.
-5. `Inspect` — cek ulang setiap 2–4 minggu.
+1. `Define` — pick one decision or rule that is frequently forgotten.
+2. `Document` — write it as a structured Context (`lcd context add`).
+3. `Review` — read it together with the team or stakeholders (`lcd review list` / `lcd review approve <id>`).
+4. `Activate` — set the status to `active` when ready (`lcd transition <id> active`).
+5. `Inspect` — re-check every 2–4 weeks (`lcd doctor` gives a health score plus automatic recommendations).
 
-## Contoh Praktis
+## Practical Examples
 
-### Contoh 1: Produk
+### Example 1: Product
 
-`Context` ini cocok untuk keputusan bisnis:
+This Context suits a business decision:
 
 ```yaml
 id: "ctx-feature-launch-window"
 version: 1
-title: "Fitur baru harus diluncurkan sesuai roadmap kuartalan"
-description: "Semua fitur baru harus sesuai dengan prioritas kuartal yang disetujui oleh product management."
+title: "New features must launch according to the quarterly roadmap"
+description: "All new features must align with the quarterly priorities approved by product management."
 source:
-  type: "product"
-  uri: "roadmap-q3"
+  type: "organization"
+  uri: "https://wiki.example.com/roadmap-q3"
 authority:
   level: 2
   source:
-    type: "product"
+    type: "organization"
+    id: "product-team"
     name: "Product Team"
 lifecycle: "active"
+effective_date: "2026-08-08T00:00:00Z"
 governance:
   classification: "local-standard"
   approval_required: true
@@ -113,24 +141,26 @@ enforcement:
   mode: "warn"
 ```
 
-### Contoh 2: Tim kecil
+### Example 2: Small team
 
-Gunakan `Local-Guideline` untuk preferensi tim:
+Use `local-guideline` for team preferences:
 
 ```yaml
 id: "ctx-code-style"
 version: 1
-title: "Gunakan nama variabel camelCase di frontend"
-description: "Semua JavaScript/TypeScript file harus mengikuti camelCase untuk variabel lokal."
+title: "Use camelCase variable names in the frontend"
+description: "All JavaScript/TypeScript files must use camelCase for local variables."
 source:
-  type: "team"
-  uri: "engineering-style-guide"
+  type: "organization"
+  uri: "https://wiki.example.com/style-guide"
 authority:
   level: 1
   source:
-    type: "team"
+    type: "organization"
+    id: "frontend-team"
     name: "Frontend Team"
 lifecycle: "active"
+effective_date: "2026-08-08T00:00:00Z"
 governance:
   classification: "local-guideline"
   approval_required: false
@@ -138,17 +168,21 @@ enforcement:
   mode: "comment"
 ```
 
-## Tips untuk Solo Founder dan Startup Awam
+## Tips for Solo Founders and Early Startups
 
-- mulai dengan satu atau dua konteks penting.
-- jangan langsung menulis puluhan aturan; fokus pada yang menimbulkan masalah nyata.
-- gunakan kata-kata sederhana dan contoh spesifik.
-- catat siapa yang membuat aturan dan mengapa.
-- pisahkan aturan yang "perlu stabil" dari yang "boleh berubah cepat".
+- Start with one or two important Contexts.
+- Do not write dozens of rules immediately; focus on the ones causing real problems.
+- Use plain language and specific examples.
+- Record who created the rule and why.
+- Separate rules that "need to be stable" from those that "may change quickly."
 
-## Next Step
+## Next Steps
 
-Setelah 5 menit awal, lanjutkan ke dokumen berikut:
-- `lcdd-concepts.md` untuk mengenal istilah utama.
-- `lcdd-templates.md` untuk template file.
-- `lcdd-cheat-sheet.md` untuk ringkasan cepat.
+After the first five minutes, continue with these documents:
+
+- [lcdd-concepts.md](lcdd-concepts.md) to learn the core terminology.
+- [lcdd-use-cases.md](lcdd-use-cases.md) for end-to-end scenarios.
+- [lcdd-templates.md](lcdd-templates.md) for file templates.
+- [lcdd-cheat-sheet.md](lcdd-cheat-sheet.md) for a quick summary.
+- [CLI README](../implementation/packages/cli/README.md) for the full list of `lcd` commands.
+- [research-v2.md](research-v2.md) for the status of the LCDD expansion plan versus the implementation.

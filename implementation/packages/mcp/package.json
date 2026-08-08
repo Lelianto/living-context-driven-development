@@ -1,6 +1,6 @@
 {
   "name": "@lcdd/mcp",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "LCDD MCP Server — AI agent integration via Model Context Protocol",
   "type": "module",
   "main": "dist/index.js",
@@ -13,6 +13,7 @@
   ],
   "scripts": {
     "build": "tsc",
+    "test": "vitest run --passWithNoTests",
     "clean": "rm -rf dist",
     "prepublishOnly": "npm run build"
   },
@@ -31,12 +32,13 @@
   },
   "homepage": "https://github.com/Lelianto/living-context-driven-development#readme",
   "dependencies": {
-    "@lcdd/core": "^0.4.0",
+    "@lcdd/core": "^0.5.0",
     "@modelcontextprotocol/sdk": "^1.30.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
-    "typescript": "^5.6.0"
+    "typescript": "^5.6.0",
+    "vitest": "^2.0.0"
   },
   "engines": {
     "node": ">=18.0.0"

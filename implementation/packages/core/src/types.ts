@@ -177,6 +177,48 @@ export interface EnforcementEvent {
   };
 }
 
+/**
+ * Records that a human or agent dismissed a reported violation as not applicable.
+ * Required to compute a true false positive rate (dismissals / violations) per
+ * specification 0009. Without these events the rate is uncomputable and the
+ * HIGH_FALSE_POSITIVE trigger stays dormant rather than reporting a substitute.
+ */
+export interface DismissalEvent {
+  event_id: string;
+  timestamp: string;
+  context_id: string;
+  artifact_path: string;
+  actor: {
+    type: 'human' | 'ai-agent';
+    id: string;
+  };
+  reason?: string;
+}
+
+export type HealAction =
+  | 'deprecate'
+  | 'refine-scope'
+  | 'review-clarity'
+  | 'adjust-threshold'
+  | 'register-source'
+  | 'archive';
+
+export interface HealEvent {
+  heal_id: string;
+  timestamp: string;
+  recommendation_id: string;
+  trigger: string;
+  context_id?: string;
+  action: HealAction;
+  operation: 'apply' | 'rollback';
+  actor: string;
+  snapshot_id?: string;
+  health_before?: number;
+  health_after?: number;
+  approval_reason?: string;
+  reason?: string;
+}
+
 export interface RegistryQuery {
   select?: string[];
   conditions: QueryCondition[];

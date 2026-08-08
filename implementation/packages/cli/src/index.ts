@@ -91,6 +91,41 @@ program
     await doctorCommand(options);
   });
 
+const improveCmd = program
+  .command('improve')
+  .description('Review and apply self-healing recommendations');
+
+improveCmd
+  .command('check')
+  .description('List actionable improvement recommendations')
+  .option('--json', 'Output in JSON format')
+  .option('--priority <priority>', 'Filter by priority: immediate, short-term, long-term')
+  .action(async (options) => {
+    const { improveCheckCommand } = await import('./commands/improve.js');
+    await improveCheckCommand(options);
+  });
+
+improveCmd
+  .command('apply')
+  .description('Apply a recommendation, with guardrail checks and auto-rollback')
+  .argument('<recommendation-id>', 'Recommendation ID from lcd improve check')
+  .option('--dry-run', 'Show the change without writing it')
+  .option('--yes', 'Skip the confirmation prompt')
+  .option('--reason <reason>', 'Approval reason (required for hardened contexts)')
+  .action(async (recommendationId: string, options) => {
+    const { improveApplyCommand } = await import('./commands/improve.js');
+    await improveApplyCommand(recommendationId, options);
+  });
+
+improveCmd
+  .command('rollback')
+  .description('Restore the registry to its state before a heal')
+  .argument('<heal-id>', 'Heal ID reported by lcd improve apply')
+  .action(async (healId: string) => {
+    const { improveRollbackCommand } = await import('./commands/improve.js');
+    await improveRollbackCommand(healId);
+  });
+
 const reviewCmd = program
   .command('review')
   .description('Manage review workflow');

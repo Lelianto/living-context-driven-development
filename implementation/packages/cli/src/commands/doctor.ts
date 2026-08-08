@@ -1,32 +1,6 @@
 import { FileRegistry, ContextDoctor } from '@lcdd/core';
 import chalk from 'chalk';
-
-function formatScore(score: number, max: number): string {
-  const pct = max > 0 ? (score / max * 100).toFixed(0) : '0';
-  const bar = max > 0 ? '█'.repeat(Math.round(score / max * 20)) : '';
-  const empty = max > 0 ? '░'.repeat(20 - Math.round(score / max * 20)) : '░'.repeat(20);
-  return `${chalk.bold(bar + empty)} ${pct}% (${score}/${max})`;
-}
-
-function gradeColor(grade: string): string {
-  switch (grade) {
-    case 'A': return chalk.green.bold(grade);
-    case 'B': return chalk.blue.bold(grade);
-    case 'C': return chalk.yellow.bold(grade);
-    case 'D': return chalk.red.bold(grade);
-    case 'F': return chalk.redBright.bold(grade);
-    default: return grade;
-  }
-}
-
-function statusIcon(status: string): string {
-  switch (status) {
-    case 'ok': return chalk.green('✓');
-    case 'warning': return chalk.yellow('⚠');
-    case 'critical': return chalk.red('✗');
-    default: return ' ';
-  }
-}
+import { formatScore, gradeColor, statusIcon, severityTag, rule } from '../format.js';
 
 export async function doctorCommand(options: { json?: boolean; triggers?: boolean }): Promise<void> {
   const registry = new FileRegistry(process.cwd());
@@ -50,7 +24,7 @@ export async function doctorCommand(options: { json?: boolean; triggers?: boolea
   console.log('');
 
   console.log(chalk.bold('Health Metrics'));
-  console.log(chalk.dim('─'.repeat(60)));
+  console.log(rule());
 
   for (const metric of report.metrics) {
     const icon = statusIcon(metric.status);
@@ -67,20 +41,27 @@ export async function doctorCommand(options: { json?: boolean; triggers?: boolea
 
   if (report.triggers && report.triggers.length > 0 && options.triggers) {
     console.log(chalk.bold('Triggers Fired'));
-    console.log(chalk.dim('─'.repeat(60)));
+    console.log(rule());
     for (const trigger of report.triggers) {
-      const sev = trigger.severity === 'critical' ? chalk.red(`[${trigger.severity.toUpperCase()}]`) :
-                  trigger.severity === 'high' ? chalk.yellow(`[${trigger.severity.toUpperCase()}]`) :
-                  chalk.dim(`[${trigger.severity.toUpperCase()}]`);
-      console.log(`  ${sev} ${trigger.description}`);
+      console.log(`  ${severityTag(trigger.severity)} ${trigger.description}`);
       console.log(`    ${chalk.dim('→')} ${trigger.recommendation}`);
+      console.log('');
+    }
+  }
+
+  if (report.dormant_triggers && report.dormant_triggers.length > 0 && options.triggers) {
+    console.log(chalk.bold('Dormant Triggers'));
+    console.log(rule());
+    for (const dormant of report.dormant_triggers) {
+      console.log(`  ${chalk.dim('○')} ${chalk.bold(dormant.trigger)}`);
+      console.log(`    ${chalk.dim(dormant.reason)}`);
       console.log('');
     }
   }
 
   if (report.recommendations.length > 0) {
     console.log(chalk.bold('Recommendations'));
-    console.log(chalk.dim('─'.repeat(60)));
+    console.log(rule());
     let i = 1;
     for (const rec of report.recommendations) {
       console.log(`  ${chalk.cyan(`${i}.`)} ${rec}`);
@@ -93,6 +74,7 @@ export async function doctorCommand(options: { json?: boolean; triggers?: boolea
     console.log(chalk.green('  All contexts are healthy. No action required.'));
   } else {
     console.log(chalk.dim(`  Run ${chalk.cyan('lcd doctor --triggers')} for detailed trigger analysis.`));
+    console.log(chalk.dim(`  Run ${chalk.cyan('lcd improve check')} for actionable recommendations.`));
   }
   console.log('');
 }

@@ -17,7 +17,7 @@ ROOT_NPMRC="$BASE/.npmrc"
 
 cleanup() {
   rm -f "$ROOT_NPMRC"
-  for d in packages/core packages/cli; do
+  for d in packages/core packages/cli packages/mcp; do
     [ -f "$BASE/$d/package.json.bak" ] && mv "$BASE/$d/package.json.bak" "$BASE/$d/package.json"
     rm -f "$BASE/$d/.npmrc"
   done
@@ -52,10 +52,16 @@ publish_pkg() {
   mv "$pkgjson.bak" "$pkgjson"
 }
 
+# Core first; cli/mcp depend on it, so they must resolve @Lelianto/lcdd-core at the
+# version being published right now, not a stale hardcoded range.
+CORE_VERSION="$(node -e "console.log(require('$BASE/packages/core/package.json').version)")"
+
 publish_pkg "core" "lcdd-core" ""
-publish_pkg "cli" "lcdd-cli" "pkg.dependencies = Object.fromEntries(Object.entries(pkg.dependencies).filter(([k]) => k !== '@lcdd/core')); pkg.dependencies['@${OWNER}/lcdd-core'] = '^0.2.1';"
+publish_pkg "cli" "lcdd-cli" "pkg.dependencies = Object.fromEntries(Object.entries(pkg.dependencies).filter(([k]) => k !== '@lcdd/core')); pkg.dependencies['@${OWNER}/lcdd-core'] = '^${CORE_VERSION}';"
+publish_pkg "mcp" "lcdd-mcp" "pkg.dependencies = Object.fromEntries(Object.entries(pkg.dependencies).filter(([k]) => k !== '@lcdd/core')); pkg.dependencies['@${OWNER}/lcdd-core'] = '^${CORE_VERSION}';"
 
 echo ""
 echo "Done."
 echo "  https://github.com/${OWNER}/living-context-driven-development/pkgs/npm/lcdd-core"
 echo "  https://github.com/${OWNER}/living-context-driven-development/pkgs/npm/lcdd-cli"
+echo "  https://github.com/${OWNER}/living-context-driven-development/pkgs/npm/lcdd-mcp"

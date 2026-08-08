@@ -1,303 +1,342 @@
 # Research Update: LCDD Adoption, Expansion, and Scope
 
-**Status:** Research
-**Version:** 0.1.0
+**Status:** Research (tracking)  
+**Version:** 0.2.0  
 **Last Updated:** 2026-08-08
+
+---
 
 ## Abstract
 
-Dokumen ini merangkum hasil analisis terhadap repositori dan pendekatan serupa, serta rekomendasi adopsi untuk Living Context Driven Development (LCDD). Fokusnya adalah: fitur apa yang bisa diadopsi tanpa melemahkan prinsip LCDD, bagaimana memperluas layanan LCDD, apakah LCDD tetap efektif jika tidak mengambil data dari website atau aturan tertentu, bagaimana menangani perubahan yang berasal dari tim produk atau manajemen, dan apakah LCDD bisa mendukung repository selain GitHub.
+This document summarizes an analysis of comparable repositories and approaches, along with adoption recommendations for Living Context Driven Development (LCDD). It focuses on: which features can be adopted without weakening LCDD's principles, how to expand LCDD's scope, whether LCDD remains effective without ingesting data from websites or external rules, how to handle changes originating from product or management teams, and whether LCDD can support repositories other than GitHub.
+
+> **Note on version 0.2.0:** This document now also serves as **status tracking** — each planned phase is mapped against the actual implementation (as of v0.4.0) in [Implementation Status vs Plan](#implementation-status-vs-plan-as-of-v040).
 
 ---
 
-## 1. Repositori Serupa dan Pelajaran Utama
+## Implementation Status vs Plan (as of v0.4.0)
+
+The repository has reached **v0.4.0 — Pipeline Automation** (extract, normalize, review, doctor, dashboard, MCP server). Here is the status of each planned phase against the actual implementation:
+
+| Phase | Plan | Status | Notes |
+|---|---|---|---|
+| **Phase 1** — Consolidate principles and documentation | Clarify principles, add examples, strengthen observability | 🟡 Mostly complete | 4 practical documents shipped: quick-start, concepts, templates, cheat-sheet; `lcd doctor` + health score exist. Two documents from section 7.5 remain outstanding (Use Cases, For Product & Management) |
+| **Phase 2** — Platform-agnostic repository connector | Abstract source control; GitHub/GitLab/Bitbucket/Azure DevOps adapters | 🟡 Partial | `lcd source add/check/watch/schedule` (Git + Website) exists and is platform-agnostic by design (clone+fetch+diff works against any Git host); explicit GitLab/Bitbucket/Azure DevOps adapters do not exist yet |
+| **Phase 3** — Product and domain-specific packs | Security, architecture, product, privacy packs; pack template | 🟡 Partial | 5 example packs in `examples/` (startup, fintech, healthcare, ecommerce, education) exist; a canonical pack template plus provenance/impact-analysis metadata do not |
+| **Phase 4** — Enforcement plug-in ecosystem | CI/CD, policy engine, IDE/editor extension | 🟡 Partial | `lcd validate` + regex/file-exists/custom-script verifiers + a GitHub Action exist; IDE extension and policy engine adapters are on the v0.5.0 roadmap |
+| **Phase 5** — Registry, marketplace, services | Hosted registry, approval workflow, compliance reporting | ❌ Not started | A v0.5.0 priority (Community Context Pack Registry, database-backed registry) |
+| **Bonus** — MCP server for AI agents | — (not in the original plan) | ✅ Delivered early | `@lcdd/mcp` shipped in v0.3.0: 7 tools for Claude/Cursor/Cline — evidence the plan can be exceeded |
+
+**Conclusion:** this 5-phase plan **remains relevant and aligned** with the roadmap
+(`ROADMAP.md`, `specification/0016-roadmap.md`). Phase 1 is nearly complete; Phases 2–4 are
+progressing on correct foundations (platform-agnostic, stable schema, hardened/local
+classification enforced); Phase 5 is the next step. One course correction: **an LLM is no longer
+required** — the v0.4.0 pipeline runs on free local Ollama without an API key, and stages 01–05
+can be deterministic.
+
+---
+
+## 1. Comparable Repositories and Key Lessons
 
 ### 1.1 `kyverno`
 
-- Fokus: policy-as-code untuk Kubernetes.
-- Pelajaran yang bisa diadopsi:
-  - deklaratif dan terverifikasi sebagai pendekatan policy-as-code.
-  - enforcement engine berbasis aturan yang dieksekusi otomatis.
-  - model distribusi policy yang bisa diturunkan ke runtime.
-- Batasan untuk LCDD:
-  - jangan jadikan LCDD hanya spesifik untuk Kubernetes.
-  - pertahankan generalitas konteks lintas domain.
+- Focus: policy-as-code for Kubernetes.
+- Lessons worth adopting:
+  - declarative and verifiable as a policy-as-code approach.
+  - a rule-based enforcement engine executed automatically.
+  - a policy distribution model that can be pushed down to runtime.
+- Limits for LCDD:
+  - do not make LCDD Kubernetes-specific.
+  - preserve the generality of Contexts across domains.
 
 ### 1.2 `pacbot`
 
-- Fokus: continuous compliance scanning dan policy automation.
-- Pelajaran yang bisa diadopsi:
-  - observabilitas pelanggaran konteks dan dashboard compliance.
-  - integrasi alert/audit trail untuk aturan yang aktif.
-- Batasan untuk LCDD:
-  - LCDD harus tetap menekankan lifecycle kontekstual, bukan hanya pemindaian aturan.
+- Focus: continuous compliance scanning and policy automation.
+- Lessons worth adopting:
+  - observability of Context violations and a compliance dashboard.
+  - alert/audit-trail integration for active rules.
+- Limits for LCDD:
+  - LCDD must keep emphasizing contextual lifecycle, not just rule scanning.
 
 ### 1.3 `enterprise-azure-policy-as-code` / `azure-policy-as-code`
 
-- Fokus: infrastruktur cloud governance lewat policy-as-code.
-- Pelajaran yang bisa diadopsi:
-  - adapter untuk target enforcement engine atau cloud provider.
-  - kuratori context pack yang mudah di-deploy.
-- Batasan untuk LCDD:
-  - jangan membuat schema bergantung pada provider spesifik.
+- Focus: cloud infrastructure governance via policy-as-code.
+- Lessons worth adopting:
+  - adapters for target enforcement engines or cloud providers.
+  - curated Context Packs that are easy to deploy.
+- Limits for LCDD:
+  - do not make the schema dependent on a specific provider.
 
 ### 1.4 `registry` (Model Context Protocol)
 
-- Fokus: versi dan distribusi konteks bagi MCP server.
-- Pelajaran yang bisa diadopsi:
-  - registry versi sebagai arsitektur distribusi konteks.
-  - Context Pack marketplace untuk berbagi aturan.
-- Batasan untuk LCDD:
-  - tetap jaga konteks sebagai first-class artifact, bukan hanya metadata registry.
+- Focus: versioning and distribution of context for MCP servers.
+- Lessons worth adopting:
+  - a versioned registry as the context distribution architecture.
+  - a Context Pack marketplace for sharing rules.
+- Limits for LCDD:
+  - keep Context as a first-class artifact, not merely registry metadata.
 
 ### 1.5 `PRD-driven-context-engineering`
 
-- Fokus: menghubungkan product requirements ke konteks pekerjaan engineering.
-- Pelajaran yang bisa diadopsi:
-  - gunakan keputusan produk sebagai sumber konteks resmi.
-  - terapkan kontrol formal pada perubahan bisnis yang berdampak teknis.
-- Batasan untuk LCDD:
-  - harus tetap menggunakan governance classification dan lifecycle untuk setiap konteks.
+- Focus: connecting product requirements to engineering work context.
+- Lessons worth adopting:
+  - treat product decisions as an official Context source.
+  - apply formal controls to business changes that carry technical impact.
+- Limits for LCDD:
+  - every Context must still use governance classification and lifecycle.
 
 ---
 
-## 2. Apa yang Bisa Diadopsi Tanpa Mengurangi Prinsip LCDD
+## 2. What Can Be Adopted Without Weakening LCDD's Principles
 
-### 2.1 Adopsi yang Sejalan
+### 2.1 Aligned Adoptions
 
-- policy-as-code enforcement model: gunakan mekanisme block/warn/comment/silent.
-- observabilitas pelanggaran: dashboard, audit trail, violation trends.
-- context registry dan distribusi: versi konteks, pack, sinkronisasi antar repositori.
-- source-agnostic connectors: buat adapter untuk berbagai target enforcement.
-- product decision context: treat product/management decisions as valid context sources.
+- Policy-as-code enforcement model: use the block/warn/comment/silent mechanism.
+- Violation observability: dashboards, audit trails, violation trends.
+- Context registry and distribution: Context versioning, packs, cross-repository synchronization.
+- Source-agnostic connectors: build adapters for a range of enforcement targets.
+- Product decision context: treat product and management decisions as valid Context sources.
 
-### 2.2 Nilai Tambahan yang Layak Dimiliki
+### 2.2 Additional Value Worth Having
 
-- adapter enforcement engine setara Kyverno/OPA, tapi tetap abstrak.
-- support multi-repository dan multi-platform, bukan GitHub-only.
-- `Context Packs` sebagai unit shareable governance.
-- explicit authority/provenance untuk setiap konteks.
-- clear lifecycle states untuk setiap perubahan konteks.
+- Enforcement engine adapters comparable to Kyverno/OPA, but kept abstract.
+- Multi-repository and multi-platform support, not GitHub-only.
+- `Context Packs` as a shareable unit of governance.
+- Explicit authority and provenance for every Context.
+- Clear lifecycle states for every Context change.
 
-### 2.3 Hal yang Tidak Sesuai dengan Prinsip LCDD
+### 2.3 What Does Not Fit LCDD's Principles
 
-- menjadikan LCDD sebagai tooling batasan domain saja (misalnya hanya untuk Kubernetes atau cloud).
-- memaksa semua aturan ditulis secara manual tanpa pipeline discovery.
-- menghilangkan separation antara hardened dan local governance.
-- membuat konteks hanya berupa dokumen Markdown tanpa schema struktural.
-- mengandalkan AI untuk langsung memodifikasi hardened contexts tanpa review.
+- Reducing LCDD to domain-limited tooling (for example, Kubernetes-only or cloud-only).
+- Forcing all rules to be written manually with no discovery pipeline.
+- Removing the separation between hardened and local governance.
+- Reducing a Context to a Markdown document with no structural schema.
+- Relying on AI to modify hardened Contexts directly without review.
 
 ---
 
-## 3. Rencana Ekspansi Layanan LCDD
+## 3. LCDD Service Expansion Plan
 
-### Fase 1: Konsolidasi Prinsip dan Dokumentasi
+### Phase 1: Consolidate Principles and Documentation
 
-- perjelas kembali prinsip utama LCDD:
-  - `Context` sebagai first-class artifact.
-  - `Lifecycle` dengan enam tahap.
-  - `Hardened` vs `Local` governance.
-- tambahkan contoh konkret di dokumentasi:
+- Restate the core LCDD principles:
+  - `Context` as a first-class artifact.
+  - `Lifecycle` with six stages.
+  - `Hardened` versus `Local` governance.
+- Add concrete examples to the documentation:
   - product-driven context.
   - compliance context.
   - team-style context.
-- perkuat definisi observability dan health score.
+- Strengthen the definitions of observability and health score.
 
-### Fase 2: Platform-Agnostik Repository Connector
+### Phase 2: Platform-Agnostic Repository Connector
 
-- bangun abstraksi `source control / PR/MR interface`.
-- implementasikan adapter untuk:
+- Build a `source control / PR/MR interface` abstraction.
+- Implement adapters for:
   - GitHub
   - GitLab
   - Bitbucket
   - Azure DevOps
   - generic Git / file-system flows.
-- pastikan integrasi bisa:
-  - membaca event PR/MR/commit.
-  - menulis komentar/annotations.
-  - menjalankan checks lintas platform.
+- Ensure the integration can:
+  - read PR/MR/commit events.
+  - write comments and annotations.
+  - run checks across platforms.
 
-### Fase 3: Konteks Product & Domain-Specific Packs
+### Phase 3: Product and Domain-Specific Context Packs
 
-- kembangkan `Context Pack` untuk use case:
+- Develop `Context Packs` for these use cases:
   - security/compliance.
   - architecture governance.
   - product requirement enforcement.
   - data privacy.
-- sediakan template pack:
+- Provide pack templates:
   - `product-decision-context`
   - `team-standard-context`
   - `regulatory-context`
-- definisikan metadata provenance, authority, dan impact analysis.
+- Define provenance, authority, and impact analysis metadata.
 
-### Fase 4: Enforcement Plug-in Ecosystem
+### Phase 4: Enforcement Plug-in Ecosystem
 
-- kembangkan plugin/runtime connector untuk:
+- Develop plugins and runtime connectors for:
   - CI/CD (GitHub Actions, GitLab CI, Azure Pipelines).
-  - policy engine (Kyverno-like, OPA-like, custom linters).
-  - IDE/editor extension.
-- dukung mode enforcement standar: block/warn/comment/silent.
-- implementasikan perlindungan terhadap context immutability untuk hardened rules.
+  - policy engines (Kyverno-like, OPA-like, custom linters).
+  - IDE/editor extensions.
+- Support the standard enforcement modes: block/warn/comment/silent.
+- Implement Context immutability protection for hardened rules.
 
-### Fase 5: Registry, Marketplace, dan Layanan
+### Phase 5: Registry, Marketplace, and Services
 
-- bangun registry/context marketplace untuk:
-  - publikasi Context Packs.
-  - distribusi versi.
-  - discovery konteks.
-- tawarkan layanan:
+- Build a registry/Context marketplace for:
+  - publishing Context Packs.
+  - distributing versions.
+  - Context discovery.
+- Offer services:
   - hosted registry.
   - shared governance packs.
   - approval workflow.
   - compliance reporting.
-- kembangkan komunitas untuk:
-  - berbagi pack.
-  - kolaborasi lintas tim.
-  - best-practice governance.
+- Grow a community for:
+  - sharing packs.
+  - cross-team collaboration.
+  - governance best practices.
 
 ---
 
-## 4. Efektivitas LCDD Tanpa Data Website atau Aturan Eksternal
+## 4. LCDD Effectiveness Without Website Data or External Rules
 
-LCDD tetap efektif jika:
+LCDD remains effective as long as:
 
-- ada aturan, keputusan, atau kondisi yang perlu dibuat eksplisit.
-- aturan tersebut dapat diubah menjadi konteks terstruktur.
-- ada proses review dan lifecycle yang mengelola perubahan.
+- there are rules, decisions, or conditions that need to be made explicit.
+- those rules can be converted into structured Contexts.
+- a review process and lifecycle manage their change.
 
-### Sumber konteks alternatif
+### Alternative Context sources
 
 - product decision memos.
-- PRD / roadmap.
+- PRDs and roadmaps.
 - internal policy.
-- meeting notes yang distandarisasi.
-- tim manajemen atau leadership.
-- dokumen audit internal.
+- standardized meeting notes.
+- management or leadership teams.
+- internal audit documents.
 
-### Mengapa masih efektif
+### Why it still works
 
-Kunci LCDD bukanlah sumber datanya; kuncinya adalah:
-- `menjadikan knowledge menjadi context`
-- `memberi provenance` pada setiap aturan
-- `memetakan authority`
-- `mengelola lifecycle`
+The key to LCDD is not its data source; the key is:
 
-Kalau tidak perlu mengambil data dari website atau aturan eksternal, LCDD justru tetap relevan untuk konteks internal dan keputusan bisnis. Ini adalah bentuk governance yang sangat diperlukan ketika tim perlu menyelaraskan engineering dengan strategi produk.
+- `turning knowledge into Context`
+- `giving provenance` to every rule
+- `mapping authority`
+- `managing the lifecycle`
 
----
-
-## 5. Perubahan dari Tim Product atau Manajemen
-
-LCDD dapat menangani perubahan produk/manajemen dengan cara berikut:
-
-- jadikan keputusan produk sebagai `source` dan `authority` context.
-- tetapkan metadata seperti `owners`, `rationale`, `impact analysis`, `approval_required`.
-- gunakan lifecycle yang sama untuk semua konteks.
-- klasifikasikan konteks sesuai dampaknya, misalnya:
-  - `Local-Standard` untuk kebijakan tim produk yang boleh berubah relatif cepat.
-  - `Hardened-Standard` untuk keputusan produk yang memiliki dampak organisasi/lintas-tim.
-
-### Prinsip yang harus dijaga
-
-- perubahan produk harus tercatat secara formal.
-- perubahan tidak boleh otomatis mengubah hardened contexts tanpa approval.
-- jika perubahan berdampak luas, gunakan review lintas stakeholder.
-- jika perubahan bersifat lokal, gunakan mekanisme lebih cepat tetapi tetap dengan observabilitas.
+If you do not need to ingest data from websites or external rules, LCDD remains just as relevant for internal context and business decisions. This is a form of governance that becomes essential when a team needs to align engineering with product strategy.
 
 ---
 
-## 6. Support untuk Repository Selain GitHub
+## 5. Changes from Product or Management Teams
 
-LCDD sebaiknya dibangun sebagai platform-agnostik dari awal.
+LCDD can handle product and management changes as follows:
 
-### Strategi dukungan multi-repository
+- treat the product decision as the Context's `source` and `authority`.
+- set metadata such as `owners`, `rationale`, `impact analysis`, and `approval_required`.
+- use the same lifecycle for every Context.
+- classify the Context according to its impact, for example:
+  - `Local-Standard` for product team policy that may change relatively quickly.
+  - `Hardened-Standard` for product decisions with organizational or cross-team impact.
 
-- buat abstraksi `repository connector` yang memisahkan model governance dari platform implementasi.
-- gunakan interface yang dapat disesuaikan untuk:
+### Principles to preserve
+
+- product changes must be recorded formally.
+- changes must never modify hardened Contexts automatically without approval.
+- if a change has broad impact, use cross-stakeholder review.
+- if a change is local, use a faster mechanism but retain observability.
+
+---
+
+## 6. Support for Repositories Other Than GitHub
+
+LCDD should be built platform-agnostic from the start.
+
+### Multi-repository support strategy
+
+- Create a `repository connector` abstraction that separates the governance model from the platform implementation.
+- Use an adaptable interface for:
   - event ingest (push, PR/MR, commit)
-  - metadata review/comment
+  - review/comment metadata
   - status checks
-  - file diff dan scope matching
-- dukung platform populer:
+  - file diffs and scope matching
+- Support the popular platforms:
   - GitHub
   - GitLab
   - Bitbucket
   - Azure DevOps
-  - Git generic / non-hosted repos
+  - generic Git / self-hosted repos
 
-### Manfaat
+### Benefits
 
-- LCDD tidak dikunci pada satu vendor.
-- lebih mudah diadopsi oleh organisasi yang sudah menggunakan GitLab, Bitbucket, atau Azure Repos.
-- memudahkan integrasi dengan lingkungan enterprise yang tidak ingin bergantung pada GitHub.
-
----
-
-## 7. Dokumentasi yang Mudah Dipahami
-
-LCDD adalah konsep baru, jadi dokumentasi yang jelas, ringkas, dan praktis adalah kunci untuk adopsi oleh solo founder, tim kecil, dan startup pemula.
-
-### 7.1 Prinsip dokumentasi praktis
-
-- fokus pada masalah yang diselesaikan: jelaskan dengan cepat mengapa LCDD diperlukan (context debt, specification drift, governance hidup).
-- mulai dari contoh nyata: gunakan satu atau dua skenario yang mudah dipahami, misalnya keputusan produk yang berubah atau aturan compliance sederhana.
-- sediakan ringkasan tingkat tinggi untuk pembaca non-teknis, lalu detail teknis untuk implementor.
-- gunakan bahasa sederhana dan tautkan istilah baru ke glossary singkat.
-- buat struktur dokumentasi bertingkat: Overview → Use Cases → Quick Start → Concepts → Reference.
-- jangan pakai FAQ sebagai pengganti dokumentasi terstruktur; gunakan FAQ hanya sebagai pelengkap.
-
-### 7.2 Konten untuk target pengguna berbeda
-
-- solo founder:
-  - `Getting Started` sederhana dalam 5 menit.
-  - contoh pack default untuk `product rule`, `team standard`, dan `compliance`.
-  - check list adopsi ringan tanpa harus membangun infrastruktur penuh.
-- tim engineering kecil:
-  - panduan `how to add a new Context` dan `how to move from Draft ke Active`.
-  - contoh PR workflow untuk `Local` vs `Hardened` contexts.
-  - template context dan template proposal/RFC.
-- startup awam:
-  - visualisasi lifecycle dan governance classification.
-  - peta jalan minimal: definisikan konteks, gunakan enforcement sederhana, ukur health.
-  - `one-page cheat sheet` untuk tim produk, manajemen, dan developer.
-
-### 7.3 Taktik dokumentasi yang direkomendasikan
-
-- `Start with README`: README harus menjawab “apa ini”, “kenapa penting”, dan “cara mulai”.
-- `Small examples first`: tunjukkan `Context` dalam YAML singkat dan jelaskan setiap bagian.
-- `Docs as Code`: dokumentasi ditulis di repositori, jadi mudah dirawat bersama kode dan konteks.
-- `Visual aids`: gunakan diagram lifecycle, tabel classification, dan contoh alur perubahan konteks.
-- `Template-based onboarding`: sediakan template file untuk `Context`, `Context Pack`, dan `change proposal`.
-- `Use cases > theory`: ajak pengguna memahami lewat masalah sehari-hari, tidak lewat jargon.
-- `Review docs with non-experts`: pastikan penjelasan mudah dipahami oleh orang non-teknis.
-
-### 7.4 Riset dokumentasi yang mendukung
-
-- Write the Docs — panduan dokumentasi perangkat lunak menekankan: jelaskan masalah, tunjukkan contoh kecil, dan mulai dari README.
-- TradingView Documentation Guidelines — sumber gaya sederhana yang mendukung struktur, bahasa jelas, dan aksesibilitas.
-- Docs as Code — rekomendasi untuk menulis dokumentasi dalam format plain text agar mudah dikontrol versi dan kolaboratif.
-
-### 7.5 Dokumen khusus yang perlu dibuat
-
-- `LCDD Quick Start`: ringkas untuk founder dan startup, termasuk contoh konteks dan workflow minimal.
-- `LCDD Concepts`: penjelasan istilah penting seperti `Context`, `Lifecycle`, `Authority`, `Hardened`, `Local`.
-- `LCDD Use Cases`: contoh implementasi untuk product decision, compliance policy, dan team conventions.
-- `LCDD Templates`: file template YAML dan template change request.
-- `LCDD Cheat Sheet`: halaman satu lembar berisi definisi singkat, jenis context, dan langkah adopsi.
-- `LCDD For Product & Management`: dokumentasi non-teknis yang menjelaskan bagaimana manajemen bisa berkontribusi dan mengontrol konteks.
+- LCDD is not locked to a single vendor.
+- Easier adoption by organizations already using GitLab, Bitbucket, or Azure Repos.
+- Simpler integration with enterprise environments that do not want a GitHub dependency.
 
 ---
 
-## 8. Rekomendasi Prioritas
+## 7. Documentation That Is Easy to Understand
 
-1. Bangun dokumentasi dan contoh penggunaan untuk konteks bisnis/product.
-2. Perkuat registry dan Context Pack tanpa mengorbankan schema LCDD.
-3. Tunjukkan dukungan multi-repository lewat adapter generic.
-4. Perluas observabilitas: violation dashboard, health score, agent-specific metrics.
-5. Pastikan governance hardened/local tetap jelas sebelum menambah auto-evolution atau marketplace.
+LCDD is a new concept, so documentation that is clear, concise, and practical is the key to adoption by solo founders, small teams, and early-stage startups.
+
+### 7.1 Principles of practical documentation
+
+- Focus on the problem being solved: explain quickly why LCDD is needed (context debt, specification drift, living governance).
+- Start from real examples: use one or two easily understood scenarios, such as a changing product decision or a simple compliance rule.
+- Provide a high-level summary for non-technical readers, then technical detail for implementers.
+- Use plain language and link new terms to a short glossary.
+- Build layered documentation: Overview → Use Cases → Quick Start → Concepts → Reference.
+- Do not use an FAQ as a substitute for structured documentation; use the FAQ only as a supplement.
+
+### 7.2 Content for different target users
+
+- Solo founders:
+  - a simple 5-minute `Getting Started`.
+  - default example packs for `product rule`, `team standard`, and `compliance`.
+  - a lightweight adoption checklist that does not require building full infrastructure.
+- Small engineering teams:
+  - guides for `how to add a new Context` and `how to move from Draft to Active`.
+  - example PR workflows for `Local` versus `Hardened` Contexts.
+  - Context templates and proposal/RFC templates.
+- Non-expert startups:
+  - visualizations of lifecycle and governance classification.
+  - a minimal roadmap: define Contexts, use simple enforcement, measure health.
+  - a `one-page cheat sheet` for product, management, and developer audiences.
+
+### 7.3 Recommended documentation tactics
+
+- `Start with README`: the README must answer "what is this", "why does it matter", and "how do I start".
+- `Small examples first`: show a Context as short YAML and explain each part.
+- `Docs as Code`: write documentation in the repository so it can be maintained alongside code and Contexts.
+- `Visual aids`: use lifecycle diagrams, classification tables, and example change flows.
+- `Template-based onboarding`: provide file templates for `Context`, `Context Pack`, and `change proposal`.
+- `Use cases > theory`: help users understand through everyday problems, not jargon.
+- `Review docs with non-experts`: make sure explanations are understandable to non-technical readers.
+
+### 7.4 Supporting documentation research
+
+- Write the Docs — software documentation guidance emphasizes: explain the problem, show small examples, and start from the README.
+- TradingView Documentation Guidelines — a source of simple style guidance supporting structure, clear language, and accessibility.
+- Docs as Code — the recommendation to write documentation in plain text so it is easy to version-control and collaborate on.
+
+### 7.5 Specific documents that need to exist
+
+Status as of version 0.2.0 of this document (against the v0.4.0 repository):
+
+- ✅ `LCDD Quick Start` — [lcdd-quick-start.md](lcdd-quick-start.md) exists.
+- ✅ `LCDD Concepts` — [lcdd-concepts.md](lcdd-concepts.md) exists.
+- ✅ `LCDD Use Cases` — [lcdd-use-cases.md](lcdd-use-cases.md) exists (product decision, compliance policy, team conventions).
+- ✅ `LCDD Templates` — [lcdd-templates.md](lcdd-templates.md) exists.
+- ✅ `LCDD Cheat Sheet` — [lcdd-cheat-sheet.md](lcdd-cheat-sheet.md) exists.
+- ✅ `LCDD For Product & Management` — [lcdd-for-product-and-management.md](lcdd-for-product-and-management.md) exists (non-technical document for management).
 
 ---
 
-## 9. Ringkasan
+## 8. Priority Recommendations
 
-LCDD punya peluang besar untuk menjadi kerangka governance kontekstual yang lebih luas dari policy-as-code. Yang terbaik dari repositori sejenis adalah mekanisme enforcement, observabilitas, dan distribusi konteks. Yang penting bagi LCDD adalah menjaga generalitas, lifecycle, authority, dan discovery. Dukungan multi-platform dan konteks product/internal memperkuat posisi LCDD tanpa mengurangi prinsip dasarnya.
+Status as of v0.4.0:
+
+1. ✅ **Complete** — practical documentation and domain example packs exist (see section 7.5).
+2. 🟡 **In progress** — a file-based registry and 5 example packs exist; a database-backed registry and marketplace are v0.5.0.
+3. 🟡 **In progress** — `lcd source` is already platform-agnostic (Git + Website); GitLab/Azure CI adapters do not exist yet.
+4. 🟡 **In progress** — `lcd dashboard`, `lcd doctor` with 6 triggers, and `lcd improve` exist; Grafana and agent-specific metrics are v0.5.0+.
+5. 🟡 **Holding** — hardened/local classification is enforced in the Rule Engine and auto-approval review; a marketplace should only follow once this is stable.
+
+---
+
+## 9. Summary
+
+LCDD has a significant opportunity to become a contextual governance framework broader than policy-as-code. The best ideas from comparable repositories are their enforcement mechanisms, observability, and context distribution. What matters for LCDD is preserving generality, lifecycle, authority, and discovery. Multi-platform support and product/internal context strengthen LCDD's position without diluting its core principles.
+
+**The v0.4.0 status confirms the plan's direction:** the automated pipeline (extract → normalize →
+review → doctor) runs without an API key by default (Ollama), the MCP server shipped ahead of
+schedule, and the next priority is the v0.5.0 ecosystem (VS Code extension, GitHub App,
+database-backed registry, marketplace packs, multi-connector RSS/Slack/PDF).
+
+For the concrete engineering plan that turns the self-healing proposal into code, see
+[lcdd-implementation-plan.md](lcdd-implementation-plan.md).

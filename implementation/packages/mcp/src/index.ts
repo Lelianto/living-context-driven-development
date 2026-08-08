@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { readFileSync } from "fs";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
@@ -13,6 +14,7 @@ import {
   DashboardService,
   ReviewManager,
   ContextVerifier,
+  ImproveEngine,
   parseCQL,
   type Context,
   type LifecycleStage,
@@ -20,6 +22,11 @@ import {
 
 const projectRoot = process.env.LCDD_PROJECT_ROOT || process.cwd();
 const registry = new FileRegistry(projectRoot);
+
+// Read from package.json so the advertised version cannot drift from the release.
+const PKG_VERSION = JSON.parse(
+  readFileSync(new URL("../package.json", import.meta.url), "utf-8")
+).version as string;
 
 const TOOLS = [
   {
@@ -92,12 +99,28 @@ const TOOLS = [
       properties: {},
     },
   },
+  {
+    name: "lcdd_get_recommendations",
+    description:
+      "Get self-healing recommendations derived from enforcement observability data. " +
+      "Read-only: reports what could be repaired and whether it needs human approval, but " +
+      "never applies a change. Applying a heal is a human action performed via 'lcd improve apply'.",
+    inputSchema: {
+      type: "object",
+      properties: {
+        priority: {
+          type: "string",
+          description: "Filter by priority (immediate, short-term, long-term)",
+        },
+      },
+    },
+  },
 ];
 
 const server = new Server(
   {
     name: "lcdd-mcp",
-    version: "0.3.1",
+    version: PKG_VERSION,
   },
   {
     capabilities: {
@@ -265,6 +288,46 @@ server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest)
         };
       }
 
+      case "lcdd_get_recommendations": {
+        const engine = new ImproveEngine(registry, new ContextDoctor(projectRoot));
+        let plans = engine.plan();
+
+        if (args?.priority) {
+          plans = plans.filter(p => p.recommendation.priority === args.priority);
+        }
+
+        const output = plans.map(p => ({
+          recommendation_id: p.recommendation.recommendation_id,
+          trigger: p.recommendation.trigger,
+          context_id: p.recommendation.context_id ?? null,
+          action: p.recommendation.action,
+          priority: p.recommendation.priority,
+          severity: p.recommendation.severity,
+          title: p.recommendation.title,
+          description: p.recommendation.description,
+          reason: p.recommendation.reason,
+          confidence: p.recommendation.confidence,
+          proposed_change: p.recommendation.proposed_change ?? null,
+          executable: p.executable,
+          requires_approval: p.requires_approval,
+          blocked_reason: p.blocked_reason ?? null,
+        }));
+
+        return {
+          content: [{
+            type: "text",
+            text: JSON.stringify({
+              total: output.length,
+              recommendations: output,
+              note:
+                "Read-only. To apply a recommendation a human must run " +
+                "'lcd improve apply <recommendation-id>'. Hardened contexts additionally require " +
+                "an explicit approval reason and are never modified automatically.",
+            }, null, 2),
+          }],
+        };
+      }
+
       default:
         return {
           content: [{ type: "text", text: `Unknown tool: ${name}` }],
@@ -272,8 +335,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request: CallToolRequest)
         };
     }
   } catch (e) {
+    // Deliberately omit the stack trace: it leaks absolute filesystem paths to
+    // the connected client.
     return {
-      content: [{ type: "text", text: JSON.stringify({ error: (e as Error).message, stack: (e as Error).stack }) }],
+      content: [{ type: "text", text: JSON.stringify({ error: (e as Error).message }) }],
       isError: true,
     };
   }

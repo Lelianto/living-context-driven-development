@@ -27,11 +27,20 @@ jobs:
           npm run build --workspaces
           npm link --workspace=packages/cli
 
+      - name: Run Tests
+        run: |
+          cd implementation
+          npm test --workspaces
+
       - name: List Active Contexts
         run: lcd list --lifecycle active
 
       - name: Validate
         run: lcd validate --strict
+
+      - name: Improvement Recommendations
+        if: always()
+        run: lcd improve check --json
 
       - name: Summary
         if: always()

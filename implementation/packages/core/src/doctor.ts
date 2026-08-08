@@ -1,6 +1,7 @@
-import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
-import type { Context, LifecycleEvent, EnforcementEvent, VerificationViolation } from './types.js';
+import type { Context, LifecycleEvent, EnforcementEvent, DismissalEvent } from './types.js';
+import { readJsonl, daysSince } from './jsonl.js';
+import { TriggerEvaluator, TRIGGER_THRESHOLDS, type Recommendation, type TriggerEvaluation } from './trigger-evaluator.js';
 
 export interface HealthMetric {
   name: string;
@@ -19,8 +20,15 @@ export interface HealthReport {
   metrics: HealthMetric[];
   recommendations: string[];
   triggers?: TriggerResult[];
+  /** Triggers that could not run for lack of observability data. */
+  dormant_triggers?: TriggerEvaluation['dormant'];
 }
 
+/**
+ * Trigger output projected for display. The authoritative shape is
+ * `Recommendation` from trigger-evaluator; this is a narrowed view kept for
+ * report readability and backwards compatibility with `lcd doctor --triggers`.
+ */
 export interface TriggerResult {
   trigger: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -29,19 +37,33 @@ export interface TriggerResult {
   recommendation: string;
 }
 
+function toTriggerResult(rec: Recommendation): TriggerResult {
+  return {
+    trigger: rec.trigger,
+    severity: rec.severity,
+    context_id: rec.context_id,
+    description: rec.description,
+    recommendation: rec.suggested_command
+      ? `${rec.reason} — ${rec.suggested_command}`
+      : rec.reason,
+  };
+}
+
 export class ContextDoctor {
   private contextsDir: string;
+  private evaluator: TriggerEvaluator;
 
-  constructor(projectRoot: string) {
+  constructor(projectRoot: string, evaluator: TriggerEvaluator = new TriggerEvaluator()) {
     this.contextsDir = join(projectRoot, '.lcdd', 'contexts');
+    this.evaluator = evaluator;
   }
 
   diagnose(contexts: Context[]): HealthReport {
     const events = this.readLifecycleEvents();
     const enforcements = this.readEnforcementEvents();
+    const dismissals = this.readDismissalEvents();
     const metrics: HealthMetric[] = [];
     const recommendations: string[] = [];
-    const triggers: TriggerResult[] = [];
 
     metrics.push(this.checkStaleContexts(contexts, events));
     metrics.push(this.checkMissingOwners(contexts));
@@ -52,11 +74,11 @@ export class ContextDoctor {
     metrics.push(this.checkTagHygiene(contexts));
     metrics.push(this.checkReviewBacklog(contexts));
 
-    triggers.push(...this.evaluateStaleNoViolation(contexts, enforcements));
-    triggers.push(...this.evaluateHighFalsePositive(contexts, enforcements));
-    triggers.push(...this.evaluateIncreasingViolations(contexts, enforcements));
-    triggers.push(...this.evaluateAiDrift(enforcements));
-    triggers.push(...this.evaluateNewSourceDetected(contexts));
+    // Trigger evaluation is owned by TriggerEvaluator. Doctor previously carried
+    // a second implementation with divergent thresholds; that is now removed so
+    // the two can never disagree.
+    const evaluation = this.evaluator.evaluate(contexts, enforcements, dismissals);
+    const triggers = evaluation.recommendations.map(toTriggerResult);
 
     for (const m of metrics) {
       if (m.status === 'warning' || m.status === 'critical') {
@@ -64,10 +86,8 @@ export class ContextDoctor {
       }
     }
 
-    if (triggers.length > 0) {
-      for (const t of triggers) {
-        recommendations.push(`[${t.trigger}] ${t.recommendation}`);
-      }
+    for (const t of triggers) {
+      recommendations.push(`[${t.trigger}] ${t.recommendation}`);
     }
 
     const totalScore = metrics.reduce((sum, m) => sum + m.score, 0);
@@ -86,47 +106,46 @@ export class ContextDoctor {
       metrics,
       recommendations: [...new Set(recommendations)],
       triggers,
+      dormant_triggers: evaluation.dormant,
     };
   }
 
   private readLifecycleEvents(): LifecycleEvent[] {
-    const logPath = join(this.contextsDir, '.events.log');
-    if (!existsSync(logPath)) return [];
-    const content = readFileSync(logPath, 'utf-8').trim();
-    if (!content) return [];
-    return content.split('\n')
-      .filter(line => line.trim())
-      .map(line => {
-        try { return JSON.parse(line) as LifecycleEvent; } catch { return null; }
-      })
-      .filter((e): e is LifecycleEvent => e !== null);
+    return readJsonl<LifecycleEvent>(join(this.contextsDir, '.events.log'));
   }
 
   private readEnforcementEvents(): EnforcementEvent[] {
-    const logPath = join(this.contextsDir, '.enforcements.log');
-    if (!existsSync(logPath)) return [];
-    const content = readFileSync(logPath, 'utf-8').trim();
-    if (!content) return [];
-    return content.split('\n')
-      .filter(line => line.trim())
-      .map(line => {
-        try { return JSON.parse(line) as EnforcementEvent; } catch { return null; }
-      })
-      .filter((e): e is EnforcementEvent => e !== null);
+    return readJsonl<EnforcementEvent>(join(this.contextsDir, '.enforcements.log'));
+  }
+
+  private readDismissalEvents(): DismissalEvent[] {
+    return readJsonl<DismissalEvent>(join(this.contextsDir, '.dismissals.log'));
   }
 
   private daysSince(dateStr: string | undefined | null): number {
-    if (!dateStr) return Infinity;
-    return (Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24);
+    return daysSince(dateStr);
+  }
+
+  /**
+   * Lifecycle events that represent real context activity.
+   *
+   * Heal bookkeeping (actor_role 'improve-engine') is excluded deliberately: a
+   * heal records that the *governance system* touched the context, not that the
+   * context is being actively maintained. Counting it would let a single heal
+   * permanently mask a dormant context, and rollback could not restore health.
+   */
+  private activityEvents(events: LifecycleEvent[]): LifecycleEvent[] {
+    return events.filter(e => e.actor_role !== 'improve-engine');
   }
 
   private checkStaleContexts(contexts: Context[], events: LifecycleEvent[]): HealthMetric {
-    const staleThreshold = 90;
+    const staleThreshold = TRIGGER_THRESHOLDS.STALE_DAYS;
     const staleIds: string[] = [];
+    const activity = this.activityEvents(events);
 
     for (const ctx of contexts) {
       if (ctx.lifecycle === 'archived' || ctx.lifecycle === 'draft') continue;
-      const ctxEvents = events
+      const ctxEvents = activity
         .filter(e => e.context_id === ctx.id)
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
       const lastEventDate = ctxEvents.length > 0
@@ -231,8 +250,9 @@ export class ContextDoctor {
   private checkDraftStagnation(contexts: Context[], events: LifecycleEvent[]): HealthMetric {
     const drafts = contexts.filter(c => c.lifecycle === 'draft');
     const stalledThreshold = 30;
+    const activity = this.activityEvents(events);
     const stalled = drafts.filter(c => {
-      const lastEvent = events
+      const lastEvent = activity
         .filter(e => e.context_id === c.id)
         .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())[0];
       const baseDate = lastEvent ? lastEvent.timestamp : c.updated_at || c.created_at;
@@ -307,108 +327,5 @@ export class ContextDoctor {
         ? ['No contexts pending review.']
         : [`${pending.length} context(s) awaiting review: ${pending.map(c => c.id).join(', ')}`],
     };
-  }
-
-  evaluateStaleNoViolation(contexts: Context[], enforcements: EnforcementEvent[]): TriggerResult[] {
-    const results: TriggerResult[] = [];
-    for (const ctx of contexts) {
-      if (ctx.lifecycle !== 'active') continue;
-      const ctxEnfs = enforcements.filter(e => e.context_id === ctx.id);
-      if (ctxEnfs.length === 0) continue;
-      const recent = ctxEnfs.filter(e => this.daysSince(e.timestamp) <= 90);
-      if (recent.length === 0) continue;
-      const hasViolation = recent.some(e => e.status === 'violation');
-      if (!hasViolation) {
-        results.push({
-          trigger: 'STALE_NO_VIOLATION',
-          severity: 'medium',
-          context_id: ctx.id,
-          description: `Context "${ctx.title}" is active with no violations in 90+ days.`,
-          recommendation: `Consider deprecating "${ctx.id}" — lcd transition ${ctx.id} deprecated --reason "No violations in >90 days"`,
-        });
-      }
-    }
-    return results;
-  }
-
-  evaluateHighFalsePositive(contexts: Context[], enforcements: EnforcementEvent[]): TriggerResult[] {
-    const results: TriggerResult[] = [];
-    for (const ctx of contexts) {
-      if (ctx.lifecycle === 'archived') continue;
-      const ctxEnfs = enforcements.filter(e => e.context_id === ctx.id);
-      if (ctxEnfs.length < 10) continue;
-      const violations = ctxEnfs.filter(e => e.status === 'violation').length;
-      const rate = violations / ctxEnfs.length;
-      if (rate > 0.2) {
-        results.push({
-          trigger: 'HIGH_FALSE_POSITIVE',
-          severity: 'high',
-          context_id: ctx.id,
-          description: `Context "${ctx.title}" has ${(rate * 100).toFixed(0)}% violation rate (${violations}/${ctxEnfs.length}).`,
-          recommendation: `Consider refining scope or enforcement threshold for "${ctx.id}" — lcd review show ${ctx.id}`,
-        });
-      }
-    }
-    return results;
-  }
-
-  evaluateIncreasingViolations(contexts: Context[], enforcements: EnforcementEvent[]): TriggerResult[] {
-    const results: TriggerResult[] = [];
-    for (const ctx of contexts) {
-      if (ctx.lifecycle === 'archived') continue;
-      const ctxEnfs = enforcements
-        .filter(e => e.context_id === ctx.id)
-        .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-      if (ctxEnfs.length < 6) continue;
-      const recent = ctxEnfs.slice(0, 3);
-      const earlier = ctxEnfs.slice(3, 6);
-      const recentViolations = recent.filter(e => e.status === 'violation').length;
-      const earlierViolations = earlier.filter(e => e.status === 'violation').length;
-      if (recentViolations > earlierViolations) {
-        results.push({
-          trigger: 'INCREASING_VIOLATIONS',
-          severity: 'medium',
-          context_id: ctx.id,
-          description: `Context "${ctx.title}" violations increased from ${earlierViolations}/3 to ${recentViolations}/3 in recent checks.`,
-          recommendation: `Review context clarity for "${ctx.id}" — consider updating description or enforcement.`,
-        });
-      }
-    }
-    return results;
-  }
-
-  evaluateAiDrift(enforcements: EnforcementEvent[]): TriggerResult[] {
-    if (enforcements.length === 0) return [];
-    const humanEnfs = enforcements.filter(e => e.actor.type === 'human');
-    const aiEnfs = enforcements.filter(e => e.actor.type === 'ai-agent');
-    if (humanEnfs.length < 5 || aiEnfs.length < 5) return [];
-    const humanViolationRate = humanEnfs.filter(e => e.status === 'violation').length / humanEnfs.length;
-    const aiViolationRate = aiEnfs.filter(e => e.status === 'violation').length / aiEnfs.length;
-    if (humanViolationRate > 0 && aiViolationRate / humanViolationRate > 2) {
-      return [{
-        trigger: 'AI_DRIFT',
-        severity: 'critical',
-        description: `AI agent violation rate (${(aiViolationRate * 100).toFixed(0)}%) is >2x human rate (${(humanViolationRate * 100).toFixed(0)}%).`,
-        recommendation: 'Specification drift detected — AI is triggering enforcement more than humans. Review context clarity and enforcement thresholds. Run lcd doctor for detailed analysis.',
-      }];
-    }
-    return [];
-  }
-
-  evaluateNewSourceDetected(contexts: Context[]): TriggerResult[] {
-    const results: TriggerResult[] = [];
-    for (const ctx of contexts) {
-      if (ctx.source.type !== 'unknown' || ctx.lifecycle === 'archived') continue;
-      if (ctx.source.uri) {
-        results.push({
-          trigger: 'NEW_SOURCE_DETECTED',
-          severity: 'low',
-          context_id: ctx.id,
-          description: `Context "${ctx.title}" references source URI "${ctx.source.uri}" without extraction.`,
-          recommendation: `Register the source with lcd source add ${ctx.source.uri} to enable automated change detection.`,
-        });
-      }
-    }
-    return results;
   }
 }

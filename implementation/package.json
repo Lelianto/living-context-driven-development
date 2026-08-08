@@ -1,13 +1,13 @@
 {
   "name": "lcdd-monorepo",
   "private": true,
-  "version": "0.3.0",
+  "version": "0.5.0",
   "description": "Living Context Driven Development — Reference Implementation",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
+    "build": "npm run build --workspace=@lcdd/core && npm run build --workspace=@lcdd/cli && npm run build --workspace=@lcdd/mcp",
     "test": "npm run test --workspaces",
     "lint": "npm run lint --workspaces",
     "clean": "npm run clean --workspaces"

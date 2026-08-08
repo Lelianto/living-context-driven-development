@@ -130,6 +130,22 @@ lcd doctor --triggers             # Show trigger evaluation details
 
 Metrics checked: Stale Contexts, Missing Owners, Enforcement Conflicts, Deprecation Backlog, Draft Stagnation, Authority Gaps, Tag Hygiene, Review Backlog.
 
+### `lcd improve`
+
+Review and apply self-healing recommendations. This is the Improve loop: the doctor's triggers produce recommendations, and `lcd improve` carries out the safe ones under the 9 guardrails (hardened contexts never auto-modified, every action snapshotted and audited, rollback on health regression).
+
+```bash
+lcd improve check                       # List current recommendations
+lcd improve check --json                # Machine-readable output
+lcd improve check --priority immediate  # Filter by priority
+lcd improve apply <rec-id> --dry-run    # Preview the change, write nothing
+lcd improve apply <rec-id> --yes        # Apply (prompts otherwise)
+lcd improve apply <rec-id> --yes --reason "..."   # Record an approval reason
+lcd improve rollback <heal-id>          # Restore the pre-heal snapshot
+```
+
+Phase A executes three actions automatically: `deprecate` (dormant contexts), `refine-scope` (narrowing `applies_to` for high violation/false-positive rates), and `register-source` (via `lcd source add`). Hardened contexts always require an explicit approval reason, and a heal that drops health rolls itself back. Every apply and rollback appends a `heal` event to the audit trail.
+
 ### `lcd validate`
 
 Validate files against all active contexts. Detects violations and blocks on critical rules.

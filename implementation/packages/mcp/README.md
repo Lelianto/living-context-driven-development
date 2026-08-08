@@ -47,6 +47,9 @@ If `LCDD_PROJECT_ROOT` is not set, the current working directory is used.
 | `lcdd_get_health` | Context Health Report — score, grade, stale contexts, recommendations |
 | `lcdd_get_dashboard` | Enforcement dashboard — violation trends, actor breakdown |
 | `lcdd_list_reviews` | Pending reviews with auto-approval eligibility |
+| `lcdd_get_recommendations` | Read-only self-healing recommendations with confidence and proposed changes |
+
+`lcdd_get_recommendations` is deliberately read-only: an AI agent may inspect a heal plan, but applying one is a human action via the CLI (`lcd improve apply`). Agents must never heal unattended.
 
 ---
 
@@ -57,6 +60,9 @@ If `LCDD_PROJECT_ROOT` is not set, the current working directory is used.
 
 **"What's the health of this project's governance?":**
 > Agent calls `lcdd_get_health` → returns score, grade, stale contexts, and actionable recommendations.
+
+**"What should be healed, and how?":**
+> Agent calls `lcdd_get_recommendations` → returns plans with recommendation ids, confidence, and proposed changes. Applying one stays a human action: `lcd improve apply <id> --dry-run` to preview, `--yes` to execute.
 
 **"Are there security rules I should know about before coding?":**
 > Agent calls `lcdd_query_contexts` with `SELECT * FROM contexts WHERE lifecycle = 'active' AND category = 'security'` → returns all active security contexts.

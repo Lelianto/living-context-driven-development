@@ -1,96 +1,145 @@
 # LCDD Cheat Sheet
 
-**Status:** Documentation
-**Version:** 0.1.0
+**Status:** Documentation  
+**Version:** 0.2.0  
 **Last Updated:** 2026-08-08
 
-Satu halaman ringkas untuk mengingat konsep utama LCDD.
+---
 
-## Istilah Cepat
+A one-page summary of the core LCDD concepts.
 
-| Istilah | Apa artinya | Kapan pakai |
+## Quick Terminology
+
+| Term | What it means | When to use it |
 |---|---|---|
-| Context | Aturan atau keputusan yang disimpan secara terstruktur | Saat Anda ingin membuat kebijakan eksplisit |
-| Lifecycle | Status aturan dari draft sampai archived | Untuk mengetahui apakah aturan sudah aktif |
-| Authority | Siapa yang memberi otoritas pada aturan | Untuk menentukan seberapa susah mengubahnya |
-| Hardened | Aturan yang berubah pelan dan butuh approval | Untuk regulasi atau arsitektur penting |
-| Local | Aturan yang bisa berubah cepat | Untuk gaya tim atau preferensi produk |
-| Enforcement | Bagaimana aturan diberlakukan | Untuk memutuskan block/warn/comment/silent |
-| Context Pack | Kumpulan aturan terkait | Untuk mengadopsi satu set aturan bersama |
+| Context | A rule or decision stored in structured form | When you want to make a policy explicit |
+| Lifecycle | A rule's status from draft to archived | To know whether a rule is in force |
+| Authority | Who gives the rule its authority | To determine how hard it is to change |
+| Hardened | A slow-changing rule that requires approval | For regulation or critical architecture |
+| Local | A rule that can change quickly | For team style or product preferences |
+| Enforcement | How the rule is applied | To choose block/warn/comment/silent |
+| Context Pack | A collection of related rules | To adopt a set of rules together |
+| Context Registry | Where all rules are stored (`.lcdd/contexts/`) | To find the rules currently in force |
+| Pipeline | 9 stages: Discover → Extract → Normalize → Classify → Review → Version → Enforce → Observe → Improve | To automate rule creation and maintenance |
+| Health Score | A 0–100 score plus an A–F grade for rule health | To find stale rules (`lcd doctor`) |
 
-## 3 Pertanyaan Kunci untuk Setiap Context
+## Three Key Questions for Every Context
 
-1. Apa tujuan aturan ini?
-2. Siapa yang perlu mengikuti atau menyetujui?
-3. Apakah aturan ini harus stabil (hard) atau boleh berubah cepat (local)?
+1. What is the purpose of this rule?
+2. Who needs to follow or approve it?
+3. Must this rule stay stable (hardened) or may it change quickly (local)?
 
-## Ketika Mulai LCDD
+## When Starting with LCDD
 
-- Mulai dari **satu aturan penting**.
-- Simpan dalam **file terpisah** dengan struktur jelas.
-- Tambahkan `source`, `authority`, `lifecycle`, dan `enforcement`.
-- Gunakan `draft` sampai aturan siap.
-- Ubah ke `active` jika siap diberlakukan.
+- Start with **one important rule**.
+- Store it in a **separate file** with a clear structure.
+- Add `source`, `authority`, `lifecycle`, and `enforcement`.
+- Use `draft` until the rule is ready.
+- Switch to `active` when it is ready to be enforced.
 
-## Aturan Praktis
+If you are already using the tooling (v0.4.0+), the CLI path:
 
-- `Hardened` = gunakan untuk aturan besar, compliance, atau arsitektur.
-- `Local` = gunakan untuk tim, gaya kode, atau keputusan produk yang bisa disesuaikan.
-- `block` = untuk aturan yang harus ditaati sekarang.
-- `warn` = untuk aturan yang ingin dipantau tetapi tidak langsung memblokir.
-- `comment` = untuk preferensi atau panduan yang bersifat edukasi.
-- `silent` = untuk eksperimen internal atau data awal.
+```bash
+npm install -g @lcdd/cli    # or: npx @lcdd/cli
+lcd init                    # create .lcdd/contexts/ (hardened, local, experimental)
+lcd context add             # create a Context with Rule Engine auto-suggestions
+lcd transition <id> active  # activate after review
+lcd validate                # run enforcement against active Contexts
+lcd doctor                  # check rule health (health score)
+```
 
-## Contoh Cepat: Pilih Kelas Governance
+## Rules of Thumb
 
-- `Hardened-Standard`: "Semua layanan internal harus menggunakan TLS 1.3".
-- `Local-Standard`: "Semua release branch harus memakai nama `release/*`".
-- `Local-Guideline`: "Gunakan 2 spasi di front-end CSS".
-- `Local-Experimental`: "Coba format API baru ini selama 30 hari".
+- `Hardened` = use for major rules, compliance, or architecture.
+- `Local` = use for team decisions, code style, or adjustable product choices.
+- `block` = for rules that must be obeyed right now.
+- `warn` = for rules you want to monitor without blocking immediately.
+- `comment` = for preferences or educational guidance.
+- `silent` = for internal experiments or baseline data collection.
 
-## Template Konteks Singkat
+## Quick Example: Choosing a Governance Class
+
+The schema defines 6 classifications, not just 2:
+
+- `Hardened-Mandate`: "All personal data processing must comply with GDPR" (legal/compliance).
+- `Hardened-Standard`: "All internal services must use TLS 1.3."
+- `Hardened-Local`: "Core module architecture changes require tech lead approval" (needs approval, but team-scoped).
+- `Local-Standard`: "All release branches must be named `release/*`."
+- `Local-Guideline`: "Use 2 spaces in frontend CSS."
+- `Local-Experimental`: "Trial this new API format for 30 days."
+
+## Short Context Template
 
 ```yaml
 id: "ctx-example"
 version: 1
-title: "Judul konteks singkat"
-description: "Jelaskan apa aturan ini dan mengapa penting."
+title: "Short Context title"
+description: "Explain what this rule is and why it matters."
 source:
-  type: "product"
-  uri: "roadmap-q3"
+  type: "organization" # individual, organization, standard-body, ai-system, community, ...
+  uri: "https://wiki.example.com/roadmap-q3"
 authority:
-  level: 2
+  level: 2 # 0–4: 4 mandate, 3 standard, 2 guideline, 1 preference, 0 suggestion
   source:
-    type: "product"
+    type: "organization"
+    id: "product-team" # REQUIRED — the schema requires type, id, and name
     name: "Product Team"
-lifecycle: "draft"
+lifecycle: "draft" # draft, candidate, approved, active, deprecated, archived
 governance:
   classification: "local-standard"
   approval_required: true
 enforcement:
-  mode: "warn"
+  mode: "warn" # block, warn, comment, silent
 ```
 
-## Fast Tips untuk Founder & Startup
+## Fast Tips for Founders and Startups
 
-- Jika Anda punya keputusan produk penting, bermula dari `Context` lebih baik daripada hanya menulis di notulen.
-- Jika aturan hanya untuk tim kecil, pilih `local-guideline` dan jangan memblokir orang.
-- Jika Anda ingin AI agent menghormati aturan, gunakan `active` + `enforcement` yang jelas.
-- Setelah satu atau dua aturan berjalan, ulangi proses untuk keputusan lain.
+- If you have an important product decision, starting from a `Context` beats writing it only in meeting notes.
+- If a rule applies to a small team only, choose `local-guideline` and do not block people.
+- If you want AI agents to respect a rule, use `active` plus a clear `enforcement`.
+- Once one or two rules are working, repeat the process for other decisions.
 
-## Kesalahan Umum
+## Common Mistakes
 
-- Menulis rule sebagai teks bebas tanpa struktur.
-- Menetapkan semua aturan sebagai `hardened`, sehingga tim jadi lambat bergerak.
-- Menggunakan FAQ sebagai satu-satunya dokumentasi.
-- Mengabaikan `source` dan `authority` sehingga aturan terlihat tidak resmi.
+- Writing rules as free text without structure.
+- Marking every rule as `hardened`, which slows the team down.
+- Using the FAQ as the only documentation.
+- Ignoring `source` and `authority`, which makes rules look unofficial.
 
-## Cepat: file mana yang harus dibuat?
+## Quick: Which Files Should You Create?
 
-- `contexts/` atau `lcd-contexts/`
+**Manual (no tooling):**
+
+- `contexts/` or `lcd-contexts/`
 - `contexts/ctx-*.yaml`
-- `docs/lcdd-quick-start.md`
-- `docs/lcdd-concepts.md`
-- `docs/lcdd-templates.md`
+- `docs/lcdd-quick-start.md`, `docs/lcdd-concepts.md`, `docs/lcdd-templates.md`
 
-Gunakan cheat sheet ini sebagai referensi ketika Anda membuat aturan baru atau berdiskusi di tim.
+**With the CLI (`lcd init`):**
+
+```text
+.lcdd/
+├── config.yaml
+└── contexts/
+    ├── hardened/       # requires explicit approval to change
+    ├── local/          # changes quickly, team-managed
+    └── experimental/   # AI suggestions, lowest authority
+```
+
+## CLI Command Summary (v0.4.0)
+
+| Command | Purpose |
+|---|---|
+| `lcd init` | Initialize `.lcdd/` in a project |
+| `lcd context add` | Create a Context interactively (with auto-suggestions) |
+| `lcd list` / `lcd show <id>` | View all Contexts / Context detail |
+| `lcd validate` | Enforcement: check artifacts against active Contexts |
+| `lcd query "<CQL>"` | Query the registry using CQL |
+| `lcd transition <id> <stage>` | Move the lifecycle forward (draft → active, etc.) |
+| `lcd review list/approve/reject` | Context review workflow |
+| `lcd doctor` | Health score plus recommendations (8 metrics, 6 triggers) |
+| `lcd improve check/apply/rollback` | Review, apply, and roll back self-healing recommendations |
+| `lcd source add/check/watch` | Monitor rule sources (Git/website) |
+| `lcd extract <id>` / `lcd normalize` | Automated pipeline (LLM optional, Ollama by default) |
+| `lcd dashboard` | Enforcement observability (terminal/web) |
+
+Use this cheat sheet as a reference when creating new rules or discussing them with your team.

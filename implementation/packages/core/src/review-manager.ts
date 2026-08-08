@@ -1,4 +1,4 @@
-import type { Context, ReviewStatus, LifecycleStage } from './types.js';
+import type { Context, ReviewStatus, LifecycleStage, LifecycleEvent } from './types.js';
 import { FileRegistry } from './registry.js';
 import { LifecycleManager } from './lifecycle.js';
 
@@ -83,6 +83,7 @@ export class ReviewManager {
     }
 
     this.registry.save(updated);
+    this.recordReviewEvent(ctx, updated, actor, `review:approved${reason ? ` — ${reason}` : ''}`);
 
     return {
       action: 'approved',
@@ -104,6 +105,7 @@ export class ReviewManager {
     };
 
     this.registry.save(updated);
+    this.recordReviewEvent(ctx, updated, actor, `review:rejected${reason ? ` — ${reason}` : ''}`);
 
     return {
       action: 'rejected',
@@ -125,6 +127,7 @@ export class ReviewManager {
     };
 
     this.registry.save(updated);
+    this.recordReviewEvent(ctx, updated, actor, `review:needs-revision${reason ? ` — ${reason}` : ''}`);
 
     return {
       action: 'revision-requested',
@@ -132,6 +135,29 @@ export class ReviewManager {
       timestamp: new Date().toISOString(),
       message: reason || 'Revision requested via review workflow.',
     };
+  }
+
+  /**
+   * Review decisions mutate contexts, so they must land in the same audit trail
+   * as lifecycle transitions. Previously these writes went straight to disk with
+   * no event, leaving approvals invisible to `lcd doctor` and to auditors.
+   */
+  private recordReviewEvent(before: Context, after: Context, actor: string, reason: string): void {
+    const event: LifecycleEvent = {
+      context_id: after.id,
+      from_stage: before.lifecycle,
+      to_stage: after.lifecycle,
+      timestamp: new Date().toISOString(),
+      actor,
+      actor_role: 'reviewer',
+      reason,
+      metadata: {
+        review_status_from: before.review_status,
+        review_status_to: after.review_status,
+        version: after.version,
+      },
+    };
+    this.registry.writeLifecycleEvent(event);
   }
 
   autoApprove(actor: string): ReviewResult[] {

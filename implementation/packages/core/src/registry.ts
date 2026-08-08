@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, statSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync, statSync, rmSync } from 'fs';
 import { join, dirname } from 'path';
 import yaml from 'js-yaml';
 import { v4 as uuid } from 'uuid';
@@ -11,15 +11,20 @@ import type {
   LifecycleEvent,
   LifecycleStage,
   EnforcementEvent,
+  DismissalEvent,
+  HealEvent,
 } from './types.js';
 import { LifecycleManager } from './lifecycle.js';
 import { validateContextFull } from './schema.js';
+import { readJsonl } from './jsonl.js';
 
 export class FileRegistry {
   private contextsDir: string;
+  private snapshotsDir: string;
 
   constructor(projectRoot: string) {
     this.contextsDir = join(projectRoot, '.lcdd', 'contexts');
+    this.snapshotsDir = join(projectRoot, '.lcdd', 'snapshots');
   }
 
   ensureDir(): void {
@@ -32,13 +37,6 @@ export class FileRegistry {
 
   private getFilePath(id: string): string {
     return join(this.contextsDir, `${id}.yaml`);
-  }
-
-  private resolveClassificationDir(classification: string): string {
-    if (classification.startsWith('hardened')) return join(this.contextsDir, 'hardened');
-    if (classification.startsWith('local-') && classification !== 'local-experimental')
-      return join(this.contextsDir, 'local');
-    return join(this.contextsDir, 'experimental');
   }
 
   private listFiles(dir: string): string[] {
@@ -263,51 +261,138 @@ export class FileRegistry {
     id: string,
     to: LifecycleStage,
     actor: string,
-    reason?: string
+    reason?: string,
+    actorRole?: string
   ): { context: Context; event: LifecycleEvent } {
     const context = this.load(id);
     if (!context) throw new Error(`Context not found: ${id}`);
 
     const result = LifecycleManager.transition(context, to, actor, reason);
+    if (actorRole) result.event.actor_role = actorRole;
     this.save(result.context);
-
-    const eventLogPath = join(this.contextsDir, '.events.log');
-    const eventLine = JSON.stringify(result.event) + '\n';
-    mkdirSync(dirname(eventLogPath), { recursive: true });
-    writeFileSync(eventLogPath, eventLine, { flag: 'a' });
+    this.appendLog('.events.log', result.event);
 
     return result;
   }
 
   writeEnforcementEvent(event: EnforcementEvent): void {
-    const logPath = join(this.contextsDir, '.enforcements.log');
-    const eventLine = JSON.stringify(event) + '\n';
-    mkdirSync(dirname(logPath), { recursive: true });
-    writeFileSync(logPath, eventLine, { flag: 'a' });
+    this.appendLog('.enforcements.log', event);
   }
 
   readEnforcementEvents(): EnforcementEvent[] {
-    const logPath = join(this.contextsDir, '.enforcements.log');
-    if (!existsSync(logPath)) return [];
-    const content = readFileSync(logPath, 'utf-8').trim();
-    if (!content) return [];
-    return content.split('\n')
-      .filter(line => line.trim())
-      .map(line => {
-        try { return JSON.parse(line) as EnforcementEvent; } catch { return null; }
-      })
-      .filter((e): e is EnforcementEvent => e !== null);
+    return readJsonl<EnforcementEvent>(join(this.contextsDir, '.enforcements.log'));
   }
 
-  snapshot(timestamp?: string): Snapshot {
-    const contexts = this.list({ lifecycle: 'active' as LifecycleStage });
-    const ts = timestamp || new Date().toISOString();
+  writeDismissalEvent(event: DismissalEvent): void {
+    this.appendLog('.dismissals.log', event);
+  }
 
-    return {
+  readDismissalEvents(): DismissalEvent[] {
+    return readJsonl<DismissalEvent>(join(this.contextsDir, '.dismissals.log'));
+  }
+
+  writeHealEvent(event: HealEvent): void {
+    this.appendLog('.heals.log', event);
+    // Healing is a governance action, so it also belongs in the lifecycle audit
+    // trail that reviewers and auditors read.
+    this.appendLog('.events.log', {
+      context_id: event.context_id ?? 'registry',
+      from_stage: 'active',
+      to_stage: 'active',
+      timestamp: event.timestamp,
+      actor: event.actor,
+      actor_role: 'improve-engine',
+      reason: `heal:${event.operation}:${event.action} (${event.heal_id})`,
+      metadata: { heal_id: event.heal_id, recommendation_id: event.recommendation_id },
+    } satisfies LifecycleEvent);
+  }
+
+  readHealEvents(): HealEvent[] {
+    return readJsonl<HealEvent>(join(this.contextsDir, '.heals.log'));
+  }
+
+  readLifecycleEvents(): LifecycleEvent[] {
+    return readJsonl<LifecycleEvent>(join(this.contextsDir, '.events.log'));
+  }
+
+  writeLifecycleEvent(event: LifecycleEvent): void {
+    this.appendLog('.events.log', event);
+  }
+
+  private appendLog(name: string, event: unknown): void {
+    const logPath = join(this.contextsDir, name);
+    mkdirSync(dirname(logPath), { recursive: true });
+    writeFileSync(logPath, JSON.stringify(event) + '\n', { flag: 'a' });
+  }
+
+  /**
+   * Capture every context regardless of lifecycle and persist it to disk.
+   *
+   * All lifecycles are included deliberately: a heal may modify a draft or
+   * deprecated context, and a snapshot that omitted them could not restore the
+   * registry to its prior state.
+   */
+  snapshot(timestamp?: string): Snapshot {
+    const contexts = this.list();
+    const ts = timestamp || new Date().toISOString();
+    const snapshot: Snapshot = {
       snapshot_id: `snap-${ts.replace(/[:.]/g, '-')}`,
       timestamp: ts,
       contexts,
       count: contexts.length,
     };
+
+    mkdirSync(this.snapshotsDir, { recursive: true });
+    writeFileSync(
+      join(this.snapshotsDir, `${snapshot.snapshot_id}.yaml`),
+      yaml.dump(snapshot, { lineWidth: 120 })
+    );
+
+    return snapshot;
+  }
+
+  loadSnapshot(snapshotId: string): Snapshot | null {
+    const path = join(this.snapshotsDir, `${snapshotId}.yaml`);
+    if (!existsSync(path)) return null;
+    return yaml.load(readFileSync(path, 'utf-8')) as Snapshot;
+  }
+
+  listSnapshots(): string[] {
+    if (!existsSync(this.snapshotsDir)) return [];
+    return readdirSync(this.snapshotsDir)
+      .filter(f => f.endsWith('.yaml'))
+      .map(f => f.replace(/\.yaml$/, ''))
+      .sort();
+  }
+
+  /**
+   * Restore the registry to a snapshot. Contexts created after the snapshot are
+   * removed, so the result is the recorded state rather than a merge.
+   *
+   * Writes bypass `save()` because restoring a prior version legitimately lowers
+   * the version number, which `save()` rejects by design.
+   */
+  restoreSnapshot(snapshotId: string): { restored: number; removed: number } {
+    const snapshot = this.loadSnapshot(snapshotId);
+    if (!snapshot) throw new Error(`Snapshot not found: ${snapshotId}`);
+
+    const snapshotIds = new Set(snapshot.contexts.map(c => c.id));
+    let removed = 0;
+    for (const ctx of this.list()) {
+      if (!snapshotIds.has(ctx.id)) {
+        const path = this.getFilePath(ctx.id);
+        if (existsSync(path)) {
+          rmSync(path);
+          removed++;
+        }
+      }
+    }
+
+    mkdirSync(this.contextsDir, { recursive: true });
+    for (const ctx of snapshot.contexts) {
+      writeFileSync(this.getFilePath(ctx.id), yaml.dump(ctx, { lineWidth: 120 }));
+    }
+
+    return { restored: snapshot.contexts.length, removed };
   }
 }

@@ -147,7 +147,9 @@ describe('FileRegistry', () => {
   });
 
   describe('snapshot', () => {
-    it('captures only active contexts', () => {
+    // Snapshots deliberately include every lifecycle. A heal may modify a draft
+    // or deprecated context, and an active-only snapshot could not restore it.
+    it('captures contexts in every lifecycle stage', () => {
       const ctx = registry.create(baseFields);
       registry.transition(ctx.id, 'candidate', 'user');
       registry.transition(ctx.id, 'approved', 'user');
@@ -156,8 +158,103 @@ describe('FileRegistry', () => {
       registry.create({ ...baseFields, title: 'Draft only' });
 
       const snap = registry.snapshot();
-      expect(snap.count).toBe(1);
-      expect(snap.contexts[0].lifecycle).toBe('active');
+      expect(snap.count).toBe(2);
+      expect(snap.contexts.map(c => c.lifecycle).sort()).toEqual(['active', 'draft']);
+    });
+
+    it('persists the snapshot to disk', () => {
+      registry.create(baseFields);
+      const snap = registry.snapshot();
+
+      expect(registry.listSnapshots()).toContain(snap.snapshot_id);
+      expect(registry.loadSnapshot(snap.snapshot_id)!.count).toBe(snap.count);
+    });
+
+    it('returns null for an unknown snapshot', () => {
+      expect(registry.loadSnapshot('snap-nope')).toBeNull();
+    });
+  });
+
+  describe('restoreSnapshot', () => {
+    it('restores a prior context version', () => {
+      const ctx = registry.create(baseFields);
+      const snap = registry.snapshot();
+
+      registry.transition(ctx.id, 'candidate', 'user');
+      expect(registry.load(ctx.id)!.lifecycle).toBe('candidate');
+      expect(registry.load(ctx.id)!.version).toBe(2);
+
+      registry.restoreSnapshot(snap.snapshot_id);
+
+      const restored = registry.load(ctx.id)!;
+      expect(restored.lifecycle).toBe('draft');
+      expect(restored.version).toBe(1);
+    });
+
+    it('removes contexts created after the snapshot', () => {
+      registry.create(baseFields);
+      const snap = registry.snapshot();
+      const later = registry.create({ ...baseFields, title: 'Created later' });
+
+      const result = registry.restoreSnapshot(snap.snapshot_id);
+
+      expect(result.removed).toBe(1);
+      expect(registry.load(later.id)).toBeNull();
+    });
+
+    it('throws for an unknown snapshot', () => {
+      expect(() => registry.restoreSnapshot('snap-nope')).toThrow(/not found/i);
+    });
+  });
+
+  describe('event logs', () => {
+    it('records a lifecycle event on transition', () => {
+      const ctx = registry.create(baseFields);
+      registry.transition(ctx.id, 'candidate', 'user', 'ready for review');
+
+      const events = registry.readLifecycleEvents();
+      expect(events).toHaveLength(1);
+      expect(events[0].to_stage).toBe('candidate');
+      expect(events[0].reason).toBe('ready for review');
+    });
+
+    it('round-trips dismissal events', () => {
+      registry.writeDismissalEvent({
+        event_id: 'dis-1',
+        timestamp: new Date().toISOString(),
+        context_id: 'ctx-a',
+        artifact_path: 'src/f.ts',
+        actor: { type: 'human', id: 'dev' },
+        reason: 'test fixture, not production code',
+      });
+
+      const events = registry.readDismissalEvents();
+      expect(events).toHaveLength(1);
+      expect(events[0].context_id).toBe('ctx-a');
+    });
+
+    it('a heal event also lands in the lifecycle audit trail', () => {
+      registry.writeHealEvent({
+        heal_id: 'heal-1',
+        timestamp: new Date().toISOString(),
+        recommendation_id: 'rec-1',
+        trigger: 'STALE_NO_VIOLATION',
+        context_id: 'ctx-a',
+        action: 'deprecate',
+        operation: 'apply',
+        actor: 'improve-engine',
+      });
+
+      expect(registry.readHealEvents()).toHaveLength(1);
+      const lifecycle = registry.readLifecycleEvents();
+      expect(lifecycle).toHaveLength(1);
+      expect(lifecycle[0].reason).toMatch(/^heal:apply:deprecate/);
+    });
+
+    it('returns an empty array when a log does not exist', () => {
+      expect(registry.readHealEvents()).toEqual([]);
+      expect(registry.readDismissalEvents()).toEqual([]);
+      expect(registry.readLifecycleEvents()).toEqual([]);
     });
   });
 });
